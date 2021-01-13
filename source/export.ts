@@ -5,7 +5,7 @@ EXPORT("PlayerManager", PlayerManager);
 EXPORT("ItemBasic", ItemBasic);
 EXPORT("ItemArmor", ItemArmor);
 EXPORT("ItemRegistry", ItemRegistry);
-EXPORT("CreativeCategory", CreativeCategory);
+EXPORT("ItemCategory", ItemCategory);
 EXPORT("TileEntityBase", TileEntityBase);
 EXPORT("Side", Side);
 EXPORT("BlockEngine", BlockEngine);

@@ -1022,13 +1022,13 @@ var ItemTool = /** @class */ (function (_super) {
 /// <reference path="ItemBasic.ts" />
 /// <reference path="ItemArmor.ts" />
 /// <reference path="ItemTool.ts" />
-var CreativeCategory;
-(function (CreativeCategory) {
-    CreativeCategory[CreativeCategory["BUILDING"] = 1] = "BUILDING";
-    CreativeCategory[CreativeCategory["NATURE"] = 2] = "NATURE";
-    CreativeCategory[CreativeCategory["EQUIPMENT"] = 3] = "EQUIPMENT";
-    CreativeCategory[CreativeCategory["ITEMS"] = 4] = "ITEMS";
-})(CreativeCategory || (CreativeCategory = {}));
+var ItemCategory;
+(function (ItemCategory) {
+    ItemCategory[ItemCategory["BUILDING"] = 1] = "BUILDING";
+    ItemCategory[ItemCategory["NATURE"] = 2] = "NATURE";
+    ItemCategory[ItemCategory["EQUIPMENT"] = 3] = "EQUIPMENT";
+    ItemCategory[ItemCategory["ITEMS"] = 4] = "ITEMS";
+})(ItemCategory || (ItemCategory = {}));
 var ItemRegistry;
 (function (ItemRegistry) {
     var items = {};
@@ -1104,10 +1104,9 @@ var ItemRegistry;
         else
             icon = params.icon;
         Item.createItem(stringID, params.name, icon, { stack: params.stack || 64, isTech: params.isTech });
+        Item.setCategory(numericID, params.category || ItemCategory.ITEMS);
         if (params.maxDamage)
             Item.setMaxDamage(numericID, params.maxDamage);
-        if (params.category)
-            Item.setCategory(numericID, params.category);
         if (params.handEquipped)
             Item.setToolRender(numericID, true);
         if (params.allowedInOffhand)
@@ -1302,7 +1301,7 @@ EXPORT("PlayerManager", PlayerManager);
 EXPORT("ItemBasic", ItemBasic);
 EXPORT("ItemArmor", ItemArmor);
 EXPORT("ItemRegistry", ItemRegistry);
-EXPORT("CreativeCategory", CreativeCategory);
+EXPORT("ItemCategory", ItemCategory);
 EXPORT("TileEntityBase", TileEntityBase);
 EXPORT("Side", Side);
 EXPORT("BlockEngine", BlockEngine);

@@ -3,7 +3,7 @@
 /// <reference path="ItemArmor.ts" />
 /// <reference path="ItemTool.ts" />
 
-enum CreativeCategory {
+enum ItemCategory {
 	BUILDING = 1,
 	NATURE = 2,
 	EQUIPMENT = 3,
@@ -81,8 +81,8 @@ namespace ItemRegistry {
 		icon: string|Item.TextureData,
 		stack?: number,
 		isTech?: boolean,
-		maxDamage?: number,
 		category?: number,
+		maxDamage?: number,
 		handEquipped?: boolean,
 		allowedInOffhand?: boolean,
 		glint?: boolean,
@@ -99,8 +99,8 @@ namespace ItemRegistry {
 			icon = params.icon;
 
 		Item.createItem(stringID, params.name, icon, {stack: params.stack || 64, isTech: params.isTech});
+		Item.setCategory(numericID, params.category || ItemCategory.ITEMS);
 		if (params.maxDamage) Item.setMaxDamage(numericID, params.maxDamage);
-		if (params.category) Item.setCategory(numericID, params.category);
 		if (params.handEquipped) Item.setToolRender(numericID, true);
 		if (params.allowedInOffhand) Item.setAllowedInOffhand(numericID, true);
 		if (params.glint) Item.setGlint(numericID, true);
