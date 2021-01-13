@@ -1,0 +1,11 @@
+EXPORT("ItemStack", ItemStack);
+EXPORT("Vector3", Vector3);
+EXPORT("WorldRegion", WorldRegion);
+EXPORT("PlayerManager", PlayerManager);
+EXPORT("ItemBasic", ItemBasic);
+EXPORT("ItemArmor", ItemArmor);
+EXPORT("ItemRegistry", ItemRegistry);
+EXPORT("CreativeCategory", CreativeCategory);
+EXPORT("TileEntityBase", TileEntityBase);
+EXPORT("Side", Side);
+EXPORT("BlockEngine", BlockEngine);

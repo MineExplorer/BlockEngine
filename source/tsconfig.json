@@ -1,0 +1,28 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"lib": ["ESNext"],
+		"outFile": "../BlockEngine.js",
+		"allowJs": false,
+		"downlevelIteration": false,
+		"experimentalDecorators": true,
+		"strict": false,
+		"skipLibCheck": true,
+		"declaration": true
+	},
+	"exclude": [],
+	"include": [
+		"header.ts",
+		"ItemStack.ts",
+		"Vector3.ts",
+		"WorldRegion.ts",
+		"PlayerManager.ts",
+		"ItemRegistry.ts",
+		"TileEntityBase.ts",
+		"BlockEngine.ts",
+		"export.ts"
+	],
+	"files": [
+		"../../IC_Libraries/declarations/core-engine.d.ts"
+	]
+}
