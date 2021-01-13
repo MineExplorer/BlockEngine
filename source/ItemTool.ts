@@ -13,6 +13,7 @@ implements ToolParams {
 
 	constructor(stringID: string, name: string, icon: string|Item.TextureData, toolMaterial: string | ToolMaterial, toolData?: ToolParams) {
 		super(stringID, name, icon);
+		this.setMaxStack(1);
 		if (typeof toolMaterial == "string") {
 			toolMaterial = ItemRegistry.getToolMaterial(toolMaterial);
 		}

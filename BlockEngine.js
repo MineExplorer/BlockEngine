@@ -975,6 +975,7 @@ var ItemTool = /** @class */ (function (_super) {
         _this.damage = 0;
         _this.isWeapon = false;
         _this.blockTypes = [];
+        _this.setMaxStack(1);
         if (typeof toolMaterial == "string") {
             toolMaterial = ItemRegistry.getToolMaterial(toolMaterial);
         }
