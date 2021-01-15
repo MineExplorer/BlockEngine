@@ -673,7 +673,6 @@ var BlockBase = /** @class */ (function () {
 }());
 var ItemBase = /** @class */ (function () {
     function ItemBase(stringID, name, icon) {
-        this.rarity = 0;
         this.stringID = stringID;
         this.id = IDRegistry.genItemID(stringID);
         this.setName(name || stringID);
@@ -759,10 +758,7 @@ var ItemBase = /** @class */ (function () {
         this.item.addRepairItem(itemID);
     };
     ItemBase.prototype.setRarity = function (rarity) {
-        this.rarity = rarity;
-        if (!('onNameOverride' in this)) {
-            ItemRegistry.setRarity(this.id, rarity);
-        }
+        ItemRegistry.setRarity(this.id, rarity);
     };
     return ItemBase;
 }());
@@ -794,6 +790,7 @@ var ItemArmor = /** @class */ (function (_super) {
             texture: _this.texture,
             isTech: !((_a = params.addToCreative) !== null && _a !== void 0 ? _a : false)
         });
+        _this.setCategory(ItemCategory.EQUIPMENT);
         if (params.material)
             _this.setMaterial(params.material);
         ItemArmor.registerListeners(_this.id, _this);
@@ -1023,8 +1020,38 @@ var EnumRarity;
 var ItemRegistry;
 (function (ItemRegistry) {
     var items = {};
+    var itemsRarity = {};
     var armorMaterials = {};
     var toolMaterials = {};
+    function getInstanceOf(itemID) {
+        return items[itemID] || null;
+    }
+    ItemRegistry.getInstanceOf = getInstanceOf;
+    function getRarity(id) {
+        var _a;
+        return (_a = itemsRarity[id]) !== null && _a !== void 0 ? _a : EnumRarity.COMMON;
+    }
+    ItemRegistry.getRarity = getRarity;
+    function getRarityColor(rarity) {
+        if (rarity == EnumRarity.UNCOMMON)
+            return "§e";
+        if (rarity == EnumRarity.RARE)
+            return "§b";
+        if (rarity == EnumRarity.EPIC)
+            return "§d";
+        return "";
+    }
+    ItemRegistry.getRarityColor = getRarityColor;
+    function setRarity(id, rarity) {
+        itemsRarity[id] = rarity;
+        var itemInstance = getInstanceOf(id);
+        if (!itemInstance || !('onNameOverride' in itemInstance)) {
+            Item.registerNameOverrideFunction(id, function (item, translation, name) {
+                return getRarityColor(rarity) + translation;
+            });
+        }
+    }
+    ItemRegistry.setRarity = setRarity;
     function addArmorMaterial(name, material) {
         armorMaterials[name] = material;
     }
@@ -1043,49 +1070,50 @@ var ItemRegistry;
     ItemRegistry.getToolMaterial = getToolMaterial;
     function registerItem(itemInstance) {
         items[itemInstance.id] = itemInstance;
-        if ('onNameOverride' in itemInstance) {
-            Item.registerNameOverrideFunction(itemInstance.id, function (item, translation, name) {
-                return getRarityColor(itemInstance.rarity) + itemInstance.onNameOverride(item, translation, name);
-            });
-        }
-        if ('onIconOverride' in itemInstance) {
-            Item.registerIconOverrideFunction(itemInstance.id, function (item, isModUi) {
-                return itemInstance.onIconOverride(item, isModUi);
-            });
-        }
-        if ('onItemUse' in itemInstance) {
-            Item.registerUseFunction(itemInstance.id, function (coords, item, block, player) {
-                itemInstance.onItemUse(coords, item, block, player);
-            });
-        }
-        if ('onNoTargetUse' in itemInstance) {
-            Item.registerNoTargetUseFunction(itemInstance.id, function (item, player) {
-                itemInstance.onNoTargetUse(item, player);
-            });
-        }
-        if ('onUsingReleased' in itemInstance) {
-            Item.registerUsingReleasedFunction(itemInstance.id, function (item, ticks, player) {
-                itemInstance.onUsingReleased(item, ticks, player);
-            });
-        }
-        if ('onUsingComplete' in itemInstance) {
-            Item.registerUsingCompleteFunction(itemInstance.id, function (item, player) {
-                itemInstance.onUsingComplete(item, player);
-            });
-        }
-        if ('onDispense' in itemInstance) {
-            Item.registerDispenseFunction(itemInstance.id, function (coords, item, blockSource) {
-                var region = new WorldRegion(blockSource);
-                itemInstance.onDispense(coords, item, region);
-            });
-        }
+        registerItemFuncs(itemInstance.id, itemInstance);
         return itemInstance;
     }
     ItemRegistry.registerItem = registerItem;
-    function getInstanceOf(itemID) {
-        return items[itemID] || null;
+    function registerItemFuncs(itemID, itemFuncs) {
+        if ('onNameOverride' in itemFuncs) {
+            Item.registerNameOverrideFunction(itemID, function (item, translation, name) {
+                var rarity = getRarity(item.id);
+                return getRarityColor(rarity) + itemFuncs.onNameOverride(item, translation, name);
+            });
+        }
+        if ('onIconOverride' in itemFuncs) {
+            Item.registerIconOverrideFunction(itemID, function (item, isModUi) {
+                return itemFuncs.onIconOverride(item, isModUi);
+            });
+        }
+        if ('onItemUse' in itemFuncs) {
+            Item.registerUseFunction(itemID, function (coords, item, block, player) {
+                itemFuncs.onItemUse(coords, item, block, player);
+            });
+        }
+        if ('onNoTargetUse' in itemFuncs) {
+            Item.registerNoTargetUseFunction(itemID, function (item, player) {
+                itemFuncs.onNoTargetUse(item, player);
+            });
+        }
+        if ('onUsingReleased' in itemFuncs) {
+            Item.registerUsingReleasedFunction(itemID, function (item, ticks, player) {
+                itemFuncs.onUsingReleased(item, ticks, player);
+            });
+        }
+        if ('onUsingComplete' in itemFuncs) {
+            Item.registerUsingCompleteFunction(itemID, function (item, player) {
+                itemFuncs.onUsingComplete(item, player);
+            });
+        }
+        if ('onDispense' in itemFuncs) {
+            Item.registerDispenseFunction(itemID, function (coords, item, blockSource) {
+                var region = new WorldRegion(blockSource);
+                itemFuncs.onDispense(coords, item, region);
+            });
+        }
     }
-    ItemRegistry.getInstanceOf = getInstanceOf;
+    ItemRegistry.registerItemFuncs = registerItemFuncs;
     function createItem(stringID, params) {
         var _a;
         var numericID = IDRegistry.genItemID(stringID);
@@ -1135,26 +1163,6 @@ var ItemRegistry;
         return item;
     }
     ItemRegistry.createTool = createTool;
-    /**
-     * Registers name override function for item which adds color to item name depends on rarity
-     * @param rarity number from 1 to 3
-     */
-    function setRarity(id, rarity) {
-        Item.registerNameOverrideFunction(id, function (item, translation, name) {
-            return getRarityColor(rarity) + translation;
-        });
-    }
-    ItemRegistry.setRarity = setRarity;
-    function getRarityColor(rarity) {
-        if (rarity == EnumRarity.UNCOMMON)
-            return "§e";
-        if (rarity == EnumRarity.RARE)
-            return "§b";
-        if (rarity == EnumRarity.EPIC)
-            return "§d";
-        return "";
-    }
-    ItemRegistry.getRarityColor = getRarityColor;
 })(ItemRegistry || (ItemRegistry = {}));
 var TileEntityBase = /** @class */ (function () {
     function TileEntityBase() {

@@ -15,7 +15,6 @@ class ItemBase {
 	icon: {name: string, meta: number};
 	maxStack: number;
 	maxDamage: number;
-	rarity: number = 0;
 	item: any;
 
 	constructor(stringID: string, name?: string, icon?: string|Item.TextureData) {
@@ -115,9 +114,6 @@ class ItemBase {
 	}
 
 	setRarity(rarity: number): void {
-		this.rarity = rarity;
-		if (!('onNameOverride' in this)) {
-			ItemRegistry.setRarity(this.id, rarity);
-		}
+		ItemRegistry.setRarity(this.id, rarity);
 	}
  }

@@ -20,8 +20,34 @@ enum EnumRarity {
 
 namespace ItemRegistry {
 	let items = {};
+	let itemsRarity = {};
 	let armorMaterials = {};
 	let toolMaterials = {};
+
+	export function getInstanceOf(itemID: number): ItemBase {
+		return items[itemID] || null;
+	}
+
+	export function getRarity(id: number): number {
+		return itemsRarity[id] ?? EnumRarity.COMMON;
+	}
+
+	export function getRarityColor(rarity: number): string {
+		if (rarity == EnumRarity.UNCOMMON) return "§e";
+		if (rarity == EnumRarity.RARE) return "§b";
+		if (rarity == EnumRarity.EPIC) return "§d";
+		return "";
+	}
+
+	export function setRarity(id: number, rarity: number): void {
+		itemsRarity[id] = rarity;
+		let itemInstance = getInstanceOf(id);
+		if (!itemInstance || !('onNameOverride' in itemInstance)) {
+			Item.registerNameOverrideFunction(id, function(item: ItemInstance, translation: string, name: string) {
+				return getRarityColor(rarity) + translation;
+			});
+		}
+	}
 
 	export function addArmorMaterial(name: string, material: ArmorMaterial): void {
 		armorMaterials[name] = material;
@@ -39,49 +65,50 @@ namespace ItemRegistry {
 		return toolMaterials[name];
 	}
 
-	export function registerItem(itemInstance: ItemBase & ItemFuncs): ItemBase {
+	export function registerItem(itemInstance: ItemBase): ItemBase {
 		items[itemInstance.id] = itemInstance;
-		if ('onNameOverride' in itemInstance) {
-			Item.registerNameOverrideFunction(itemInstance.id, function(item: ItemInstance, translation: string, name: string) {
-				return getRarityColor(itemInstance.rarity) + itemInstance.onNameOverride(item, translation, name);
-			});
-		}
-		if ('onIconOverride' in itemInstance) {
-			Item.registerIconOverrideFunction(itemInstance.id, function(item: ItemInstance, isModUi: boolean)	{
-				return itemInstance.onIconOverride(item, isModUi);
-			});
-		}
-		if ('onItemUse' in itemInstance) {
-			Item.registerUseFunction(itemInstance.id, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, block: Tile, player: number) {
-				itemInstance.onItemUse(coords, item, block, player);
-			});
-		}
-		if ('onNoTargetUse' in itemInstance) {
-			Item.registerNoTargetUseFunction(itemInstance.id, function(item: ItemInstance, player: number) {
-				itemInstance.onNoTargetUse(item, player);
-			});
-		}
-		if ('onUsingReleased' in itemInstance) {
-			Item.registerUsingReleasedFunction(itemInstance.id, function(item: ItemInstance, ticks: number, player: number)	{
-				itemInstance.onUsingReleased(item, ticks, player);
-			});
-		}
-		if ('onUsingComplete' in itemInstance) {
-			Item.registerUsingCompleteFunction(itemInstance.id, function(item: ItemInstance, player: number) {
-				itemInstance.onUsingComplete(item, player);
-			});
-		}
-		if ('onDispense' in itemInstance) {
-			Item.registerDispenseFunction(itemInstance.id, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, blockSource: BlockSource) {
-				let region = new WorldRegion(blockSource);
-				itemInstance.onDispense(coords, item, region);
-			});
-		}
+		registerItemFuncs(itemInstance.id, itemInstance);
 		return itemInstance;
 	}
 
-	export function getInstanceOf(itemID: number): ItemBase {
-		return items[itemID] || null;
+	export function registerItemFuncs(itemID: number, itemFuncs: ItemBase | ItemFuncs) {
+		if ('onNameOverride' in itemFuncs) {
+			Item.registerNameOverrideFunction(itemID, function(item: ItemInstance, translation: string, name: string) {
+				let rarity = getRarity(item.id);
+				return getRarityColor(rarity) + itemFuncs.onNameOverride(item, translation, name);
+			});
+		}
+		if ('onIconOverride' in itemFuncs) {
+			Item.registerIconOverrideFunction(itemID, function(item: ItemInstance, isModUi: boolean)	{
+				return itemFuncs.onIconOverride(item, isModUi);
+			});
+		}
+		if ('onItemUse' in itemFuncs) {
+			Item.registerUseFunction(itemID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, block: Tile, player: number) {
+				itemFuncs.onItemUse(coords, item, block, player);
+			});
+		}
+		if ('onNoTargetUse' in itemFuncs) {
+			Item.registerNoTargetUseFunction(itemID, function(item: ItemInstance, player: number) {
+				itemFuncs.onNoTargetUse(item, player);
+			});
+		}
+		if ('onUsingReleased' in itemFuncs) {
+			Item.registerUsingReleasedFunction(itemID, function(item: ItemInstance, ticks: number, player: number)	{
+				itemFuncs.onUsingReleased(item, ticks, player);
+			});
+		}
+		if ('onUsingComplete' in itemFuncs) {
+			Item.registerUsingCompleteFunction(itemID, function(item: ItemInstance, player: number) {
+				itemFuncs.onUsingComplete(item, player);
+			});
+		}
+		if ('onDispense' in itemFuncs) {
+			Item.registerDispenseFunction(itemID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, blockSource: BlockSource) {
+				let region = new WorldRegion(blockSource);
+				itemFuncs.onDispense(coords, item, region);
+			});
+		}
 	}
 
 	type ItemDescription = {
@@ -152,22 +179,5 @@ namespace ItemRegistry {
 		if (params.glint) item.setGlint(true);
 		if (params.rarity) item.setRarity(params.rarity);
 		return item;
-	}
-
-	/**
-	 * Registers name override function for item which adds color to item name depends on rarity
-	 * @param rarity number from 1 to 3
-	 */
-	export function setRarity(id: string | number, rarity: number): void {
-		Item.registerNameOverrideFunction(id, function(item: ItemInstance, translation: string, name: string) {
-			return getRarityColor(rarity) + translation;
-		});
-	}
-
-	export function getRarityColor(rarity: number): string {
-		if (rarity == EnumRarity.UNCOMMON) return "§e";
-		if (rarity == EnumRarity.RARE) return "§b";
-		if (rarity == EnumRarity.EPIC) return "§d";
-		return "";
 	}
 }

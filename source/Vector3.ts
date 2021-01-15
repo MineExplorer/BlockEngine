@@ -44,7 +44,7 @@ class Vector3 implements Vector {
 		}
         return new Vector3(this);
     }
-	
+
 	set(vx: number, vy: number, vz: number): Vector3;
 	set(vx: Vector): Vector3;
 	set(vx: any, vy?: number, vz?: number) {
@@ -70,7 +70,7 @@ class Vector3 implements Vector {
 		var v = vx;
 		return this.add(v.x, v.y, v.z);
     }
-	
+
     addScaled(v: Vector, scale: number): Vector3 {
         return this.add(v.x * scale, v.y * scale, v.z * scale);
     }
@@ -97,7 +97,7 @@ class Vector3 implements Vector {
 		var v = vx;
 		return this.cross(v.x, v.y, v.z);
     }
-	
+
 	dot(vx: number, vy: number, vz: number): Vector3;
 	dot(vx: any): Vector3;
 	dot(vx: any, vy?: number, vz?: number) {
@@ -143,7 +143,7 @@ class Vector3 implements Vector {
 		var v = vx;
 		return this.distanceSquared(v.x, v.y, v.z);
     }
-	
+
 	distance(vx: number, vy: number, vz: number): number;
 	distance(vx: Vector): number;
 	distance(vx: any, vy?: number, vz?: number) {
@@ -153,7 +153,7 @@ class Vector3 implements Vector {
 		var v = vx;
 		return this.distance(v.x, v.y, v.z);
     }
-	
+
     scale(factor: number): Vector3 {
         this.x *= factor;
         this.y *= factor;

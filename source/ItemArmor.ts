@@ -32,6 +32,7 @@ class ItemArmor extends ItemBase {
 		this.armorType = params.type;
 		this.defence = params.defence;
 		this.setArmorTexture(params.texture);
+
 		this.item = Item.createArmorItem(this.stringID, this.name, this.icon, {
 			type: this.armorType,
 			armor: this.defence,
@@ -39,6 +40,7 @@ class ItemArmor extends ItemBase {
 			texture: this.texture,
 			isTech: !(params.addToCreative ?? false)
 		});
+		this.setCategory(ItemCategory.EQUIPMENT);
 		if (params.material) this.setMaterial(params.material);
 		ItemArmor.registerListeners(this.id, this);
 	}

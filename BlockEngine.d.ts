@@ -385,7 +385,6 @@ declare class ItemBase {
     };
     maxStack: number;
     maxDamage: number;
-    rarity: number;
     item: any;
     constructor(stringID: string, name?: string, icon?: string | Item.TextureData);
     setName(name: string): void;
@@ -527,12 +526,16 @@ declare enum EnumRarity {
     EPIC = 3
 }
 declare namespace ItemRegistry {
+    export function getInstanceOf(itemID: number): ItemBase;
+    export function getRarity(id: number): number;
+    export function getRarityColor(rarity: number): string;
+    export function setRarity(id: number, rarity: number): void;
     export function addArmorMaterial(name: string, material: ArmorMaterial): void;
     export function getArmorMaterial(name: string): ArmorMaterial;
     export function addToolMaterial(name: string, material: ToolMaterial): void;
     export function getToolMaterial(name: string): ToolMaterial;
-    export function registerItem(itemInstance: ItemBase & ItemFuncs): ItemBase;
-    export function getInstanceOf(itemID: number): ItemBase;
+    export function registerItem(itemInstance: ItemBase): ItemBase;
+    export function registerItemFuncs(itemID: number, itemFuncs: ItemBase | ItemFuncs): void;
     type ItemDescription = {
         name: string;
         icon: string | Item.TextureData;
@@ -569,12 +572,6 @@ declare namespace ItemRegistry {
         rarity?: number;
     };
     export function createTool(stringID: string, params: ToolDescription, toolData?: ToolParams): ItemTool;
-    /**
-     * Registers name override function for item which adds color to item name depends on rarity
-     * @param rarity number from 1 to 3
-     */
-    export function setRarity(id: string | number, rarity: number): void;
-    export function getRarityColor(rarity: number): string;
     export {};
 }
 declare abstract class TileEntityBase implements TileEntity {
