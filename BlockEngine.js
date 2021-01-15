@@ -765,10 +765,10 @@ var ItemBase = /** @class */ (function () {
 /// <reference path="ItemBase.ts" />
 var ItemCommon = /** @class */ (function (_super) {
     __extends(ItemCommon, _super);
-    function ItemCommon(stringID, name, icon, addToCreative) {
-        if (addToCreative === void 0) { addToCreative = true; }
+    function ItemCommon(stringID, name, icon, inCreative) {
+        if (inCreative === void 0) { inCreative = true; }
         var _this = _super.call(this, stringID, name, icon) || this;
-        _this.item = Item.createItem(_this.stringID, _this.name, _this.icon, { isTech: !addToCreative });
+        _this.item = Item.createItem(_this.stringID, _this.name, _this.icon, { isTech: !inCreative });
         _this.setCategory(ItemCategory.ITEMS);
         return _this;
     }
@@ -777,8 +777,8 @@ var ItemCommon = /** @class */ (function (_super) {
 /// <reference path="ItemBase.ts" />
 var ItemArmor = /** @class */ (function (_super) {
     __extends(ItemArmor, _super);
-    function ItemArmor(stringID, name, icon, params) {
-        var _a;
+    function ItemArmor(stringID, name, icon, params, inCreative) {
+        if (inCreative === void 0) { inCreative = true; }
         var _this = _super.call(this, stringID, name, icon) || this;
         _this.armorType = params.type;
         _this.defence = params.defence;
@@ -788,7 +788,7 @@ var ItemArmor = /** @class */ (function (_super) {
             armor: _this.defence,
             durability: 0,
             texture: _this.texture,
-            isTech: !((_a = params.addToCreative) !== null && _a !== void 0 ? _a : false)
+            isTech: !inCreative
         });
         _this.setCategory(ItemCategory.EQUIPMENT);
         if (params.material)
@@ -951,15 +951,15 @@ ToolAPI.registerBlockMaterial(35, "wool");
 /// <reference path="ToolType.ts" />
 var ItemTool = /** @class */ (function (_super) {
     __extends(ItemTool, _super);
-    function ItemTool(stringID, name, icon, toolMaterial, toolData, addToCreative) {
-        if (addToCreative === void 0) { addToCreative = true; }
-        var _this = _super.call(this, stringID, name, icon, addToCreative) || this;
+    function ItemTool(stringID, name, icon, toolMaterial, toolData, inCreative) {
+        var _this = _super.call(this, stringID, name, icon, inCreative) || this;
         _this.handEquipped = false;
         _this.brokenId = 0;
         _this.damage = 0;
         _this.isWeapon = false;
         _this.blockTypes = [];
         _this.setMaxStack(1);
+        _this.setCategory(ItemCategory.EQUIPMENT);
         if (typeof toolMaterial == "string") {
             toolMaterial = ItemRegistry.getToolMaterial(toolMaterial);
         }
@@ -1043,10 +1043,11 @@ var ItemRegistry;
     }
     ItemRegistry.getRarityColor = getRarityColor;
     function setRarity(id, rarity) {
-        itemsRarity[id] = rarity;
-        var itemInstance = getInstanceOf(id);
+        var numericID = Item.getNumericId(id);
+        itemsRarity[numericID] = rarity;
+        var itemInstance = getInstanceOf(numericID);
         if (!itemInstance || !('onNameOverride' in itemInstance)) {
-            Item.registerNameOverrideFunction(id, function (item, translation, name) {
+            Item.registerNameOverrideFunction(numericID, function (item, translation, name) {
                 return getRarityColor(rarity) + translation;
             });
         }
@@ -1117,12 +1118,21 @@ var ItemRegistry;
     function createItem(stringID, params) {
         var _a;
         var numericID = IDRegistry.genItemID(stringID);
+        var inCreative = (_a = params.inCreative) !== null && _a !== void 0 ? _a : true;
         var icon;
         if (typeof params.icon == "string")
             icon = { name: params.icon };
         else
             icon = params.icon;
-        Item.createItem(stringID, params.name, icon, { stack: params.stack || 64, isTech: (_a = params.addToCreative) !== null && _a !== void 0 ? _a : false });
+        if (params.type == "food") {
+            Item.createFoodItem(stringID, params.name, icon, { food: params.food, stack: params.stack || 64, isTech: !inCreative });
+        }
+        else if (params.type == "throwable") {
+            Item.createThrowableItem(stringID, params.name, icon, { stack: params.stack || 64, isTech: !inCreative });
+        }
+        else {
+            Item.createItem(stringID, params.name, icon, { stack: params.stack || 64, isTech: !inCreative });
+        }
         Item.setCategory(numericID, params.category || ItemCategory.ITEMS);
         if (params.maxDamage)
             Item.setMaxDamage(numericID, params.maxDamage);
@@ -1140,11 +1150,10 @@ var ItemRegistry;
     ItemRegistry.createItem = createItem;
     ;
     function createArmor(stringID, params) {
-        var item = new ItemArmor(stringID, params.name, params.icon, params);
+        var item = new ItemArmor(stringID, params.name, params.icon, params, params.inCreative);
         registerItem(item);
-        item.setCategory(params.category || ItemCategory.EQUIPMENT);
-        if (params.material)
-            item.setMaterial(params.material);
+        if (params.category)
+            item.setCategory(params.category);
         if (params.glint)
             item.setGlint(true);
         if (params.rarity)
@@ -1152,10 +1161,12 @@ var ItemRegistry;
         return item;
     }
     ItemRegistry.createArmor = createArmor;
+    ;
     function createTool(stringID, params, toolData) {
-        var item = new ItemTool(stringID, params.name, params.icon, params.material, toolData, params.addToCreative);
+        var item = new ItemTool(stringID, params.name, params.icon, params.material, toolData, params.inCreative);
         registerItem(item);
-        item.setCategory(params.category || ItemCategory.EQUIPMENT);
+        if (params.category)
+            item.setCategory(params.category);
         if (params.glint)
             item.setGlint(true);
         if (params.rarity)

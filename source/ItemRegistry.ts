@@ -39,11 +39,12 @@ namespace ItemRegistry {
 		return "";
 	}
 
-	export function setRarity(id: number, rarity: number): void {
-		itemsRarity[id] = rarity;
-		let itemInstance = getInstanceOf(id);
+	export function setRarity(id: string | number, rarity: number): void {
+		let numericID = Item.getNumericId(id);
+		itemsRarity[numericID] = rarity;
+		let itemInstance = getInstanceOf(numericID);
 		if (!itemInstance || !('onNameOverride' in itemInstance)) {
-			Item.registerNameOverrideFunction(id, function(item: ItemInstance, translation: string, name: string) {
+			Item.registerNameOverrideFunction(numericID, function(item: ItemInstance, translation: string, name: string) {
 				return getRarityColor(rarity) + translation;
 			});
 		}
@@ -111,29 +112,41 @@ namespace ItemRegistry {
 		}
 	}
 
-	type ItemDescription = {
+	interface ItemDescription {
 		name: string,
 		icon: string|Item.TextureData,
+		type?: "common" | "food" | "throwable",
 		stack?: number,
-		addToCreative?: boolean,
+		inCreative?: boolean,
 		category?: number,
 		maxDamage?: number,
 		handEquipped?: boolean,
 		allowedInOffhand?: boolean,
 		glint?: boolean,
 		enchant?: {type: number, value: number},
-		rarity?: number
+		rarity?: number,
+		food?: number
 	}
 
 	export function createItem(stringID: string, params: ItemDescription): void {
 		let numericID = IDRegistry.genItemID(stringID);
+		let inCreative = params.inCreative ?? true;
 		let icon: Item.TextureData;
 		if (typeof params.icon == "string")
 			icon = {name: params.icon};
 		else
 			icon = params.icon;
 
-		Item.createItem(stringID, params.name, icon, {stack: params.stack || 64, isTech: params.addToCreative ?? false});
+		if (params.type == "food") {
+			Item.createFoodItem(stringID, params.name, icon, {food: params.food, stack: params.stack || 64, isTech: !inCreative});
+		}
+		else if (params.type == "throwable") {
+			Item.createThrowableItem(stringID, params.name, icon, {stack: params.stack || 64, isTech: !inCreative});
+		}
+		else {
+			Item.createItem(stringID, params.name, icon, {stack: params.stack || 64, isTech: !inCreative});
+		}
+
 		Item.setCategory(numericID, params.category || ItemCategory.ITEMS);
 		if (params.maxDamage) Item.setMaxDamage(numericID, params.maxDamage);
 		if (params.handEquipped) Item.setToolRender(numericID, true);
@@ -146,36 +159,35 @@ namespace ItemRegistry {
 	interface ArmorDescription extends ArmorParams {
 		name: string,
 		icon: string|Item.TextureData,
-		texture: string,
+		inCreative?: boolean
 		category?: number,
 		glint?: boolean,
 		rarity?: number
 	};
 
 	export function createArmor(stringID: string, params: ArmorDescription): ItemArmor {
-		let item = new ItemArmor(stringID, params.name, params.icon, params);
+		let item = new ItemArmor(stringID, params.name, params.icon, params, params.inCreative);
 		registerItem(item);
-		item.setCategory(params.category || ItemCategory.EQUIPMENT);
-		if (params.material) item.setMaterial(params.material);
+		if (params.category) item.setCategory(params.category);
 		if (params.glint) item.setGlint(true);
 		if (params.rarity) item.setRarity(params.rarity);
 		return item;
 	}
 
-	type ToolDescription = {
+	interface ToolDescription {
 		name: string,
 		icon: string|Item.TextureData,
 		material: string,
-		addToCreative?: boolean,
+		inCreative?: boolean,
 		category?: number,
 		glint?: boolean,
 		rarity?: number
 	};
 
 	export function createTool(stringID: string, params: ToolDescription, toolData?: ToolParams) {
-		let item = new ItemTool(stringID, params.name, params.icon, params.material, toolData, params.addToCreative);
+		let item = new ItemTool(stringID, params.name, params.icon, params.material, toolData, params.inCreative);
 		registerItem(item);
-		item.setCategory(params.category || ItemCategory.EQUIPMENT);
+		if (params.category) item.setCategory(params.category);
 		if (params.glint) item.setGlint(true);
 		if (params.rarity) item.setRarity(params.rarity);
 		return item;

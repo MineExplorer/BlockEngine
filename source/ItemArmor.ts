@@ -17,7 +17,7 @@ type ArmorMaterial = {durabilityFactor: number, enchantability?: number, repairM
 
 type ArmorType = "helmet" | "chestplate" | "leggings" | "boots";
 
-type ArmorParams = {type: ArmorType, defence: number, texture: string, material?: string | ArmorMaterial, addToCreative?: boolean};
+type ArmorParams = {type: ArmorType, defence: number, texture: string, material?: string | ArmorMaterial};
 
 class ItemArmor extends ItemBase {
 	private static maxDamageArray: number[] = [11, 16, 15, 13]
@@ -27,7 +27,7 @@ class ItemArmor extends ItemBase {
 	defence: number
 	texture: string
 
-	constructor(stringID: string, name: string, icon: string|Item.TextureData, params: ArmorParams) {
+	constructor(stringID: string, name: string, icon: string|Item.TextureData, params: ArmorParams, inCreative: boolean = true) {
 		super(stringID, name, icon);
 		this.armorType = params.type;
 		this.defence = params.defence;
@@ -38,7 +38,7 @@ class ItemArmor extends ItemBase {
 			armor: this.defence,
 			durability: 0,
 			texture: this.texture,
-			isTech: !(params.addToCreative ?? false)
+			isTech: !inCreative
 		});
 		this.setCategory(ItemCategory.EQUIPMENT);
 		if (params.material) this.setMaterial(params.material);
