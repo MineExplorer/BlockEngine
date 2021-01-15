@@ -8,7 +8,7 @@ interface ItemFuncs {
 	onDispense?(coords: Callback.ItemUseCoordinates, item: ItemInstance, region: WorldRegion): void
 }
 
-class ItemBasic {
+class ItemBase {
 	readonly stringID: string;
 	readonly id: number;
 	name: string;
@@ -38,13 +38,6 @@ class ItemBasic {
 		this.icon = {name: texture, meta: index};
 	}
 
-	createItem(inCreative: boolean = true) {
-		this.item = Item.createItem(this.stringID, this.name, this.icon, {isTech: !inCreative});
-		if (this.maxStack) this.setMaxStack(this.maxStack);
-		if (this.maxDamage) this.setMaxDamage(this.maxDamage);
-		return this;
-	}
-
 	/**
      * Sets item creative category
 	 * @param category item category, should be integer from 1 to 4.
@@ -59,8 +52,7 @@ class ItemBasic {
      */
 	setMaxStack(maxStack: number): void {
 		this.maxStack = maxStack;
-		if (this.item)
-			this.item.setMaxStackSize(maxStack);
+		this.item.setMaxStackSize(maxStack);
 	}
 
 	/**
@@ -69,8 +61,7 @@ class ItemBasic {
      */
 	setMaxDamage(maxDamage: number): void  {
 		this.maxDamage = maxDamage;
-		if (this.item)
-			this.item.setMaxDamage(maxDamage);
+		this.item.setMaxDamage(maxDamage);
 	}
 
 	 /**
@@ -79,7 +70,6 @@ class ItemBasic {
      * item
      */
 	setHandEquipped(enabled: boolean): void {
-		if (!this.item) return;
 		this.item.setHandEquipped(enabled);
 	}
 
@@ -87,7 +77,6 @@ class ItemBasic {
 	 * Allows item to be put in off hand
 	 */
 	allowInOffHand(): void {
-		if (!this.item) return;
 		this.item.setAllowedInOffhand(true);
 	}
 
@@ -95,7 +84,6 @@ class ItemBasic {
 	 * Allows item to click on liquid blocks
 	 */
 	setLiquidClip(): void {
-		if (!this.item) return;
 		this.item.setLiquidClip(true);
 	}
 
@@ -107,7 +95,6 @@ class ItemBasic {
      * value is, the better enchants you get with the same level
      */
 	setEnchantType(type: number, enchantability: number): void {
-		if (!this.item) return;
 		this.item.setEnchantType(type, enchantability);
 	}
 
@@ -116,7 +103,6 @@ class ItemBasic {
      * @param enabled if true, the item will be displayed as glint item
      */
 	setGlint(enabled: boolean): void {
-		if (!this.item) return;
 		this.item.setGlint(enabled);
 	}
 
@@ -125,7 +111,6 @@ class ItemBasic {
 	 * @param itemID item id to be used as repair material
 	 */
 	addRepairItem(itemID: number): void {
-		if (!this.item) return;
 		this.item.addRepairItem(itemID);
 	}
 

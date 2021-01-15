@@ -3,7 +3,7 @@ EXPORT("ItemStack", ItemStack);
 EXPORT("Vector3", Vector3);
 EXPORT("WorldRegion", WorldRegion);
 EXPORT("PlayerManager", PlayerManager);
-EXPORT("ItemBasic", ItemBasic);
+EXPORT("ItemCommon", ItemCommon);
 EXPORT("ItemArmor", ItemArmor);
 EXPORT("ItemTool", ItemTool);
 EXPORT("TileEntityBase", TileEntityBase);

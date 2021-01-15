@@ -1,7 +1,7 @@
 /// <reference path="ToolType.ts" />
 
 class ItemTool
-extends ItemBasic
+extends ItemCommon
 implements ToolParams {
 	handEquipped: boolean = false;
 	brokenId: number = 0;
@@ -11,9 +11,10 @@ implements ToolParams {
 	toolMaterial: ToolMaterial;
 	enchantType: number;
 
-	constructor(stringID: string, name: string, icon: string|Item.TextureData, toolMaterial: string | ToolMaterial, toolData?: ToolParams) {
-		super(stringID, name, icon);
+	constructor(stringID: string, name: string, icon: string|Item.TextureData, toolMaterial: string | ToolMaterial, toolData?: ToolParams, addToCreative: boolean = true) {
+		super(stringID, name, icon, addToCreative);
 		this.setMaxStack(1);
+
 		if (typeof toolMaterial == "string") {
 			toolMaterial = ItemRegistry.getToolMaterial(toolMaterial);
 		}
@@ -23,22 +24,17 @@ implements ToolParams {
 				this[key] = toolData[key];
 			}
 		}
-	}
-
-	createItem(inCreative?: boolean) {
-		super.createItem(inCreative);
 		ToolAPI.registerTool(this.id, this.toolMaterial, this.blockTypes, this);
-		let material = this.toolMaterial;
-		if (this.enchantType && material.enchantability) {
-			this.setEnchantType(this.enchantType, material.enchantability);
+
+		if (this.enchantType && toolMaterial.enchantability) {
+			this.setEnchantType(this.enchantType, toolMaterial.enchantability);
 		}
-		if (material.repairMaterial) {
-			this.addRepairItem(material.repairMaterial);
+		if (toolMaterial.repairMaterial) {
+			this.addRepairItem(toolMaterial.repairMaterial);
 		}
 		if (this.handEquipped) {
 			this.setHandEquipped(true);
 		}
-		return this;
 	}
 
 	static damageCarriedItem(player: number, damage: number = 1) {

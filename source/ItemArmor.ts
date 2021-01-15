@@ -1,4 +1,4 @@
-/// <reference path="ItemBasic.ts" />
+/// <reference path="ItemBase.ts" />
 
 interface OnHurtListener {
 	onHurt: (params: {attacker: number, type: number, damage: number, bool1: boolean, bool2: boolean}, item: ItemInstance, slot: number, player: number) => ItemInstance | void
@@ -17,9 +17,9 @@ type ArmorMaterial = {durabilityFactor: number, enchantability?: number, repairM
 
 type ArmorType = "helmet" | "chestplate" | "leggings" | "boots";
 
-type ArmorParams = {type: ArmorType, defence: number, texture?: string, material?: string | ArmorMaterial};
+type ArmorParams = {type: ArmorType, defence: number, texture: string, material?: string | ArmorMaterial, addToCreative?: boolean};
 
-class ItemArmor extends ItemBasic {
+class ItemArmor extends ItemBase {
 	private static maxDamageArray: number[] = [11, 16, 15, 13]
 
 	armorMaterial: ArmorMaterial
@@ -31,15 +31,16 @@ class ItemArmor extends ItemBasic {
 		super(stringID, name, icon);
 		this.armorType = params.type;
 		this.defence = params.defence;
-		if (params.texture) this.setArmorTexture(params.texture);
+		this.setArmorTexture(params.texture);
+		this.item = Item.createArmorItem(this.stringID, this.name, this.icon, {
+			type: this.armorType,
+			armor: this.defence,
+			durability: 0,
+			texture: this.texture,
+			isTech: !(params.addToCreative ?? false)
+		});
 		if (params.material) this.setMaterial(params.material);
-	}
-
-	createItem(inCreative: boolean = true) {
-		this.item = Item.createArmorItem(this.stringID, this.name, this.icon, {type: this.armorType, armor: this.defence, durability: 0, texture: this.texture, isTech: !inCreative});
-		if (this.armorMaterial) this.setMaterial(this.armorMaterial);
 		ItemArmor.registerListeners(this.id, this);
-		return this;
 	}
 
 	setArmorTexture(texture: string): void {
@@ -51,16 +52,14 @@ class ItemArmor extends ItemBasic {
 			armorMaterial = ItemRegistry.getArmorMaterial(armorMaterial);
 		}
 		this.armorMaterial = armorMaterial;
-		if (this.item) {
-			var index = Native.ArmorType[this.armorType];
-			var maxDamage = armorMaterial.durabilityFactor * ItemArmor.maxDamageArray[index];
-			this.setMaxDamage(maxDamage);
-			if (armorMaterial.enchantability) {
-				this.setEnchantType(Native.EnchantType[this.armorType], armorMaterial.enchantability);
-			}
-			if (armorMaterial.repairMaterial) {
-				this.addRepairItem(armorMaterial.repairMaterial);
-			}
+		var index = Native.ArmorType[this.armorType];
+		var maxDamage = armorMaterial.durabilityFactor * ItemArmor.maxDamageArray[index];
+		this.setMaxDamage(maxDamage);
+		if (armorMaterial.enchantability) {
+			this.setEnchantType(Native.EnchantType[this.armorType], armorMaterial.enchantability);
+		}
+		if (armorMaterial.repairMaterial) {
+			this.addRepairItem(armorMaterial.repairMaterial);
 		}
 	}
 

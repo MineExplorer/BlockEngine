@@ -1,5 +1,6 @@
 /// <reference path="BlockBase.ts" />
-/// <reference path="ItemBasic.ts" />
+/// <reference path="ItemBase.ts" />
+/// <reference path="ItemCommon.ts" />
 /// <reference path="ItemArmor.ts" />
 /// <reference path="ItemTool.ts" />
 
@@ -38,8 +39,7 @@ namespace ItemRegistry {
 		return toolMaterials[name];
 	}
 
-	export function registerItem(itemInstance: ItemBasic & ItemFuncs, addToCreative?: boolean) {
-		if (!itemInstance.item) itemInstance.createItem(addToCreative);
+	export function registerItem(itemInstance: ItemBase & ItemFuncs): ItemBase {
 		items[itemInstance.id] = itemInstance;
 		if ('onNameOverride' in itemInstance) {
 			Item.registerNameOverrideFunction(itemInstance.id, function(item: ItemInstance, translation: string, name: string) {
@@ -77,9 +77,10 @@ namespace ItemRegistry {
 				itemInstance.onDispense(coords, item, region);
 			});
 		}
+		return itemInstance;
 	}
 
-	export function getInstanceOf(itemID: number): ItemBasic {
+	export function getInstanceOf(itemID: number): ItemBase {
 		return items[itemID] || null;
 	}
 
@@ -87,7 +88,7 @@ namespace ItemRegistry {
 		name: string,
 		icon: string|Item.TextureData,
 		stack?: number,
-		isTech?: boolean,
+		addToCreative?: boolean,
 		category?: number,
 		maxDamage?: number,
 		handEquipped?: boolean,
@@ -105,7 +106,7 @@ namespace ItemRegistry {
 		else
 			icon = params.icon;
 
-		Item.createItem(stringID, params.name, icon, {stack: params.stack || 64, isTech: params.isTech});
+		Item.createItem(stringID, params.name, icon, {stack: params.stack || 64, isTech: params.addToCreative ?? false});
 		Item.setCategory(numericID, params.category || ItemCategory.ITEMS);
 		if (params.maxDamage) Item.setMaxDamage(numericID, params.maxDamage);
 		if (params.handEquipped) Item.setToolRender(numericID, true);
@@ -115,14 +116,10 @@ namespace ItemRegistry {
 		if (params.rarity) setRarity(numericID, params.rarity);
 	}
 
-	type ArmorDescription = {
+	interface ArmorDescription extends ArmorParams {
 		name: string,
 		icon: string|Item.TextureData,
-		type: ArmorType,
-		defence: number,
 		texture: string,
-		material?: string | ArmorMaterial,
-		isTech?: boolean,
 		category?: number,
 		glint?: boolean,
 		rarity?: number
@@ -130,7 +127,7 @@ namespace ItemRegistry {
 
 	export function createArmor(stringID: string, params: ArmorDescription): ItemArmor {
 		let item = new ItemArmor(stringID, params.name, params.icon, params);
-		registerItem(item, !params.isTech);
+		registerItem(item);
 		item.setCategory(params.category || ItemCategory.EQUIPMENT);
 		if (params.material) item.setMaterial(params.material);
 		if (params.glint) item.setGlint(true);
@@ -142,15 +139,15 @@ namespace ItemRegistry {
 		name: string,
 		icon: string|Item.TextureData,
 		material: string,
-		isTech?: boolean,
+		addToCreative?: boolean,
 		category?: number,
 		glint?: boolean,
 		rarity?: number
 	};
 
 	export function createTool(stringID: string, params: ToolDescription, toolData?: ToolParams) {
-		let item = new ItemTool(stringID, params.name, params.icon, params.material, toolData);
-		registerItem(item, !params.isTech);
+		let item = new ItemTool(stringID, params.name, params.icon, params.material, toolData, params.addToCreative);
+		registerItem(item);
 		item.setCategory(params.category || ItemCategory.EQUIPMENT);
 		if (params.glint) item.setGlint(true);
 		if (params.rarity) item.setRarity(params.rarity);

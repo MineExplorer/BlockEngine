@@ -375,7 +375,7 @@ interface ItemFuncs {
     onUsingComplete?(item: ItemInstance, player: number): void;
     onDispense?(coords: Callback.ItemUseCoordinates, item: ItemInstance, region: WorldRegion): void;
 }
-declare class ItemBasic {
+declare class ItemBase {
     readonly stringID: string;
     readonly id: number;
     name: string;
@@ -390,7 +390,6 @@ declare class ItemBasic {
     constructor(stringID: string, name?: string, icon?: string | Item.TextureData);
     setName(name: string): void;
     setIcon(texture: string, index?: number): void;
-    createItem(inCreative?: boolean): this;
     /**
      * Sets item creative category
      * @param category item category, should be integer from 1 to 4.
@@ -440,6 +439,9 @@ declare class ItemBasic {
     addRepairItem(itemID: number): void;
     setRarity(rarity: number): void;
 }
+declare class ItemCommon extends ItemBase {
+    constructor(stringID: string, name?: string, icon?: string | Item.TextureData, addToCreative?: boolean);
+}
 interface OnHurtListener {
     onHurt: (params: {
         attacker: number;
@@ -467,17 +469,17 @@ declare type ArmorType = "helmet" | "chestplate" | "leggings" | "boots";
 declare type ArmorParams = {
     type: ArmorType;
     defence: number;
-    texture?: string;
+    texture: string;
     material?: string | ArmorMaterial;
+    addToCreative?: boolean;
 };
-declare class ItemArmor extends ItemBasic {
+declare class ItemArmor extends ItemBase {
     private static maxDamageArray;
     armorMaterial: ArmorMaterial;
     armorType: ArmorType;
     defence: number;
     texture: string;
     constructor(stringID: string, name: string, icon: string | Item.TextureData, params: ArmorParams);
-    createItem(inCreative?: boolean): this;
     setArmorTexture(texture: string): void;
     setMaterial(armorMaterial: string | ArmorMaterial): void;
     preventDamaging(): void;
@@ -501,7 +503,7 @@ declare namespace ToolType {
     let HOE: ToolParams;
     let SHEARS: ToolParams;
 }
-declare class ItemTool extends ItemBasic implements ToolParams {
+declare class ItemTool extends ItemCommon implements ToolParams {
     handEquipped: boolean;
     brokenId: number;
     damage: number;
@@ -509,8 +511,7 @@ declare class ItemTool extends ItemBasic implements ToolParams {
     blockTypes: string[];
     toolMaterial: ToolMaterial;
     enchantType: number;
-    constructor(stringID: string, name: string, icon: string | Item.TextureData, toolMaterial: string | ToolMaterial, toolData?: ToolParams);
-    createItem(inCreative?: boolean): this;
+    constructor(stringID: string, name: string, icon: string | Item.TextureData, toolMaterial: string | ToolMaterial, toolData?: ToolParams, addToCreative?: boolean);
     static damageCarriedItem(player: number, damage?: number): void;
 }
 declare enum ItemCategory {
@@ -530,13 +531,13 @@ declare namespace ItemRegistry {
     export function getArmorMaterial(name: string): ArmorMaterial;
     export function addToolMaterial(name: string, material: ToolMaterial): void;
     export function getToolMaterial(name: string): ToolMaterial;
-    export function registerItem(itemInstance: ItemBasic & ItemFuncs, addToCreative?: boolean): void;
-    export function getInstanceOf(itemID: number): ItemBasic;
+    export function registerItem(itemInstance: ItemBase & ItemFuncs): ItemBase;
+    export function getInstanceOf(itemID: number): ItemBase;
     type ItemDescription = {
         name: string;
         icon: string | Item.TextureData;
         stack?: number;
-        isTech?: boolean;
+        addToCreative?: boolean;
         category?: number;
         maxDamage?: number;
         handEquipped?: boolean;
@@ -549,24 +550,20 @@ declare namespace ItemRegistry {
         rarity?: number;
     };
     export function createItem(stringID: string, params: ItemDescription): void;
-    type ArmorDescription = {
+    interface ArmorDescription extends ArmorParams {
         name: string;
         icon: string | Item.TextureData;
-        type: ArmorType;
-        defence: number;
         texture: string;
-        material?: string | ArmorMaterial;
-        isTech?: boolean;
         category?: number;
         glint?: boolean;
         rarity?: number;
-    };
+    }
     export function createArmor(stringID: string, params: ArmorDescription): ItemArmor;
     type ToolDescription = {
         name: string;
         icon: string | Item.TextureData;
         material: string;
-        isTech?: boolean;
+        addToCreative?: boolean;
         category?: number;
         glint?: boolean;
         rarity?: number;
