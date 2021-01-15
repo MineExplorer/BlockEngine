@@ -474,10 +474,9 @@ var PlayerManager = /** @class */ (function () {
      * Adds item to player's inventory
      * @param dropRemainings if true, surplus will be dropped near player
      */
-    PlayerManager.prototype.addItemToInventory = function (id, count, data, extra, dropRemainings) {
+    PlayerManager.prototype.addItemToInventory = function (id, count, data, extra) {
         if (extra === void 0) { extra = null; }
-        if (dropRemainings === void 0) { dropRemainings = true; }
-        this.playerActor.addItemToInventory(id, count, data, extra, dropRemainings);
+        this.playerActor.addItemToInventory(id, count, data, extra, true);
     };
     /**
      * @returns inventory slot's contents.
@@ -1030,6 +1029,13 @@ var ItemCategory;
     ItemCategory[ItemCategory["EQUIPMENT"] = 3] = "EQUIPMENT";
     ItemCategory[ItemCategory["ITEMS"] = 4] = "ITEMS";
 })(ItemCategory || (ItemCategory = {}));
+var EnumRarity;
+(function (EnumRarity) {
+    EnumRarity[EnumRarity["COMMON"] = 0] = "COMMON";
+    EnumRarity[EnumRarity["UNCOMMON"] = 1] = "UNCOMMON";
+    EnumRarity[EnumRarity["RARE"] = 2] = "RARE";
+    EnumRarity[EnumRarity["EPIC"] = 3] = "EPIC";
+})(EnumRarity || (EnumRarity = {}));
 var ItemRegistry;
 (function (ItemRegistry) {
     var items = {};
@@ -1123,10 +1129,9 @@ var ItemRegistry;
     function createArmor(stringID, params) {
         var item = new ItemArmor(stringID, params.name, params.icon, params);
         registerItem(item, !params.isTech);
+        item.setCategory(params.category || ItemCategory.EQUIPMENT);
         if (params.material)
             item.setMaterial(params.material);
-        if (params.category)
-            item.setCategory(params.category);
         if (params.glint)
             item.setGlint(true);
         if (params.rarity)
@@ -1137,8 +1142,7 @@ var ItemRegistry;
     function createTool(stringID, params, toolData) {
         var item = new ItemTool(stringID, params.name, params.icon, params.material, toolData);
         registerItem(item, !params.isTech);
-        if (params.category)
-            item.setCategory(params.category);
+        item.setCategory(params.category || ItemCategory.EQUIPMENT);
         if (params.glint)
             item.setGlint(true);
         if (params.rarity)
@@ -1157,11 +1161,11 @@ var ItemRegistry;
     }
     ItemRegistry.setRarity = setRarity;
     function getRarityColor(rarity) {
-        if (rarity == 1)
+        if (rarity == EnumRarity.UNCOMMON)
             return "§e";
-        if (rarity == 2)
+        if (rarity == EnumRarity.RARE)
             return "§b";
-        if (rarity == 3)
+        if (rarity == EnumRarity.EPIC)
             return "§d";
         return "";
     }
@@ -1295,14 +1299,19 @@ var BlockEngine;
         Decorators.ContainerEvent = ContainerEvent;
     })(Decorators = BlockEngine.Decorators || (BlockEngine.Decorators = {}));
 })(BlockEngine || (BlockEngine = {}));
+// classes
 EXPORT("ItemStack", ItemStack);
 EXPORT("Vector3", Vector3);
 EXPORT("WorldRegion", WorldRegion);
 EXPORT("PlayerManager", PlayerManager);
 EXPORT("ItemBasic", ItemBasic);
 EXPORT("ItemArmor", ItemArmor);
-EXPORT("ItemRegistry", ItemRegistry);
-EXPORT("ItemCategory", ItemCategory);
+EXPORT("ItemTool", ItemTool);
 EXPORT("TileEntityBase", TileEntityBase);
+// enums
+EXPORT("ItemCategory", ItemCategory);
+EXPORT("EnumRarity", EnumRarity);
 EXPORT("Side", Side);
+// APIs
+EXPORT("ItemRegistry", ItemRegistry);
 EXPORT("BlockEngine", BlockEngine);

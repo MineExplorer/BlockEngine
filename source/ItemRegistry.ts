@@ -10,6 +10,13 @@ enum ItemCategory {
 	ITEMS = 4
 }
 
+enum EnumRarity {
+	COMMON,
+	UNCOMMON,
+	RARE,
+	EPIC
+}
+
 namespace ItemRegistry {
 	let items = {};
 	let armorMaterials = {};
@@ -124,8 +131,8 @@ namespace ItemRegistry {
 	export function createArmor(stringID: string, params: ArmorDescription): ItemArmor {
 		let item = new ItemArmor(stringID, params.name, params.icon, params);
 		registerItem(item, !params.isTech);
+		item.setCategory(params.category || ItemCategory.EQUIPMENT);
 		if (params.material) item.setMaterial(params.material);
-		if (params.category) item.setCategory(params.category);
 		if (params.glint) item.setGlint(true);
 		if (params.rarity) item.setRarity(params.rarity);
 		return item;
@@ -144,7 +151,7 @@ namespace ItemRegistry {
 	export function createTool(stringID: string, params: ToolDescription, toolData?: ToolParams) {
 		let item = new ItemTool(stringID, params.name, params.icon, params.material, toolData);
 		registerItem(item, !params.isTech);
-		if (params.category) item.setCategory(params.category);
+		item.setCategory(params.category || ItemCategory.EQUIPMENT);
 		if (params.glint) item.setGlint(true);
 		if (params.rarity) item.setRarity(params.rarity);
 		return item;
@@ -161,9 +168,9 @@ namespace ItemRegistry {
 	}
 
 	export function getRarityColor(rarity: number): string {
-		if (rarity == 1) return "§e";
-		if (rarity == 2) return "§b";
-		if (rarity == 3) return "§d";
+		if (rarity == EnumRarity.UNCOMMON) return "§e";
+		if (rarity == EnumRarity.RARE) return "§b";
+		if (rarity == EnumRarity.EPIC) return "§d";
 		return "";
 	}
 }

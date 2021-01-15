@@ -32,8 +32,8 @@ class PlayerManager {
      * Adds item to player's inventory
      * @param dropRemainings if true, surplus will be dropped near player
      */
-    addItemToInventory(id: number, count: number, data: number, extra: ItemExtraData = null, dropRemainings: boolean = true): void {
-        this.playerActor.addItemToInventory(id, count, data, extra, dropRemainings);
+    addItemToInventory(id: number, count: number, data: number, extra: ItemExtraData = null): void {
+        this.playerActor.addItemToInventory(id, count, data, extra, true);
     }
 
     /**

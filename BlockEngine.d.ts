@@ -246,7 +246,7 @@ declare class PlayerManager {
      * Adds item to player's inventory
      * @param dropRemainings if true, surplus will be dropped near player
      */
-    addItemToInventory(id: number, count: number, data: number, extra?: ItemExtraData, dropRemainings?: boolean): void;
+    addItemToInventory(id: number, count: number, data: number, extra?: ItemExtraData): void;
     /**
      * @returns inventory slot's contents.
      */
@@ -518,6 +518,12 @@ declare enum ItemCategory {
     NATURE = 2,
     EQUIPMENT = 3,
     ITEMS = 4
+}
+declare enum EnumRarity {
+    COMMON = 0,
+    UNCOMMON = 1,
+    RARE = 2,
+    EPIC = 3
 }
 declare namespace ItemRegistry {
     export function addArmorMaterial(name: string, material: ArmorMaterial): void;
