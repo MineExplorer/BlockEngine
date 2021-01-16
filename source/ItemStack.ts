@@ -39,4 +39,17 @@ class ItemStack implements ItemInstance {
 		this.id = this.data = this.count = 0;
 		this.extra = null;
 	}
+
+	applyDamage(damage: number): void {
+		let enchant = ToolAPI.getEnchantExtraData(this.extra);
+		if (Math.random() < 1 / (enchant.unbreaking + 1)) {
+			this.data += damage;
+		}
+		if (this.data >= this.getMaxDamage()) {
+			let tool = ToolAPI.getToolData(this.id);
+			this.id = tool ? tool.brokenId : 0;
+			this.count = 1;
+			this.data = 0;
+		}
+	}
 }

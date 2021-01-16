@@ -30,19 +30,31 @@ namespace ItemRegistry {
 		return items[numericID] || null;
 	}
 
-	export function getRarity(id: number): number {
-		return itemsRarity[id] ?? EnumRarity.COMMON;
+	/**
+	 * @returns EnumRarity value for item
+	 * @param itemID item's id
+	 */
+	export function getRarity(itemID: number): number {
+		return itemsRarity[itemID] ?? EnumRarity.COMMON;
 	}
 
-	export function getRarityColor(id: number): string {
-		return getRarityColorCode(getRarity(id));
-	}
-
-	export function getRarityColorCode(rarity: number): string {
+	/**
+	 * @returns chat color for rarity
+	 * @param rarity one of EnumRarity values
+	 */
+	export function getRarityColor(rarity: number): string {
 		if (rarity == EnumRarity.UNCOMMON) return "§e";
 		if (rarity == EnumRarity.RARE) return "§b";
 		if (rarity == EnumRarity.EPIC) return "§d";
 		return "";
+	}
+
+	/**
+	 * @returns chat color for item's rarity
+	 * @param itemID item's id
+	 */
+	export function getItemRarityColor(itemID: number): string {
+		return getRarityColor(getRarity(itemID));
 	}
 
 	export function setRarity(id: string | number, rarity: number, preventNameOverride?: boolean): void {
@@ -51,7 +63,7 @@ namespace ItemRegistry {
 		//@ts-ignore
 		if (!preventNameOverride && !Item.nameOverrideFunctions[numericID]) {
 			Item.registerNameOverrideFunction(numericID, function(item: ItemInstance, translation: string, name: string) {
-				return getRarityColor(item.id) + translation;
+				return getItemRarityColor(item.id) + translation;
 			});
 		}
 	}
@@ -81,7 +93,7 @@ namespace ItemRegistry {
 	export function registerItemFuncs(itemID: string | number, itemFuncs: ItemBase | ItemBehavior) {
 		if ('onNameOverride' in itemFuncs) {
 			Item.registerNameOverrideFunction(itemID, function(item: ItemInstance, translation: string, name: string) {
-				return getRarityColor(item.id) + itemFuncs.onNameOverride(item, translation, name);
+				return getItemRarityColor(item.id) + itemFuncs.onNameOverride(item, translation, name);
 			});
 		}
 		if ('onIconOverride' in itemFuncs) {
@@ -91,28 +103,28 @@ namespace ItemRegistry {
 		}
 		if ('onItemUse' in itemFuncs) {
 			Item.registerUseFunction(itemID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, block: Tile, player: number) {
-				itemFuncs.onItemUse(coords, item, block, player);
+				itemFuncs.onItemUse(coords, new ItemStack(item), block, player);
 			});
 		}
 		if ('onNoTargetUse' in itemFuncs) {
 			Item.registerNoTargetUseFunction(itemID, function(item: ItemInstance, player: number) {
-				itemFuncs.onNoTargetUse(item, player);
+				itemFuncs.onNoTargetUse(new ItemStack(item), player);
 			});
 		}
 		if ('onUsingReleased' in itemFuncs) {
 			Item.registerUsingReleasedFunction(itemID, function(item: ItemInstance, ticks: number, player: number)	{
-				itemFuncs.onUsingReleased(item, ticks, player);
+				itemFuncs.onUsingReleased(new ItemStack(item), ticks, player);
 			});
 		}
 		if ('onUsingComplete' in itemFuncs) {
 			Item.registerUsingCompleteFunction(itemID, function(item: ItemInstance, player: number) {
-				itemFuncs.onUsingComplete(item, player);
+				itemFuncs.onUsingComplete(new ItemStack(item), player);
 			});
 		}
 		if ('onDispense' in itemFuncs) {
 			Item.registerDispenseFunction(itemID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, blockSource: BlockSource) {
 				let region = new WorldRegion(blockSource);
-				itemFuncs.onDispense(coords, item, region);
+				itemFuncs.onDispense(coords, new ItemStack(item), region);
 			});
 		}
 	}

@@ -3,7 +3,7 @@ extends ToolAPI.ToolParams {
 	handEquipped?: boolean;
 	enchantType?: number;
 	blockTypes?: string[];
-	onItemUse?: (coords: Callback.ItemUseCoordinates, item: ItemInstance, block: Tile, player: number) => void;
+	onItemUse?: (coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number) => void;
 }
 
 interface ToolMaterial
@@ -39,7 +39,8 @@ namespace ToolType {
 				let region = WorldRegion.getForActor(player);
 				region.setBlock(coords, 198, 0);
 				region.playSound(coords.x + .5, coords.y + 1, coords.z + .5, "step.grass", 0.5, 0.8);
-				ItemTool.damageCarriedItem(player);
+				item.applyDamage(1);
+				Entity.setCarriedItem(player, item.id, item.count, item.data, item.extra);
 			}
 		}
 	}
@@ -64,14 +65,15 @@ namespace ToolType {
 				if (block.data == 1) logID = VanillaTileID.stripped_spruce_log;
 				if (block.data == 2) logID = VanillaTileID.stripped_birch_log;
 				if (block.data == 3) logID = VanillaTileID.stripped_jungle_log;
-				region.setBlock(coords, logID, 0);
-				ItemTool.damageCarriedItem(player);
 			}
 			else if (block.id == 162) {
 				if (block.data == 0) logID = VanillaTileID.stripped_acacia_log;
 				else logID = VanillaTileID.stripped_dark_oak_log;
+			}
+			if (logID) {
 				region.setBlock(coords, logID, 0);
-				ItemTool.damageCarriedItem(player);
+				item.applyDamage(1);
+				Entity.setCarriedItem(player, item.id, item.count, item.data, item.extra);
 			}
 		}
 	}
@@ -83,14 +85,15 @@ namespace ToolType {
 				let region = WorldRegion.getForActor(player);
 				region.setBlock(coords, 60, 0);
 				region.playSound(coords.x + .5, coords.y + 1, coords.z + .5, "step.gravel", 1, 0.8);
-				ItemTool.damageCarriedItem(player);
+				item.applyDamage(1);
+				Entity.setCarriedItem(player, item.id, item.count, item.data, item.extra);
 			}
 		}
 	}
 
 	export let SHEARS: ToolParams = {
 		blockTypes: ["plant", "fibre", "wool"],
-		modifyEnchant(enchantData, item, coords?, block?) {
+		modifyEnchant(enchantData, item, coords, block) {
 			if (block) {
 				let material = ToolAPI.getBlockMaterialName(block.id);
 				if (material == "fibre" || material == "plant") {

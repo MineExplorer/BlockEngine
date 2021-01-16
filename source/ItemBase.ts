@@ -1,11 +1,11 @@
 interface ItemBehavior {
 	onNameOverride?(item: ItemInstance, translation: string, name: string): string
 	onIconOverride?(item: ItemInstance, isModUi: boolean): Item.TextureData
-	onItemUse?(coords: Callback.ItemUseCoordinates, item: ItemInstance, block: Tile, player: number): void
-	onNoTargetUse?(item: ItemInstance, player: number): void
-	onUsingReleased?(item: ItemInstance, ticks: number, player: number): void
-	onUsingComplete?(item: ItemInstance, player: number): void
-	onDispense?(coords: Callback.ItemUseCoordinates, item: ItemInstance, region: WorldRegion): void
+	onItemUse?(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number): void
+	onNoTargetUse?(item: ItemStack, player: number): void
+	onUsingReleased?(item: ItemStack, ticks: number, player: number): void
+	onUsingComplete?(item: ItemStack, player: number): void
+	onDispense?(coords: Callback.ItemUseCoordinates, item: ItemStack, region: WorldRegion): void
 }
 
 class ItemBase {
