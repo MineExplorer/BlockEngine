@@ -32,29 +32,44 @@ class PlayerInterface {
      * Adds item to player's inventory
      * @param dropRemainings if true, surplus will be dropped near player
      */
-    addItemToInventory(id: number, count: number, data: number, extra: ItemExtraData = null): void {
-        this.playerActor.addItemToInventory(id, count, data, extra, true);
+    addItemToInventory(item: ItemInstance): void;
+    addItemToInventory(id: number, count: number, data: number, extra?: ItemExtraData): void;
+    addItemToInventory(id: any, count?: number, data?: number, extra: ItemExtraData = null): void {
+        let item = id;
+        if (typeof item == "object") {
+            this.playerActor.addItemToInventory(item.id, item.count, item.data, item.extra || null, true);
+        } else {
+            this.playerActor.addItemToInventory(id, count, data, extra, true);
+        }
     }
 
     /**
      * @returns inventory slot's contents.
      */
-    getInventorySlot(slot: number): ItemInstance {
-        return this.playerActor.getInventorySlot(slot);
+    getInventorySlot(slot: number): ItemStack {
+        let item = this.playerActor.getInventorySlot(slot);
+        return new ItemStack(item);
     }
 
     /**
      * Sets inventory slot's contents.
      */
-    setInventorySlot(slot: number, id: number, count: number, data: number, extra: ItemExtraData = null): void {
-        this.playerActor.setInventorySlot(slot, id, count, data, extra);
+    setInventorySlot(slot: number, item: ItemInstance): void;
+    setInventorySlot(slot: number, id: number, count: number, data: number, extra?: ItemExtraData): void;
+    setInventorySlot(slot: number, item: any, count?: number, data?: number, extra: ItemExtraData = null): void {
+        if (typeof item == "object") {
+            this.playerActor.setInventorySlot(slot, item.id, item.count, item.data, item.extra || null);
+        } else {
+            this.playerActor.setInventorySlot(slot, item, count, data, extra);
+        }
     }
 
     /**
      * @returns item in player's hand
     */
-    getCarriedItem(): ItemInstance {
-        return Entity.getCarriedItem(this.getUid());
+    getCarriedItem(): ItemStack {
+        let item = Entity.getCarriedItem(this.getUid());
+        return new ItemStack(item);
     }
 
     /**
@@ -64,8 +79,14 @@ class PlayerInterface {
      * @param data item data
      * @param extra item extra
      */
-    setCarriedItem(id: number, count: number, data: number, extra: ItemExtraData = null): void {
-        Entity.setCarriedItem(this.getUid(), id, count, data, extra);
+    setCarriedItem(item: ItemInstance): void;
+    setCarriedItem(id: number, count: number, data: number, extra?: ItemExtraData): void;
+    setCarriedItem(item: any, count?: number, data?: number, extra: ItemExtraData = null): void {
+        if (typeof item == "object") {
+            Entity.setCarriedItem(this.getUid(), item.id, item.count, item.data, item.extra);
+        } else {
+            Entity.setCarriedItem(this.getUid(), item, count, data, extra);
+        }
     }
 
     /**
@@ -81,14 +102,21 @@ class PlayerInterface {
      * @returns armor slot's contents.
      */
     getArmor(slot: number): ItemInstance {
-        return this.playerActor.getArmor(slot);
+        let item = this.playerActor.getArmor(slot);
+        return new ItemStack(item);
     }
 
     /**
      * Sets armor slot's contents.
      */
-    setArmor(slot: number, id: number, count: number, data: number, extra: ItemExtraData = null): void {
-        this.playerActor.setArmor(slot, id, count, data, extra);
+    setArmor(slot: number, item: ItemInstance): void;
+    setArmor(slot: number, id: number, count: number, data: number, extra?: ItemExtraData): void;
+    setArmor(slot: number, item: any, count?: number, data?: number, extra: ItemExtraData = null): void {
+        if (typeof item == "object") {
+            this.playerActor.setArmor(slot, item.id, item.count, item.data, item.extra || null);
+        } else {
+            this.playerActor.setArmor(slot, item, count, data, extra);
+        }
     }
 
     /**

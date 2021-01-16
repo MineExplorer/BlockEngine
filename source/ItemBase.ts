@@ -114,6 +114,6 @@ class ItemBase {
 	}
 
 	setRarity(rarity: number): void {
-		ItemRegistry.setRarity(this.id, rarity, true);
+		ItemRegistry.setRarity(this.id, rarity);
 	}
  }

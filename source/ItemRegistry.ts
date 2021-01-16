@@ -25,7 +25,7 @@ namespace ItemRegistry {
 	let armorMaterials = {};
 	let toolMaterials = {};
 
-	export function getInstanceOf(itemID: string | number): ItemBase {
+	export function getInstanceOf(itemID: string | number): Nullable<ItemBase> {
 		let numericID = Item.getNumericId(itemID);
 		return items[numericID] || null;
 	}

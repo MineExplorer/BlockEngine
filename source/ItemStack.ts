@@ -18,24 +18,24 @@ class ItemStack implements ItemInstance {
 		}
 	}
 
-	getMaxStack() {
+	getItemInstance(): Nullable<ItemBase> {
+		return ItemRegistry.getInstanceOf(this.id);
+	}
+
+	getMaxStack(): number {
 		return Item.getMaxStack(this.id);
 	}
 
-	getMaxDamage() {
-		Item.getMaxDamage(this.id);
+	getMaxDamage(): number {
+		return Item.getMaxDamage(this.id);
 	}
 
-	isEmpty(): boolean {
-		return this.id == 0 && this.count == 0 && this.data == 0 && this.extra == null;
-	}
-
-	decrease(count: number) {
+	decrease(count: number): void {
 		this.count -= count;
 		if (this.count <= 0) this.clear();
 	}
 
-	clear() {
+	clear(): void {
 		this.id = this.data = this.count = 0;
 		this.extra = null;
 	}
