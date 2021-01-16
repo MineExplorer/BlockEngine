@@ -2,11 +2,13 @@
 EXPORT("ItemStack", ItemStack);
 EXPORT("Vector3", Vector3);
 EXPORT("WorldRegion", WorldRegion);
-EXPORT("PlayerManager", PlayerManager);
+EXPORT("PlayerInterface", PlayerInterface);
+EXPORT("TileEntityBase", TileEntityBase);
 EXPORT("ItemCommon", ItemCommon);
+EXPORT("ItemFood", ItemFood);
+EXPORT("ItemThrowable", ItemThrowable);
 EXPORT("ItemArmor", ItemArmor);
 EXPORT("ItemTool", ItemTool);
-EXPORT("TileEntityBase", TileEntityBase);
 // enums
 EXPORT("ItemCategory", ItemCategory);
 EXPORT("EnumRarity", EnumRarity);

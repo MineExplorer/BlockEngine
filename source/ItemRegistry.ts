@@ -1,6 +1,7 @@
-/// <reference path="BlockBase.ts" />
 /// <reference path="ItemBase.ts" />
 /// <reference path="ItemCommon.ts" />
+/// <reference path="ItemFood.ts" />
+/// <reference path="ItemThrowable.ts" />
 /// <reference path="ItemArmor.ts" />
 /// <reference path="ItemTool.ts" />
 
@@ -24,28 +25,33 @@ namespace ItemRegistry {
 	let armorMaterials = {};
 	let toolMaterials = {};
 
-	export function getInstanceOf(itemID: number): ItemBase {
-		return items[itemID] || null;
+	export function getInstanceOf(itemID: string | number): ItemBase {
+		let numericID = Item.getNumericId(itemID);
+		return items[numericID] || null;
 	}
 
 	export function getRarity(id: number): number {
 		return itemsRarity[id] ?? EnumRarity.COMMON;
 	}
 
-	export function getRarityColor(rarity: number): string {
+	export function getRarityColor(id: number): string {
+		return getRarityColorCode(getRarity(id));
+	}
+
+	export function getRarityColorCode(rarity: number): string {
 		if (rarity == EnumRarity.UNCOMMON) return "§e";
 		if (rarity == EnumRarity.RARE) return "§b";
 		if (rarity == EnumRarity.EPIC) return "§d";
 		return "";
 	}
 
-	export function setRarity(id: string | number, rarity: number): void {
+	export function setRarity(id: string | number, rarity: number, preventNameOverride?: boolean): void {
 		let numericID = Item.getNumericId(id);
 		itemsRarity[numericID] = rarity;
-		let itemInstance = getInstanceOf(numericID);
-		if (!itemInstance || !('onNameOverride' in itemInstance)) {
+		//@ts-ignore
+		if (!preventNameOverride && !Item.nameOverrideFunctions[numericID]) {
 			Item.registerNameOverrideFunction(numericID, function(item: ItemInstance, translation: string, name: string) {
-				return getRarityColor(rarity) + translation;
+				return getRarityColor(item.id) + translation;
 			});
 		}
 	}
@@ -72,11 +78,10 @@ namespace ItemRegistry {
 		return itemInstance;
 	}
 
-	export function registerItemFuncs(itemID: number, itemFuncs: ItemBase | ItemFuncs) {
+	export function registerItemFuncs(itemID: string | number, itemFuncs: ItemBase | ItemBehavior) {
 		if ('onNameOverride' in itemFuncs) {
 			Item.registerNameOverrideFunction(itemID, function(item: ItemInstance, translation: string, name: string) {
-				let rarity = getRarity(item.id);
-				return getRarityColor(rarity) + itemFuncs.onNameOverride(item, translation, name);
+				return getRarityColor(item.id) + itemFuncs.onNameOverride(item, translation, name);
 			});
 		}
 		if ('onIconOverride' in itemFuncs) {

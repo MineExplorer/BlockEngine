@@ -1,5 +1,3 @@
-/// <reference path="ItemBase.ts" />
-
 interface OnHurtListener {
 	onHurt: (params: {attacker: number, type: number, damage: number, bool1: boolean, bool2: boolean}, item: ItemInstance, slot: number, player: number) => ItemInstance | void
 }

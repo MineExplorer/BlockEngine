@@ -1,4 +1,4 @@
-class PlayerManager {
+class PlayerInterface {
     playerActor: PlayerActor;
     playerUid: number;
 

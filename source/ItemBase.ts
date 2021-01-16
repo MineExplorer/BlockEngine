@@ -1,4 +1,4 @@
-interface ItemFuncs {
+interface ItemBehavior {
 	onNameOverride?(item: ItemInstance, translation: string, name: string): string
 	onIconOverride?(item: ItemInstance, isModUi: boolean): Item.TextureData
 	onItemUse?(coords: Callback.ItemUseCoordinates, item: ItemInstance, block: Tile, player: number): void
@@ -114,6 +114,6 @@ class ItemBase {
 	}
 
 	setRarity(rarity: number): void {
-		ItemRegistry.setRarity(this.id, rarity);
+		ItemRegistry.setRarity(this.id, rarity, true);
 	}
  }

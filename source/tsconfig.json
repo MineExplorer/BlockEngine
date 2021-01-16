@@ -16,7 +16,7 @@
 		"ItemStack.ts",
 		"Vector3.ts",
 		"WorldRegion.ts",
-		"PlayerManager.ts",
+		"PlayerInterface.ts",
 		"ItemRegistry.ts",
 		"TileEntityBase.ts",
 		"BlockEngine.ts",
