@@ -9,6 +9,7 @@ EXPORT("ItemFood", ItemFood);
 EXPORT("ItemThrowable", ItemThrowable);
 EXPORT("ItemArmor", ItemArmor);
 EXPORT("ItemTool", ItemTool);
+EXPORT("ToolType", ToolType);
 // enums
 EXPORT("ItemCategory", ItemCategory);
 EXPORT("EnumRarity", EnumRarity);
