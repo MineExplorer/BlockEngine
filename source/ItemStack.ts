@@ -7,14 +7,17 @@ class ItemStack implements ItemInstance {
 	constructor();
 	constructor(item: ItemInstance);
 	constructor(id: number, count: number, data: number, extra?: ItemExtraData);
-	constructor(item: number | ItemInstance = 0, count: number = 0, data: number = 0, extra: ItemExtraData = null) {
+	constructor(item?: number | ItemInstance, count?: number, data?: number, extra?: ItemExtraData) {
 		if (typeof item == "object") {
-			return new ItemStack(item.id, item.count, item.data, item.extra);
+			this.id = item.id;
+			this.data = item.data;
+			this.count = item.count;
+			this.extra = item.extra || null;
 		} else {
-			this.id = item;
-			this.data = data;
-			this.count = count;
-			this.extra = extra;
+			this.id = item || 0;
+			this.data = data || 0;
+			this.count = count || 0;
+			this.extra = extra || null;
 		}
 	}
 
