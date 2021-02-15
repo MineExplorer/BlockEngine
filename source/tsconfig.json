@@ -15,7 +15,7 @@
 		"header.ts",
 		"Vector3.ts",
 		"WorldRegion.ts",
-		"PlayerInterface.ts",
+		"PlayerEntity.ts",
 		"EntityCustomData.ts",
 		"item/ItemStack.ts",
 		"item/ItemRegistry.ts",

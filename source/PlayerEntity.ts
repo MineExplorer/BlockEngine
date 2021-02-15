@@ -1,9 +1,9 @@
-class PlayerInterface {
-    playerActor: PlayerActor;
+class PlayerEntity {
+    actor: PlayerActor;
     playerUid: number;
 
 	constructor(playerUid: number) {
-        this.playerActor = new PlayerActor(playerUid);
+        this.actor = new PlayerActor(playerUid);
         this.playerUid = playerUid;
 	}
 
@@ -18,14 +18,14 @@ class PlayerInterface {
      * @returns the id of dimension where player is.
      */
     getDimension(): number {
-        return this.playerActor.getDimension();
+        return this.actor.getDimension();
     }
 
     /**
      * @returns player's gamemode.
      */
     getGameMode(): number {
-        return this.playerActor.getGameMode();
+        return this.actor.getGameMode();
     }
 
     /**
@@ -37,9 +37,9 @@ class PlayerInterface {
     addItemToInventory(id: any, count?: number, data?: number, extra: ItemExtraData = null): void {
         let item = id;
         if (typeof item == "object") {
-            this.playerActor.addItemToInventory(item.id, item.count, item.data, item.extra || null, true);
+            this.actor.addItemToInventory(item.id, item.count, item.data, item.extra || null, true);
         } else {
-            this.playerActor.addItemToInventory(id, count, data, extra, true);
+            this.actor.addItemToInventory(id, count, data, extra, true);
         }
     }
 
@@ -47,7 +47,7 @@ class PlayerInterface {
      * @returns inventory slot's contents.
      */
     getInventorySlot(slot: number): ItemStack {
-        let item = this.playerActor.getInventorySlot(slot);
+        let item = this.actor.getInventorySlot(slot);
         return new ItemStack(item);
     }
 
@@ -58,9 +58,9 @@ class PlayerInterface {
     setInventorySlot(slot: number, id: number, count: number, data: number, extra?: ItemExtraData): void;
     setInventorySlot(slot: number, item: any, count?: number, data?: number, extra: ItemExtraData = null): void {
         if (typeof item == "object") {
-            this.playerActor.setInventorySlot(slot, item.id, item.count, item.data, item.extra || null);
+            this.actor.setInventorySlot(slot, item.id, item.count, item.data, item.extra || null);
         } else {
-            this.playerActor.setInventorySlot(slot, item, count, data, extra);
+            this.actor.setInventorySlot(slot, item, count, data, extra);
         }
     }
 
@@ -102,7 +102,7 @@ class PlayerInterface {
      * @returns armor slot's contents.
      */
     getArmor(slot: number): ItemInstance {
-        let item = this.playerActor.getArmor(slot);
+        let item = this.actor.getArmor(slot);
         return new ItemStack(item);
     }
 
@@ -113,9 +113,9 @@ class PlayerInterface {
     setArmor(slot: number, id: number, count: number, data: number, extra?: ItemExtraData): void;
     setArmor(slot: number, item: any, count?: number, data?: number, extra: ItemExtraData = null): void {
         if (typeof item == "object") {
-            this.playerActor.setArmor(slot, item.id, item.count, item.data, item.extra || null);
+            this.actor.setArmor(slot, item.id, item.count, item.data, item.extra || null);
         } else {
-            this.playerActor.setArmor(slot, item, count, data, extra);
+            this.actor.setArmor(slot, item, count, data, extra);
         }
     }
 
@@ -123,7 +123,7 @@ class PlayerInterface {
      * Sets respawn coords for the player.
      */
     setRespawnCoords(x: number, y: number, z: number): void {
-        this.playerActor.setRespawnCoords(x, y, z);
+        this.actor.setRespawnCoords(x, y, z);
     }
 
     /**
@@ -131,118 +131,118 @@ class PlayerInterface {
      * @param value experience points value
      */
     spawnExpOrbs(x: number, y: number, z: number, value: number): void {
-        this.playerActor.spawnExpOrbs(x, y, z, value);
+        this.actor.spawnExpOrbs(x, y, z, value);
     }
 
     /**
      * @returns whether the player is a valid entity.
      */
     isValid(): boolean {
-        return this.playerActor.isValid();
+        return this.actor.isValid();
     }
 
     /**
      * @returns player's selected slot.
      */
     getSelectedSlot(): number {
-        return this.playerActor.getSelectedSlot();
+        return this.actor.getSelectedSlot();
     }
 
     /**
      * Sets player's selected slot.
      */
     setSelectedSlot(slot: number): void {
-        this.playerActor.setSelectedSlot(slot);
+        this.actor.setSelectedSlot(slot);
     }
 
     /**
      * @returns player's experience.
      */
     getExperience(): number {
-        return this.playerActor.getExperience();
+        return this.actor.getExperience();
     }
 
     /**
      * Sets player's experience.
      */
     setExperience(value: number): void {
-        this.playerActor.setExperience(value);
+        this.actor.setExperience(value);
     }
 
     /**
      * Add experience to player.
      */
     addExperience(amount: number): void {
-        this.playerActor.addExperience(amount);
+        this.actor.addExperience(amount);
     }
 
     /**
      * @returns player's xp level.
      */
     getLevel(): number {
-        return this.playerActor.getLevel();
+        return this.actor.getLevel();
     }
 
     /**
      * Sets player's xp level.
      */
     setLevel(level: number): void {
-        this.playerActor.setLevel(level);
+        this.actor.setLevel(level);
     }
 
     /**
      * @returns player's exhaustion.
      */
     getExhaustion(): number {
-        return this.playerActor.getExhaustion();
+        return this.actor.getExhaustion();
     }
 
     /**
      * Sets player's exhaustion.
      */
     setExhaustion(value: number): void {
-        this.playerActor.setExhaustion(value);
+        this.actor.setExhaustion(value);
     }
 
     /**
      * @returns player's hunger.
      */
     getHunger(): number {
-        return this.playerActor.getHunger();
+        return this.actor.getHunger();
     }
 
     /**
      * Sets player's hunger.
      */
     setHunger(value: number): void {
-        this.playerActor.setHunger(value);
+        this.actor.setHunger(value);
     }
 
     /**
      * @returns player's saturation.
      */
     getSaturation(): number {
-        return this.playerActor.getSaturation();
+        return this.actor.getSaturation();
     }
 
     /**
      * Sets player's saturation.
      */
     setSaturation(value: number): void {
-        this.playerActor.setSaturation(value);
+        this.actor.setSaturation(value);
     }
 
     /**
      * @returns player's score.
      */
     getScore(): number {
-        return this.playerActor.getScore();
+        return this.actor.getScore();
     }
 
     /**
      * Sets player's score.
      */
     setScore(value: number): void {
-        this.playerActor.setScore(value);
+        this.actor.setScore(value);
     }
 }
