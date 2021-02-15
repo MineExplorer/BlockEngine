@@ -10,13 +10,13 @@ implements TileEntity {
 	x: number;
 	y: number;
 	z: number;
-	dimension: number;
-	blockID: number;
+	readonly dimension: number;
+	readonly blockID: number;
+	readonly useNetworkItemContainer: boolean = true;
 	remove: boolean;
 	isLoaded: boolean;
 	__initialized: boolean;
 
-	useNetworkItemContainer: boolean = true;
 	data: {[key: string]: any};
 	defaultValues: {};
 

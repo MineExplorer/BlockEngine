@@ -602,12 +602,12 @@ declare abstract class TileEntityBase implements TileEntity {
     x: number;
     y: number;
     z: number;
-    dimension: number;
-    blockID: number;
+    readonly dimension: number;
+    readonly blockID: number;
+    readonly useNetworkItemContainer: boolean;
     remove: boolean;
     isLoaded: boolean;
     __initialized: boolean;
-    useNetworkItemContainer: boolean;
     data: {
         [key: string]: any;
     };
