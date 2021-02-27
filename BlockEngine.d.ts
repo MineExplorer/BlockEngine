@@ -1,3 +1,14 @@
+declare enum Side {
+    Client = 0,
+    Server = 1
+}
+declare namespace BlockEngine {
+    namespace Decorators {
+        function ClientSide(): (target: TileEntityBase, propertyName: string) => void;
+        function NetworkEvent(side: Side): (target: TileEntityBase, propertyName: string) => void;
+        function ContainerEvent(side: Side): (target: TileEntityBase, propertyName: string) => void;
+    }
+}
 declare class Vector3 implements Vector {
     static readonly DOWN: Vector3;
     static readonly UP: Vector3;
@@ -669,15 +680,10 @@ declare abstract class TileEntityBase implements TileEntity {
     requireMoreLiquid(liquid: string, amount: number): void;
     sendPacket: (name: string, data: object) => {};
     sendResponse: (packetName: string, someData: object) => {};
-}
-declare enum Side {
-    Client = 0,
-    Server = 1
-}
-declare namespace BlockEngine {
-    namespace Decorators {
-        function ClientSide(): (target: TileEntityBase, propertyName: string) => void;
-        function NetworkEvent(side: Side): (target: TileEntityBase, propertyName: string) => void;
-        function ContainerEvent(side: Side): (target: TileEntityBase, propertyName: string) => void;
-    }
+    updateLiquidScale(scale: string, liquid: string): void;
+    setLiquidScale(container: any, window: any, content: any, data: {
+        scale: string;
+        liquid: string;
+        amount: number;
+    }): void;
 }

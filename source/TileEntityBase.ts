@@ -132,4 +132,22 @@ implements TileEntity {
 
 	sendPacket: (name: string, data: object) => {};
 	sendResponse: (packetName: string, someData: object) => {};
+
+	updateLiquidScale(scale: string, liquid: string) {
+		this.container.sendEvent("setLiquidScale", {scale: scale, liquid: liquid, amount: this.liquidStorage.getRelativeAmount(liquid)});
+	}
+
+	@BlockEngine.Decorators.ContainerEvent(Side.Client)
+	setLiquidScale(container: any, window: any, content: any, data: {scale: string, liquid: string, amount: number}): void {
+		let gui = container.getUiAdapter();
+		if (gui) {
+			var size = gui.getBinding(data.scale, "element_rect");
+            if (!size) {
+                return;
+            }
+            var texture = LiquidRegistry.getLiquidUITexture(data.liquid, size.width(), size.height());
+            gui.setBinding(data.scale, "texture", texture);
+            gui.setBinding(data.scale, "value", data.amount);
+		}
+	}
 }

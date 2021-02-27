@@ -13,6 +13,7 @@
 	"exclude": [],
 	"include": [
 		"header.ts",
+		"BlockEngine.ts",
 		"Vector3.ts",
 		"WorldRegion.ts",
 		"PlayerEntity.ts",
@@ -20,7 +21,6 @@
 		"item/ItemStack.ts",
 		"item/ItemRegistry.ts",
 		"TileEntityBase.ts",
-		"TileEntityDecorators.ts",
 		"export.ts"
 	],
 	"files": [
