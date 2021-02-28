@@ -5,22 +5,28 @@ enum Side {
 
 namespace BlockEngine {
 	export namespace Decorators {
-		export function ClientSide() {
-			return (target: TileEntityBase, propertyName: string) => {
-				if (!target.client) target.client = {};
-				target.client[propertyName] = target[propertyName];
+		function createField(target: object, field: string) {
+			let clientPrototype = {};
+			for (let key in target[field]) {
+				clientPrototype[key] = target[field][key];
 			}
+			target[field] = clientPrototype;
+		}
+
+		export function ClientSide(target: TileEntityBase, propertyName: string) {
+			createField(target, "client");
+			target.client[propertyName] = target[propertyName];
 		}
 
 		export function NetworkEvent(side: Side) {
 			return (target: TileEntityBase, propertyName: string) => {
 				if (side == Side.Client) {
-					if (!target.client) target.client = {};
-					if (!target.client.events) target.client.events = {};
+					createField(target, "client");
+					createField(target.client, "events");
 					target.client.events[propertyName] = target[propertyName];
 					delete target[propertyName];
 				} else {
-					if (!target.events) target.events = {};
+					createField(target, "events");
 					target.events[propertyName] = target[propertyName];
 				}
 			}
@@ -29,12 +35,12 @@ namespace BlockEngine {
 		export function ContainerEvent(side: Side) {
 			return (target: TileEntityBase, propertyName: string) => {
 				if (side == Side.Client) {
-					if (!target.client) target.client = {};
-					if (!target.client.containerEvents) target.client.containerEvents = {};
+					createField(target, "client");
+					createField(target.client, "containerEvents");
 					target.client.containerEvents[propertyName] = target[propertyName];
 					delete target[propertyName];
 				} else {
-					if (!target.containerEvents) target.containerEvents = {};
+					createField(target, "containerEvents");
 					target.containerEvents[propertyName] = target[propertyName];
 				}
 			}

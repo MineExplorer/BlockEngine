@@ -4,7 +4,7 @@ declare enum Side {
 }
 declare namespace BlockEngine {
     namespace Decorators {
-        function ClientSide(): (target: TileEntityBase, propertyName: string) => void;
+        function ClientSide(target: TileEntityBase, propertyName: string): void;
         function NetworkEvent(side: Side): (target: TileEntityBase, propertyName: string) => void;
         function ContainerEvent(side: Side): (target: TileEntityBase, propertyName: string) => void;
     }
