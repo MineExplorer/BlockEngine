@@ -6,11 +6,11 @@ enum Side {
 namespace BlockEngine {
 	export namespace Decorators {
 		function createField(target: object, field: string) {
-			let clientPrototype = {};
+			let fieldCopy = {};
 			for (let key in target[field]) {
-				clientPrototype[key] = target[field][key];
+				fieldCopy[key] = target[field][key];
 			}
-			target[field] = clientPrototype;
+			target[field] = fieldCopy;
 		}
 
 		export function ClientSide(target: TileEntityBase, propertyName: string) {

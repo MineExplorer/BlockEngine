@@ -33,11 +33,11 @@ var BlockEngine;
     var Decorators;
     (function (Decorators) {
         function createField(target, field) {
-            var clientPrototype = {};
+            var fieldCopy = {};
             for (var key in target[field]) {
-                clientPrototype[key] = target[field][key];
+                fieldCopy[key] = target[field][key];
             }
-            target[field] = clientPrototype;
+            target[field] = fieldCopy;
         }
         function ClientSide(target, propertyName) {
             createField(target, "client");
