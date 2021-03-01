@@ -1,7 +1,7 @@
 abstract class TileEntityBase
 implements TileEntity {
 	constructor() {
-		this.client = this.client || {};
+		this.client ??= {};
 		this.client.load = this.clientLoad;
 		this.client.unload = this.clientUnload;
 		this.client.tick = this.clientTick;
