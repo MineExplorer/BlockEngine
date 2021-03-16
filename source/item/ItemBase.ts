@@ -15,7 +15,7 @@ class ItemBase {
 	icon: {name: string, meta: number};
 	maxStack: number;
 	maxDamage: number;
-	item: any;
+	item: Item.NativeItem;
 
 	constructor(stringID: string, name?: string, icon?: string|Item.TextureData) {
 		this.stringID = stringID;

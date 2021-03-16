@@ -34,12 +34,12 @@ class PlayerEntity {
      */
     addItemToInventory(item: ItemInstance): void;
     addItemToInventory(id: number, count: number, data: number, extra?: ItemExtraData): void;
-    addItemToInventory(id: any, count?: number, data?: number, extra: ItemExtraData = null): void {
+    addItemToInventory(id: any, count?: number, data?: number, extra?: ItemExtraData): void {
         let item = id;
         if (typeof item == "object") {
             this.actor.addItemToInventory(item.id, item.count, item.data, item.extra || null, true);
         } else {
-            this.actor.addItemToInventory(id, count, data, extra, true);
+            this.actor.addItemToInventory(id, count, data, extra || null, true);
         }
     }
 

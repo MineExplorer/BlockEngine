@@ -51,7 +51,7 @@ class WorldRegion {
 			return this.blockSource.getBlock(x, y, z);
 		}
 		let pos = x;
-		return this.getBlock(pos.x, pos.y, pos.z);
+		return this.blockSource.getBlock(pos.x, pos.y, pos.z);
 	}
 
 	/**
@@ -84,7 +84,7 @@ class WorldRegion {
 			return this.blockSource.setBlock(x, y, z, id, data);
 		}
 		let pos = x; id = y; data = z;
-		return this.setBlock(pos.x, pos.y, pos.z, id, data);
+		return this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
 	}
 
 	/**
@@ -137,8 +137,7 @@ class WorldRegion {
 	getTileEntity(x: Vector | number, y?: number, z?: number): TileEntity {
 		if (typeof x === "number") {
 			let tileEntity = TileEntity.getTileEntity(x, y, z, this.blockSource);
-			if (tileEntity && tileEntity.__initialized) return tileEntity;
-			return null;
+			return (tileEntity && tileEntity.__initialized) ? tileEntity : null;
 		}
 		let pos = x;
 		return this.getTileEntity(pos.x, pos.y, pos.z);
@@ -195,8 +194,17 @@ class WorldRegion {
 	 * @param power defines radius of the explosion and what blocks it can destroy
 	 * @param fire if true, puts the crater on fire
 	 */
-	explode(x: number, y: number, z: number, power: number, fire: boolean = false): void {
-		this.blockSource.explode(x, y, z, power, fire)
+	explode(pos: Vector, power: number, fire?: boolean): void;
+	explode(x: number, y: any, z: any, power: number, fire?: boolean): void;
+	explode(x: Vector | number, y: any, z: any, power?: number, fire?: boolean): void {
+		if (typeof x === "number") {
+			this.blockSource.explode(x, y, z, power, fire || false);
+		} else {
+			let pos = x;
+			power = y;
+			fire = z || false;
+			this.blockSource.explode(pos.x, pos.y, pos.z, power, fire);
+		}
 	}
 
 	/**
@@ -267,7 +275,7 @@ class WorldRegion {
 			return this.blockSource.getLightLevel(x, y, z);
 		}
 		let pos = x;
-		return this.getLightLevel(pos.x, pos.y, pos.z);
+		return this.blockSource.getLightLevel(pos.x, pos.y, pos.z);
 	}
 
 	/**
@@ -280,7 +288,7 @@ class WorldRegion {
 			return this.blockSource.canSeeSky(x, y, z);
 		}
 		let pos = x;
-		return this.canSeeSky(pos.x, pos.y, pos.z);
+		return this.blockSource.canSeeSky(pos.x, pos.y, pos.z);
 	}
 
 	/**
@@ -293,7 +301,7 @@ class WorldRegion {
 			return this.blockSource.getGrassColor(x, y, z);
 		}
 		let pos = x;
-		return this.getGrassColor(pos.x, pos.y, pos.z);
+		return this.blockSource.getGrassColor(pos.x, pos.y, pos.z);
 	}
 
 	/**
@@ -301,14 +309,16 @@ class WorldRegion {
 	 * @param x X coord of the place where item will be dropped
 	 * @param y Y coord of the place where item will be dropped
 	 * @param z Z coord of the place where item will be dropped
-	 * @param id id of the item to drop
-	 * @param count count of the item to drop
-	 * @param data data of the item to drop
-	 * @param extra extra of the item to drop
+	 * @param item object representing item stack
 	 * @returns drop entity id
 	 */
-	dropItem(x: number, y: number, z: number, id: number, count: number, data: number, extra: ItemExtraData = null): number {
-		return this.blockSource.spawnDroppedItem(x, y, z, id, count, data, extra);
+	dropItem(x: number, y: number, z: number, item: ItemInstance): number;
+	dropItem(x: number, y: number, z: number, id: number, count: number, data: number, extra?: ItemExtraData): number;
+	dropItem(x: number, y: number, z: number, item: number | ItemInstance, count?: number, data?: number, extra?: ItemExtraData): number {
+        if (typeof item == "object") {
+			return this.blockSource.spawnDroppedItem(x, y, z, item.id, item.count, item.data, item.extra || null);
+        }
+		return this.blockSource.spawnDroppedItem(x, y, z, item, count, data, extra || null);
 	}
 
 	/**
@@ -350,12 +360,19 @@ class WorldRegion {
 	}
 
 	playSound(x: number, y: number, z: number, name: string, volume: number = 1, pitch: number = 1) {
-		Network.sendToAllClients("WorldRegion.play_sound", {x: x, y: y, z: z, dimension: this.getDimension(), name: name, volume: volume, pitch: pitch});
+		const soundPos = new Vector3(x, y, z);
+		const dimension = this.getDimension();
+		const clientsList = Network.getConnectedClients();
+		for (let client of clientsList) {
+			let player = client.getPlayerUid();
+			let pos = Entity.getPosition(player);
+			if (Entity.getDimension(player) == dimension && Entity.getDistanceBetweenCoords(pos, soundPos) < 100) {
+				client.send("WorldRegion.play_sound", {...soundPos, name: name, volume: volume, pitch: pitch});
+			}
+		}
 	}
 }
 
-Network.addClientPacket("WorldRegion.play_sound", function(data: {x: number, y: number, z: number, dimension: number, name: string, volume: number, pitch: number}) {
-	if (data.dimension == Player.getDimension()) {
-		World.playSound(data.x, data.y, data.z, data.name, data.volume, data.pitch);
-	}
+Network.addClientPacket("WorldRegion.play_sound", function(data: {x: number, y: number, z: number, name: string, volume: number, pitch: number}) {
+	World.playSound(data.x, data.y, data.z, data.name, data.volume, data.pitch);
 });
