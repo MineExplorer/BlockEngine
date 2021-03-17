@@ -24,6 +24,6 @@
 		"export.ts"
 	],
 	"files": [
-		"../../IC_Libraries/declarations/core-engine.d.ts"
+		"../declarations/core-engine.d.ts"
 	]
 }
