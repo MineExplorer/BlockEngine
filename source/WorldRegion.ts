@@ -13,7 +13,7 @@ class WorldRegion {
 	 * (null if given dimension is not loaded and this interface 
 	 * was not created yet)
 	 */
-	static getForDimension(dimension: number): WorldRegion {
+	static getForDimension(dimension: number): Nullable<WorldRegion> {
 		let blockSource = BlockSource.getDefaultForDimension(dimension);
 		if (blockSource) {
 			return new WorldRegion(blockSource);
@@ -26,8 +26,16 @@ class WorldRegion {
 	 * (null if given entity does not exist or the dimension is not loaded 
 	 * and interface was not created)
 	 */
-	static getForActor(entityUid: number): WorldRegion {
+	static getForActor(entityUid: number): Nullable<WorldRegion> {
 		let blockSource = BlockSource.getDefaultForActor(entityUid);
+		if (blockSource) {
+			return new WorldRegion(blockSource);
+		}
+		return null;
+	}
+
+	static getCurrentWorldGenRegion(): Nullable<WorldRegion> {
+		let blockSource = BlockSource.getCurrentWorldGenRegion();
 		if (blockSource) {
 			return new WorldRegion(blockSource);
 		}
@@ -194,7 +202,7 @@ class WorldRegion {
 	 * @param power defines radius of the explosion and what blocks it can destroy
 	 * @param fire if true, puts the crater on fire
 	 */
-	explode(pos: Vector, power: number, fire?: boolean): void;
+	explode(coords: Vector, power: number, fire?: boolean): void;
 	explode(x: number, y: any, z: any, power: number, fire?: boolean): void;
 	explode(x: Vector | number, y: any, z: any, power?: number, fire?: boolean): void {
 		if (typeof x === "number") {
@@ -225,8 +233,14 @@ class WorldRegion {
 	/**
 	 * @returns temperature of the biome on coords
 	 */
-	getBiomeTemperatureAt(x: number, y: number, z: number): number {
-		return this.blockSource.getBiomeTemperatureAt(x, y, z);
+	getBiomeTemperatureAt(coords: Vector): number;
+	getBiomeTemperatureAt(x: number, y: number, z: number): number;
+	getBiomeTemperatureAt(x: Vector | number, y?: number, z?: number): number {
+		if (typeof x === "number") {
+			return this.blockSource.getBiomeTemperatureAt(x, y, z);
+		}
+		let pos = x;
+		return this.blockSource.getBiomeTemperatureAt(pos.x, pos.y, pos.z);
 	}
 
 	/**
@@ -346,28 +360,38 @@ class WorldRegion {
 	 * that are equal to the given type, if blacklist value is false,
 	 * and all except the entities of the given type, if blacklist value is true
 	 */
-	fetchEntitiesInAABB(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number, type: number, blacklist: boolean = false): number[] {
-		return this.blockSource.fetchEntitiesInAABB(x1, y1, z1, x2, y2, z2, type, blacklist);
-	}
-
-	/**
-	 * @returns the list of entity IDs in given box,
-	 * that are equal to the given type, if blacklist value is false,
-	 * and all except the entities of the given type, if blacklist value is true
-	 */
-	listEntitiesInAABB(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number, type: number, blacklist: boolean = false): number[] {
+	listEntitiesInAABB(pos1: Vector, pos2: Vector, type?: number, blacklist?: boolean): number[];
+	listEntitiesInAABB(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number, type?: number, blacklist?: boolean): number[];
+	listEntitiesInAABB(x1: any, y1: any, z1?: any, x2?: any, y2?: number, z2?: number, type: number = -1, blacklist: boolean = true): number[] {
+		if (typeof x1 == "object") {
+			let pos1 = x1, pos2 = y1;
+			return this.listEntitiesInAABB(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, z1, x2);
+		}
 		return this.blockSource.listEntitiesInAABB(x1, y1, z1, x2, y2, z2, type, blacklist);
 	}
 
-	playSound(x: number, y: number, z: number, name: string, volume: number = 1, pitch: number = 1) {
+	playSound(x: number, y: number, z: number, name: string, volume: number = 1, pitch: number = 1): void {
 		const soundPos = new Vector3(x, y, z);
 		const dimension = this.getDimension();
 		const clientsList = Network.getConnectedClients();
 		for (let client of clientsList) {
 			let player = client.getPlayerUid();
 			let pos = Entity.getPosition(player);
-			if (Entity.getDimension(player) == dimension && Entity.getDistanceBetweenCoords(pos, soundPos) < 100) {
+			if (Entity.getDimension(player) == dimension && Entity.getDistanceBetweenCoords(pos, soundPos) <= 100) {
 				client.send("WorldRegion.play_sound", {...soundPos, name: name, volume: volume, pitch: pitch});
+			}
+		}
+	}
+
+	playSoundAtEntity(ent: number, name: string, volume: number = 1, pitch: number = 1): void {
+		const soundPos = Entity.getPosition(ent);
+		const dimension = this.getDimension();
+		const clientsList = Network.getConnectedClients();
+		for (let client of clientsList) {
+			let player = client.getPlayerUid();
+			let pos = Entity.getPosition(player);
+			if (Entity.getDimension(player) == dimension && Entity.getDistanceBetweenCoords(pos, soundPos) <= 100) {
+				client.send("WorldRegion.play_sound_at", {ent: ent, name: name, volume: volume, pitch: pitch});
 			}
 		}
 	}
@@ -375,4 +399,8 @@ class WorldRegion {
 
 Network.addClientPacket("WorldRegion.play_sound", function(data: {x: number, y: number, z: number, name: string, volume: number, pitch: number}) {
 	World.playSound(data.x, data.y, data.z, data.name, data.volume, data.pitch);
+});
+
+Network.addClientPacket("WorldRegion.play_sound_at", function(data: {ent: number, name: string, volume: number, pitch: number}) {
+	World.playSoundAtEntity(data.ent, data.name, data.volume, data.pitch);
 });
