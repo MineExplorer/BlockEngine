@@ -455,6 +455,12 @@ var WorldRegion = /** @class */ (function () {
         }
         return this.blockSource.listEntitiesInAABB(x1, y1, z1, x2, y2, z2, type, blacklist);
     };
+    /**
+     * Plays standart Minecraft sound on the specified coordinates
+     * @param name sound name
+     * @param volume sound volume from 0 to 1. Default is 1.
+     * @param pitch sound pitch, from 0 to 1. Default is 1.
+     */
     WorldRegion.prototype.playSound = function (x, y, z, name, volume, pitch) {
         if (volume === void 0) { volume = 1; }
         if (pitch === void 0) { pitch = 1; }
@@ -470,6 +476,12 @@ var WorldRegion = /** @class */ (function () {
             }
         }
     };
+    /**
+     * Plays standart Minecraft sound from the specified entity
+     * @param name sound name
+     * @param volume sound volume from 0 to 1. Default is 1.
+     * @param pitch sound pitch, from 0 to 1. Default is 1.
+     */
     WorldRegion.prototype.playSoundAtEntity = function (ent, name, volume, pitch) {
         if (volume === void 0) { volume = 1; }
         if (pitch === void 0) { pitch = 1; }
