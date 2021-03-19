@@ -46,17 +46,51 @@ implements TileEntity {
 
 	private _runInit: () => boolean;
 
-	created(): void {}
+	created(): void {
+		this.onCreate();
+	}
 
 	init(): void {
 		this.region = new WorldRegion(this.blockSource);
+		this.onInit();
 	}
 
-	load(): void {}
+	load(): void {
+		this.onLoad();
+	}
 
-	unload(): void {}
+	unload(): void {
+		this.onUnload();
+	}
 
-	tick(): void {}
+	tick(): void {
+		this.onTick();
+	}
+
+	/**
+	 * Called when a TileEntity is created
+	 */
+	onCreate(): void {}
+
+	/**
+	 * Called when a TileEntity is initialised in the world
+	 */
+	onInit(): void {}
+
+	/**
+	 * Called when a chunk with TileEntity is loaded
+	 */
+	onLoad(): void {}
+
+	/**
+	 * Called when a chunk with TileEntity is unloaded
+	 */
+	onUnload(): void {}
+
+	/**
+	 * Called every tick and should be used for all the updates of the TileEntity
+	 */
+	onTick(): void {}
 
 	clientLoad(): void {}
 
@@ -95,9 +129,9 @@ implements TileEntity {
             return false;
         }
 
-       	var screenName = this.getScreenName(player, coords);
+       	let screenName = this.getScreenName(player, coords);
     	if (screenName) {
-            var client = Network.getClientForPlayer(player);
+            let client = Network.getClientForPlayer(player);
             if (client) {
             	this.container.openFor(client, screenName);
                 return true;
@@ -141,11 +175,11 @@ implements TileEntity {
 	setLiquidScale(container: any, window: any, content: any, data: {scale: string, liquid: string, amount: number}): void {
 		let gui = container.getUiAdapter();
 		if (gui) {
-			var size = gui.getBinding(data.scale, "element_rect");
+			let size = gui.getBinding(data.scale, "element_rect");
             if (!size) {
                 return;
             }
-            var texture = LiquidRegistry.getLiquidUITexture(data.liquid, size.width(), size.height());
+            let texture = LiquidRegistry.getLiquidUITexture(data.liquid, size.width(), size.height());
             gui.setBinding(data.scale, "texture", texture);
             gui.setBinding(data.scale, "value", data.amount);
 		}

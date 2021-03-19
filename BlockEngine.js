@@ -1343,13 +1343,42 @@ var TileEntityBase = /** @class */ (function () {
         this.client.unload = this.clientUnload;
         this.client.tick = this.clientTick;
     }
-    TileEntityBase.prototype.created = function () { };
+    TileEntityBase.prototype.created = function () {
+        this.onCreate();
+    };
     TileEntityBase.prototype.init = function () {
         this.region = new WorldRegion(this.blockSource);
+        this.onInit();
     };
-    TileEntityBase.prototype.load = function () { };
-    TileEntityBase.prototype.unload = function () { };
-    TileEntityBase.prototype.tick = function () { };
+    TileEntityBase.prototype.load = function () {
+        this.onLoad();
+    };
+    TileEntityBase.prototype.unload = function () {
+        this.onUnload();
+    };
+    TileEntityBase.prototype.tick = function () {
+        this.onTick();
+    };
+    /**
+     * Called when a TileEntity is created
+     */
+    TileEntityBase.prototype.onCreate = function () { };
+    /**
+     * Called when a TileEntity is initialised in the world
+     */
+    TileEntityBase.prototype.onInit = function () { };
+    /**
+     * Called when a chunk with TileEntity is loaded
+     */
+    TileEntityBase.prototype.onLoad = function () { };
+    /**
+     * Called when a chunk with TileEntity is unloaded
+     */
+    TileEntityBase.prototype.onUnload = function () { };
+    /**
+     * Called every tick and should be used for all the updates of the TileEntity
+     */
+    TileEntityBase.prototype.onTick = function () { };
     TileEntityBase.prototype.clientLoad = function () { };
     TileEntityBase.prototype.clientUnload = function () { };
     TileEntityBase.prototype.clientTick = function () { };

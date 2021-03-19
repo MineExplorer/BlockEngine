@@ -660,6 +660,26 @@ declare abstract class TileEntityBase implements TileEntity {
     load(): void;
     unload(): void;
     tick(): void;
+    /**
+     * Called when a TileEntity is created
+     */
+    onCreate(): void;
+    /**
+     * Called when a TileEntity is initialised in the world
+     */
+    onInit(): void;
+    /**
+     * Called when a chunk with TileEntity is loaded
+     */
+    onLoad(): void;
+    /**
+     * Called when a chunk with TileEntity is unloaded
+     */
+    onUnload(): void;
+    /**
+     * Called every tick and should be used for all the updates of the TileEntity
+     */
+    onTick(): void;
     clientLoad(): void;
     clientUnload(): void;
     clientTick(): void;
