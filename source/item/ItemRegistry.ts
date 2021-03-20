@@ -194,7 +194,7 @@ namespace ItemRegistry {
 	interface ToolDescription {
 		name: string,
 		icon: string|Item.TextureData,
-		material: string,
+		material: string|ToolAPI.ToolMaterial,
 		inCreative?: boolean,
 		category?: number,
 		glint?: boolean,
