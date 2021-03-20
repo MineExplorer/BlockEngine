@@ -1165,7 +1165,6 @@ var ItemRegistry;
     var items = {};
     var itemsRarity = {};
     var armorMaterials = {};
-    var toolMaterials = {};
     function getInstanceOf(itemID) {
         var numericID = Item.getNumericId(itemID);
         return items[numericID] || null;
@@ -1222,11 +1221,12 @@ var ItemRegistry;
     }
     ItemRegistry.getArmorMaterial = getArmorMaterial;
     function addToolMaterial(name, material) {
-        toolMaterials[name] = material;
+        ToolAPI.addToolMaterial(name, material);
     }
     ItemRegistry.addToolMaterial = addToolMaterial;
     function getToolMaterial(name) {
-        return toolMaterials[name];
+        //@ts-ignore
+        return ToolAPI.toolMaterials[name];
     }
     ItemRegistry.getToolMaterial = getToolMaterial;
     function registerItem(itemInstance) {

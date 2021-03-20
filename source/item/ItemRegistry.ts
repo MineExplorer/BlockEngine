@@ -23,7 +23,6 @@ namespace ItemRegistry {
 	let items = {};
 	let itemsRarity = {};
 	let armorMaterials = {};
-	let toolMaterials = {};
 
 	export function getInstanceOf(itemID: string | number): Nullable<ItemBase> {
 		let numericID = Item.getNumericId(itemID);
@@ -77,11 +76,12 @@ namespace ItemRegistry {
 	}
 
 	export function addToolMaterial(name: string, material: ToolMaterial): void {
-		toolMaterials[name] = material;
+		ToolAPI.addToolMaterial(name, material);
 	}
 
 	export function getToolMaterial(name: string): ToolMaterial {
-		return toolMaterials[name];
+		//@ts-ignore
+		return ToolAPI.toolMaterials[name];
 	}
 
 	export function registerItem(itemInstance: ItemBase): ItemBase {
