@@ -1500,7 +1500,7 @@ var LiquidItemRegistry;
     LiquidItemRegistry.getEmptyItem = getEmptyItem;
     function getFullItem(id, data, liquid) {
         var emptyData = LiquidItemRegistry.EmptyByFull[id];
-        if (emptyData) {
+        if (emptyData && data > 0) {
             return { id: id, data: 0, amount: data, storage: emptyData.storage };
         }
         var fullData = LiquidItemRegistry.FullByEmpty[id + ":" + liquid];

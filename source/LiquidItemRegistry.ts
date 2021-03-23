@@ -52,7 +52,7 @@ namespace LiquidItemRegistry {
 
 	export function getFullItem(id: number, data: number, liquid: string): FullData {
 		let emptyData = EmptyByFull[id];
-		if (emptyData) {
+		if (emptyData && data > 0) {
 			return {id: id, data: 0, amount: data, storage: emptyData.storage}
 		}
 
