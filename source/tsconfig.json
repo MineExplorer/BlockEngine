@@ -21,6 +21,8 @@
 		"item/ItemStack.ts",
 		"item/ItemRegistry.ts",
 		"TileEntityBase.ts",
+		"LiquidItemRegistry.ts",
+		"LiquidTank.ts",
 		"export.ts"
 	],
 	"files": [
