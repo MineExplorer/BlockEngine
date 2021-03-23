@@ -1,7 +1,7 @@
 namespace BlockEngine {
 	export class LiquidTank {
 		tileEntity: TileEntity;
-		name: string;
+		readonly name: string;
 		limit: number;
 		liquids: object;
 		data: {
@@ -91,14 +91,22 @@ namespace BlockEngine {
 			return 0;
 		}
 
+		isFull(): boolean {
+			return this.data.amount == this.limit;
+		}
+
+		isEmpty(): boolean {
+			return this.data.amount == 0;
+		}
+
 		addLiquidToItem(inputSlot: ItemContainerSlot, outputSlot: ItemContainerSlot): boolean {
 			let liquid = this.getLiquidStored();
 			if (!liquid) return false;
 
-			let amount = Math.round(this.getAmount(liquid) * 1000) / 1000;
+			let amount = this.getAmount(liquid);
 			if (amount > 0) {
 				let full = LiquidItemRegistry.getFullItem(inputSlot.id, inputSlot.data, liquid);
-				if (full && full.amount > 0 && (outputSlot.id == full.id && outputSlot.data == full.data && outputSlot.count < Item.getMaxStack(full.id) || outputSlot.id == 0)) {
+				if (full && (outputSlot.id == full.id && outputSlot.data == full.data && outputSlot.count < Item.getMaxStack(full.id) || outputSlot.id == 0)) {
 					if (amount >= full.amount) {
 						this.getLiquid(full.amount);
 						inputSlot.setSlot(inputSlot.id, inputSlot.count - 1, inputSlot.data);
@@ -109,10 +117,10 @@ namespace BlockEngine {
 					if (inputSlot.count == 1 && full.storage) {
 						if (inputSlot.id == full.id) {
 							amount = this.getLiquid(full.amount);
-							inputSlot.setSlot(inputSlot.id, 1, inputSlot.data - amount * 1000);
+							inputSlot.setSlot(inputSlot.id, 1, inputSlot.data - amount);
 						} else {
 							amount = this.getLiquid(full.storage);
-							inputSlot.setSlot(full.id, 1, (full.storage - amount)*1000);
+							inputSlot.setSlot(full.id, 1, full.storage - amount);
 						}
 						return true;
 					}
@@ -126,8 +134,7 @@ namespace BlockEngine {
 			let empty = LiquidItemRegistry.getEmptyItem(inputSlot.id, inputSlot.data);
 			if (empty && (!liquid && this.isValidLiquid(empty.liquid) || empty.liquid == liquid) && !this.isFull()) {
 				if (outputSlot.id == empty.id && outputSlot.data == empty.data && outputSlot.count < Item.getMaxStack(empty.id) || outputSlot.id == 0) {
-					let storedAmount = +this.getAmount(liquid).toFixed(3);
-					let freeAmount = this.getLimit() - storedAmount;
+					let freeAmount = this.getLimit() - this.getAmount();
 					if (freeAmount >= empty.amount) {
 						this.addLiquid(empty.liquid, empty.amount);
 						inputSlot.setSlot(inputSlot.id, inputSlot.count - 1, inputSlot.data);
@@ -138,20 +145,12 @@ namespace BlockEngine {
 					if (inputSlot.count == 1 && empty.storage) {
 						let amount = Math.min(freeAmount, empty.amount);
 						this.addLiquid(empty.liquid, amount);
-						inputSlot.setSlot(inputSlot.id, 1, inputSlot.data + amount * 1000);
+						inputSlot.setSlot(inputSlot.id, 1, inputSlot.data + amount);
 						return true;
 					}
 				}
 			}
 			return false;
-		}
-
-		isFull(): boolean {
-			return this.data.amount < this.limit;
-		}
-
-		isEmpty(): boolean {
-			return this.data.amount == 0;
 		}
 
 		updateUiScale(scale: string): void {
