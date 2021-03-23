@@ -98,7 +98,7 @@ namespace BlockEngine {
 			let amount = Math.round(this.getAmount(liquid) * 1000) / 1000;
 			if (amount > 0) {
 				let full = LiquidItemRegistry.getFullItem(inputSlot.id, inputSlot.data, liquid);
-				if (full && (outputSlot.id == full.id && outputSlot.data == full.data && outputSlot.count < Item.getMaxStack(full.id) || outputSlot.id == 0)) {
+				if (full && full.amount > 0 && (outputSlot.id == full.id && outputSlot.data == full.data && outputSlot.count < Item.getMaxStack(full.id) || outputSlot.id == 0)) {
 					if (amount >= full.amount) {
 						this.getLiquid(full.amount);
 						inputSlot.setSlot(inputSlot.id, inputSlot.count - 1, inputSlot.data);
@@ -128,7 +128,7 @@ namespace BlockEngine {
 				if (outputSlot.id == empty.id && outputSlot.data == empty.data && outputSlot.count < Item.getMaxStack(empty.id) || outputSlot.id == 0) {
 					let storedAmount = +this.getAmount(liquid).toFixed(3);
 					let freeAmount = this.getLimit() - storedAmount;
-					if (freeAmount > empty.amount) {
+					if (freeAmount >= empty.amount) {
 						this.addLiquid(empty.liquid, empty.amount);
 						inputSlot.setSlot(inputSlot.id, inputSlot.count - 1, inputSlot.data);
 						inputSlot.validate();

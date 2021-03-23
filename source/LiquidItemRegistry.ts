@@ -1,3 +1,6 @@
+/**
+ * Registry for liquid storage items. Compatible with LiquidRegistry.
+ */
 namespace LiquidItemRegistry {
 	/**
 	 * @amount liquid amount able to extract
@@ -34,17 +37,15 @@ namespace LiquidItemRegistry {
 	}
 
 	export function getEmptyItem(id: number, data: number): EmptyData {
+		let emptyData = EmptyByFull[id];
+		if (emptyData) {
+			let amount = emptyData.storage - data;
+			return {id: emptyData.id, data: 0, liquid: emptyData.liquid, amount: amount, storage: emptyData.storage};
+		}
+
 		let empty = LiquidRegistry.getEmptyItem(id, data);
 		if (empty) {
-			let itemData: any = {id: empty.id, data: empty.data, liquid: empty.liquid};
-			let emptyData = EmptyByFull[id];
-			if (emptyData) {
-				itemData.storage = emptyData.storage;
-				itemData.amount = (emptyData.storage - data) / 1000;
-			} else {
-				itemData.amount = 1;
-			}
-			return itemData;
+			return {id: empty.id, data: empty.data, liquid: empty.liquid, amount: 1000};
 		}
 		return null;
 	}
@@ -52,15 +53,17 @@ namespace LiquidItemRegistry {
 	export function getFullItem(id: number, data: number, liquid: string): FullData {
 		let emptyData = EmptyByFull[id];
 		if (emptyData) {
-			return {id: id, data: 0, amount: data / 1000, storage: emptyData.storage / 1000}
+			return {id: id, data: 0, amount: data, storage: emptyData.storage}
 		}
+
 		let fullData = FullByEmpty[id+":"+liquid];
 		if (fullData) {
-			return {id: fullData.id, data: 0, amount: fullData.storage / 1000, storage: fullData.storage / 1000}
+			return {id: fullData.id, data: 0, amount: fullData.storage, storage: fullData.storage}
 		}
+
 		let full = LiquidRegistry.getFullItem(id, data, liquid);
 		if (full) {
-			return {id: full.id, data: full.data, amount: 1};
+			return {id: full.id, data: full.data, amount: 1000};
 		}
 		return null;
 	}
