@@ -92,11 +92,11 @@ namespace BlockEngine {
 		}
 
 		isFull(): boolean {
-			return this.data.amount == this.limit;
+			return this.data.amount >= this.limit;
 		}
 
 		isEmpty(): boolean {
-			return this.data.amount == 0;
+			return this.data.amount <= 0;
 		}
 
 		addLiquidToItem(inputSlot: ItemContainerSlot, outputSlot: ItemContainerSlot): boolean {
