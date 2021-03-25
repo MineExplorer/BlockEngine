@@ -116,14 +116,24 @@ implements TileEntity {
 		return false;
 	}
 
+	private _clickPrevented = false;
+
+	/**
+	 * Prevents all actions on click
+	 */
+    preventClick(): void {
+        this._clickPrevented = true;
+    }
+
 	onItemClick(id: number, count: number, data: number, coords: Callback.ItemUseCoordinates, player: number, extra: ItemExtraData): boolean {
         if (!this.__initialized) {
             if (!this._runInit()) {
                 return false;
             }
         }
-        if (this.onItemUse(coords, new ItemStack(id, count, data, extra), player)) {
-            return false;
+		this._clickPrevented = false;
+        if (this.onItemUse(coords, new ItemStack(id, count, data, extra), player) || this._clickPrevented) {
+            return this._clickPrevented;
         }
         if (Entity.getSneaking(player)) {
             return false;
