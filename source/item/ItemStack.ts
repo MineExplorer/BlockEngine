@@ -50,9 +50,13 @@ class ItemStack implements ItemInstance {
 		}
 		if (this.data >= this.getMaxDamage()) {
 			let tool = ToolAPI.getToolData(this.id);
-			this.id = tool ? tool.brokenId : 0;
-			this.count = 1;
-			this.data = 0;
+			if (tool && tool.brokenId) {
+				this.id = tool.brokenId;
+				this.data = 0;
+				this.extra = null;
+			} else {
+				this.clear();
+			}
 		}
 	}
 }

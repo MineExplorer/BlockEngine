@@ -24,6 +24,14 @@ namespace ItemRegistry {
 	let itemsRarity = {};
 	let armorMaterials = {};
 
+	export function isBlock(id: number) {
+		return IDRegistry.getIdInfo(id).startsWith("block");
+	}
+
+	export function isItem(id: number) {
+		return IDRegistry.getIdInfo(id).startsWith("item");
+	}
+
 	export function getInstanceOf(itemID: string | number): Nullable<ItemBase> {
 		let numericID = Item.getNumericId(itemID);
 		return items[numericID] || null;
