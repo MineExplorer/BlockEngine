@@ -85,9 +85,9 @@ class WorldRegion {
 	 * @param id - id of the block to set
 	 * @param data - data of the block to set
 	 */
-	setBlock(coords: Vector, id: number, data: number): number;
-	setBlock(x: number, y: number, z: number, id: number, data: number): number;
-	setBlock(x: any, y: number, z: number, id?: number, data?: number): number {
+	setBlock(coords: Vector, id: number, data: number): void;
+	setBlock(x: number, y: number, z: number, id: number, data: number): void;
+	setBlock(x: any, y: number, z: number, id?: number, data?: number): void {
 		if (typeof x === "number") {
 			return this.blockSource.setBlock(x, y, z, id, data);
 		}
