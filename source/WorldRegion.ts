@@ -50,11 +50,11 @@ class WorldRegion {
 	}
 
 	/**
-	 * @returns Tile object with id and data propeties of the block at coords
+	 * @returns BlockState object of the block at coords
 	 */
-	getBlock(coords: Vector): Tile;
-	getBlock(x: number, y: number, z: number): Tile;
-	getBlock(x: any, y?: number, z?: number): Tile {
+	getBlock(coords: Vector): BlockState;
+	getBlock(x: number, y: number, z: number): BlockState;
+	getBlock(x: any, y?: number, z?: number): BlockState {
 		if (typeof x === "number") {
 			return this.blockSource.getBlock(x, y, z);
 		}
@@ -85,14 +85,20 @@ class WorldRegion {
 	 * @param id - id of the block to set
 	 * @param data - data of the block to set
 	 */
+	setBlock(coords: Vector, state: BlockState): void;
 	setBlock(coords: Vector, id: number, data: number): void;
+	setBlock(x: number, y: number, z: number, state: BlockState): void;
 	setBlock(x: number, y: number, z: number, id: number, data: number): void;
-	setBlock(x: any, y: number, z: number, id?: number, data?: number): void {
+	setBlock(x: any, y: any, z?: any, id?: any, data?: any): void {
 		if (typeof x === "number") {
-			return this.blockSource.setBlock(x, y, z, id, data);
+			if (typeof id == "number") {
+				return this.blockSource.setBlock(x, y, z, id, data);
+			} else {
+				return this.blockSource.setBlock(x, y, z, id);
+			}
 		}
 		let pos = x; id = y; data = z;
-		return this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
+		return this.setBlock(pos.x, pos.y, pos.z, id, data);
 	}
 
 	/**
@@ -378,15 +384,7 @@ class WorldRegion {
      */
 	playSound(x: number, y: number, z: number, name: string, volume: number = 1, pitch: number = 1): void {
 		const soundPos = new Vector3(x, y, z);
-		const dimension = this.getDimension();
-		const clientsList = Network.getConnectedClients();
-		for (let client of clientsList) {
-			let player = client.getPlayerUid();
-			let pos = Entity.getPosition(player);
-			if (Entity.getDimension(player) == dimension && Entity.getDistanceBetweenCoords(pos, soundPos) <= 100) {
-				client.send("WorldRegion.play_sound", {...soundPos, name: name, volume: volume, pitch: pitch});
-			}
-		}
+		this.sendPacketInRadius(soundPos, 100, "WorldRegion.play_sound", {...soundPos, name: name, volume: volume, pitch: pitch});
 	}
 
 	/**
@@ -397,13 +395,22 @@ class WorldRegion {
      */
 	playSoundAtEntity(ent: number, name: string, volume: number = 1, pitch: number = 1): void {
 		const soundPos = Entity.getPosition(ent);
+		this.sendPacketInRadius(soundPos, 100, "WorldRegion.play_sound_at", {ent: ent, name: name, volume: volume, pitch: pitch})
+	}
+
+	/**
+	 * Sends network packet for players in a radius from specified coords
+	 * @param packetName name of the packet to send
+	 * @param data packet data object
+	 */
+	sendPacketInRadius(coords: Vector, radius: number, packetName: string, data: object): void {
 		const dimension = this.getDimension();
 		const clientsList = Network.getConnectedClients();
 		for (let client of clientsList) {
 			let player = client.getPlayerUid();
-			let pos = Entity.getPosition(player);
-			if (Entity.getDimension(player) == dimension && Entity.getDistanceBetweenCoords(pos, soundPos) <= 100) {
-				client.send("WorldRegion.play_sound_at", {ent: ent, name: name, volume: volume, pitch: pitch});
+			let entPos = Entity.getPosition(player);
+			if (Entity.getDimension(player) == dimension && Entity.getDistanceBetweenCoords(entPos, coords) <= radius) {
+				client.send(packetName, data);
 			}
 		}
 	}
