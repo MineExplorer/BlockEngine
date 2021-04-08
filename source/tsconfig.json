@@ -12,7 +12,7 @@
 	},
 	"exclude": [],
 	"include": [
-		"header.ts",
+		"BlockEngine.ts",
 		"Decorators.ts",
 		"Vector3.ts",
 		"WorldRegion.ts",
