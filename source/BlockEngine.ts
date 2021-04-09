@@ -1,11 +1,11 @@
 LIBRARY({
 	name: "BlockEngine",
-	version: 3,
+	version: 4,
 	shared: false,
 	api: "CoreEngine"
 });
 
-namespace BlockEninge {
+namespace BlockEngine {
 	const gameVersion = getMCPEVersion().array;
 
 	export function getGameVersion() {
