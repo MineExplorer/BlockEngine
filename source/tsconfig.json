@@ -20,6 +20,7 @@
 		"EntityCustomData.ts",
 		"item/ItemStack.ts",
 		"item/ItemRegistry.ts",
+		"id_converter/*",
 		"TileEntityBase.ts",
 		"LiquidItemRegistry.ts",
 		"LiquidTank.ts",

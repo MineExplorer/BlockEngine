@@ -18,4 +18,5 @@ EXPORT("Side", Side);
 EXPORT("ItemRegistry", ItemRegistry);
 EXPORT("LiquidItemRegistry", LiquidItemRegistry);
 EXPORT("EntityCustomData", EntityCustomData);
+EXPORT("IDConverter", IDConverter);
 EXPORT("BlockEngine", BlockEngine);
