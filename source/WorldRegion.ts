@@ -373,7 +373,19 @@ class WorldRegion {
 			let pos1 = x1, pos2 = y1;
 			return this.listEntitiesInAABB(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, z1, x2);
 		}
-		return this.blockSource.listEntitiesInAABB(x1, y1, z1, x2, y2, z2, type, blacklist);
+		let entities = this.blockSource.listEntitiesInAABB(x1, y1, z1, x2, y2, z2, type, blacklist);
+		if ((type == 1 || type == 63) != blacklist) {
+			let players = Network.getConnectedPlayers();
+			let dimension = this.getDimension();
+			for (let ent of players) {
+				if (Entity.getDimension(ent) != dimension) continue;
+				let c = Entity.getPosition(ent);
+				if ((c.x >= x1 && c.x <= x2) && (c.y >= y1 && c.y <= y2) && (c.z >= z1 && c.z <= z2)) {
+					entities.push(ent);
+				}
+			}
+		}
+		return entities;
 	}
 
 	/**
