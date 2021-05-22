@@ -32,3 +32,4 @@ IDConverter.registerOld("acacia_boat", 333, 4);
 IDConverter.registerOld("dark_oak_boat", 333, 5);
 IDConverter.registerOld("milk_bucket", 325, 1);
 IDConverter.registerOld("water_bucket", 325, 8);
+IDConverter.registerOld("lava_bucket", 325, 10);
