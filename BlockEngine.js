@@ -17,6 +17,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -788,6 +790,40 @@ var EntityCustomData;
         delete entities[entity];
     });
 })(EntityCustomData || (EntityCustomData = {}));
+var BlockRegistry;
+(function (BlockRegistry) {
+    function registerDrop(nameID, dropFunc) {
+        Block.registerDropFunction(nameID, dropFunc);
+        addBlockDropOnExplosion(nameID);
+    }
+    BlockRegistry.registerDrop = registerDrop;
+    function setDestroyLevel(nameID, level) {
+        Block.registerDropFunction(nameID, function (blockCoords, blockID, blockData, diggingLevel) {
+            if (diggingLevel >= level) {
+                return [
+                    [Block.getNumericId(nameID), 1, 0]
+                ];
+            }
+        }, level);
+        addBlockDropOnExplosion(nameID);
+    }
+    BlockRegistry.setDestroyLevel = setDestroyLevel;
+    function addBlockDropOnExplosion(nameID) {
+        Block.registerPopResourcesFunction(nameID, function (coords, block, region) {
+            if (Math.random() >= 0.25)
+                return;
+            var dropFunc = Block.getDropFunction(block.id);
+            var enchant = ToolAPI.getEnchantExtraData();
+            var item = new ItemStack();
+            //@ts-ignore
+            var drop = dropFunc(coords, block.id, block.data, 127, enchant, item, region);
+            for (var i in drop) {
+                region.spawnDroppedItem(coords.x + .5, coords.y + .5, coords.z + .5, drop[i][0], drop[i][1], drop[i][2], drop[i][3] || null);
+            }
+        });
+    }
+    BlockRegistry.addBlockDropOnExplosion = addBlockDropOnExplosion;
+})(BlockRegistry || (BlockRegistry = {}));
 var ItemStack = /** @class */ (function () {
     function ItemStack(item, count, data, extra) {
         if (typeof item == "object") {
@@ -1115,6 +1151,9 @@ var ToolType;
     };
     ToolType.HOE = {
         handEquipped: true,
+        enchantType: Native.EnchantType.pickaxe,
+        damage: 2,
+        blockTypes: ["plant"],
         onItemUse: function (coords, item, block, player) {
             if ((block.id == 2 || block.id == 3) && coords.side == 1) {
                 var region = WorldRegion.getForActor(player);

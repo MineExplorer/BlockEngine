@@ -386,6 +386,11 @@ declare namespace EntityCustomData {
     function getField(entity: number, key: string): any;
     function putField(entity: number, key: string, value: any): void;
 }
+declare namespace BlockRegistry {
+    function registerDrop(nameID: string | number, dropFunc: Block.DropFunction): void;
+    function setDestroyLevel(nameID: string | number, level: number): void;
+    function addBlockDropOnExplosion(nameID: string | number): void;
+}
 declare class ItemStack implements ItemInstance {
     id: number;
     count: number;

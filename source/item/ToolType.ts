@@ -80,6 +80,9 @@ namespace ToolType {
 
 	export let HOE: ToolParams = {
 		handEquipped: true,
+		enchantType: Native.EnchantType.pickaxe,
+		damage: 2,
+		blockTypes: ["plant"],
 		onItemUse: function(coords, item, block, player) {
 			if ((block.id == 2 || block.id == 3) && coords.side == 1) {
 				let region = WorldRegion.getForActor(player);
