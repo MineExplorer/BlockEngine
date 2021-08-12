@@ -792,17 +792,20 @@ var EntityCustomData;
 })(EntityCustomData || (EntityCustomData = {}));
 var BlockRegistry;
 (function (BlockRegistry) {
-    function registerDrop(nameID, dropFunc) {
-        Block.registerDropFunction(nameID, dropFunc);
+    function registerDrop(nameID, dropFunc, level) {
+        Block.registerDropFunction(nameID, function (blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
+            if (!level || level <= diggingLevel) {
+                return dropFunc(blockCoords, blockID, blockData, diggingLevel, enchant, item, region);
+            }
+            return [];
+        });
         addBlockDropOnExplosion(nameID);
     }
     BlockRegistry.registerDrop = registerDrop;
     function setDestroyLevel(nameID, level) {
         Block.registerDropFunction(nameID, function (blockCoords, blockID, blockData, diggingLevel) {
             if (diggingLevel >= level) {
-                return [
-                    [Block.getNumericId(nameID), 1, 0]
-                ];
+                return [[Block.getNumericId(nameID), 1, 0]];
             }
         }, level);
         addBlockDropOnExplosion(nameID);

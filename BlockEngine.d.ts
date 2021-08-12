@@ -387,7 +387,7 @@ declare namespace EntityCustomData {
     function putField(entity: number, key: string, value: any): void;
 }
 declare namespace BlockRegistry {
-    function registerDrop(nameID: string | number, dropFunc: Block.DropFunction): void;
+    function registerDrop(nameID: string | number, dropFunc: Block.DropFunction, level?: number): void;
     function setDestroyLevel(nameID: string | number, level: number): void;
     function addBlockDropOnExplosion(nameID: string | number): void;
 }

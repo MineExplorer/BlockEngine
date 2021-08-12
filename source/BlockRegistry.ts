@@ -1,15 +1,18 @@
 namespace BlockRegistry {
-    export function registerDrop(nameID: string | number, dropFunc: Block.DropFunction): void {
-        Block.registerDropFunction(nameID, dropFunc);
+    export function registerDrop(nameID: string | number, dropFunc: Block.DropFunction, level?: number): void {
+        Block.registerDropFunction(nameID, function(blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
+            if (!level || level <= diggingLevel) {
+                return dropFunc(blockCoords, blockID, blockData, diggingLevel, enchant, item, region);
+            }
+            return [];
+        });
         addBlockDropOnExplosion(nameID);
     }
 
     export function setDestroyLevel(nameID: string | number, level: number): void {
         Block.registerDropFunction(nameID, function(blockCoords, blockID, blockData, diggingLevel) {
             if (diggingLevel >= level) {
-                return [
-                    [Block.getNumericId(nameID), 1, 0]
-                ];
+                return [[Block.getNumericId(nameID), 1, 0]];
             }
         }, level);
         addBlockDropOnExplosion(nameID);
