@@ -15,6 +15,7 @@ EXPORT("ItemCategory", ItemCategory);
 EXPORT("EnumRarity", EnumRarity);
 EXPORT("Side", Side);
 // APIs
+EXPORT("BlockRegistry", BlockRegistry);
 EXPORT("ItemRegistry", ItemRegistry);
 EXPORT("LiquidItemRegistry", LiquidItemRegistry);
 EXPORT("EntityCustomData", EntityCustomData);

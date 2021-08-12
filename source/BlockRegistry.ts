@@ -14,7 +14,7 @@ namespace BlockRegistry {
             if (diggingLevel >= level) {
                 return [[Block.getNumericId(nameID), 1, 0]];
             }
-        }, level);
+        });
         addBlockDropOnExplosion(nameID);
     }
 

@@ -17,8 +17,6 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -807,7 +805,7 @@ var BlockRegistry;
             if (diggingLevel >= level) {
                 return [[Block.getNumericId(nameID), 1, 0]];
             }
-        }, level);
+        });
         addBlockDropOnExplosion(nameID);
     }
     BlockRegistry.setDestroyLevel = setDestroyLevel;
@@ -1882,6 +1880,7 @@ EXPORT("ItemCategory", ItemCategory);
 EXPORT("EnumRarity", EnumRarity);
 EXPORT("Side", Side);
 // APIs
+EXPORT("BlockRegistry", BlockRegistry);
 EXPORT("ItemRegistry", ItemRegistry);
 EXPORT("LiquidItemRegistry", LiquidItemRegistry);
 EXPORT("EntityCustomData", EntityCustomData);
