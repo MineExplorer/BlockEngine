@@ -1,4 +1,44 @@
 namespace BlockRegistry {
+    export function getBlockRotation(player, hasVertical) {
+		let pitch = EntityGetPitch(player);
+		if (hasVertical) {
+			if (pitch < -45) return 0;
+			if (pitch > 45) return 1;
+		}
+		let rotation = Math.floor((EntityGetYaw(player) - 45)%360 / 90);
+		if (rotation < 0) rotation += 4;
+		rotation = [5, 3, 4, 2][rotation];
+		return rotation;
+	}
+
+	export function setRotationFunction(id: string | number, hasVertical?: boolean, placeSound?: string) {
+		Block.registerPlaceFunction(id, function(coords, item, block, player, region) {
+			let place = World.canTileBeReplaced(block.id, block.data) ? coords : coords.relative;
+			let rotation = getBlockRotation(player, hasVertical);
+			region.setBlock(place.x, place.y, place.z, item.id, rotation);
+			//World.playSound(place.x, place.y, place.z, placeSound || "dig.stone", 1, 0.8);
+			return place;
+		});
+	}
+
+    export function createBlockWithRotation(stringID: string, params: {name: string, texture: [string,  number][]}, blockType?: string | Block.SpecialType, hasVertical?: boolean): void {
+        let texture = params.texture;
+        let textures = [
+			[texture[3], texture[2], texture[0], texture[1], texture[4], texture[5]],
+			[texture[2], texture[3], texture[1], texture[0], texture[5], texture[4]],
+			[texture[0], texture[1], texture[3], texture[2], texture[5], texture[4]],
+			[texture[0], texture[1], texture[2], texture[3], texture[4], texture[5]],
+			[texture[0], texture[1], texture[4], texture[5], texture[3], texture[2]],
+			[texture[0], texture[1], texture[5], texture[4], texture[2], texture[3]]
+		]
+		let variations = [];
+		for (let i = 0; i < textures.length; i++) {
+			variations.push({name: params.name, texture: textures[i], inCreative: i == 3});
+		}
+		Block.createBlock(stringID, variations, blockType);
+        setRotationFunction(stringID, hasVertical);
+    }
+
     export function registerDrop(nameID: string | number, dropFunc: Block.DropFunction, level?: number): void {
         Block.registerDropFunction(nameID, function(blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
             if (!level || level <= diggingLevel) {

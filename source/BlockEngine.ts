@@ -5,6 +5,9 @@ LIBRARY({
 	api: "CoreEngine"
 });
 
+let EntityGetYaw = ModAPI.requireGlobal("Entity.getYaw");
+let EntityGetPitch = ModAPI.requireGlobal("Entity.getPitch");
+
 namespace BlockEngine {
 	const gameVersion = getMCPEVersion().array;
 

@@ -34,6 +34,8 @@ LIBRARY({
     shared: false,
     api: "CoreEngine"
 });
+var EntityGetYaw = ModAPI.requireGlobal("Entity.getYaw");
+var EntityGetPitch = ModAPI.requireGlobal("Entity.getPitch");
 var BlockEngine;
 (function (BlockEngine) {
     var gameVersion = getMCPEVersion().array;
@@ -790,6 +792,49 @@ var EntityCustomData;
 })(EntityCustomData || (EntityCustomData = {}));
 var BlockRegistry;
 (function (BlockRegistry) {
+    function getBlockRotation(player, hasVertical) {
+        var pitch = EntityGetPitch(player);
+        if (hasVertical) {
+            if (pitch < -45)
+                return 0;
+            if (pitch > 45)
+                return 1;
+        }
+        var rotation = Math.floor((EntityGetYaw(player) - 45) % 360 / 90);
+        if (rotation < 0)
+            rotation += 4;
+        rotation = [5, 3, 4, 2][rotation];
+        return rotation;
+    }
+    BlockRegistry.getBlockRotation = getBlockRotation;
+    function setRotationFunction(id, hasVertical, placeSound) {
+        Block.registerPlaceFunction(id, function (coords, item, block, player, region) {
+            var place = World.canTileBeReplaced(block.id, block.data) ? coords : coords.relative;
+            var rotation = getBlockRotation(player, hasVertical);
+            region.setBlock(place.x, place.y, place.z, item.id, rotation);
+            //World.playSound(place.x, place.y, place.z, placeSound || "dig.stone", 1, 0.8);
+            return place;
+        });
+    }
+    BlockRegistry.setRotationFunction = setRotationFunction;
+    function createBlockWithRotation(stringID, params, blockType, hasVertical) {
+        var texture = params.texture;
+        var textures = [
+            [texture[3], texture[2], texture[0], texture[1], texture[4], texture[5]],
+            [texture[2], texture[3], texture[1], texture[0], texture[5], texture[4]],
+            [texture[0], texture[1], texture[3], texture[2], texture[5], texture[4]],
+            [texture[0], texture[1], texture[2], texture[3], texture[4], texture[5]],
+            [texture[0], texture[1], texture[4], texture[5], texture[3], texture[2]],
+            [texture[0], texture[1], texture[5], texture[4], texture[2], texture[3]]
+        ];
+        var variations = [];
+        for (var i = 0; i < textures.length; i++) {
+            variations.push({ name: params.name, texture: textures[i], inCreative: i == 3 });
+        }
+        Block.createBlock(stringID, variations, blockType);
+        setRotationFunction(stringID, hasVertical);
+    }
+    BlockRegistry.createBlockWithRotation = createBlockWithRotation;
     function registerDrop(nameID, dropFunc, level) {
         Block.registerDropFunction(nameID, function (blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
             if (!level || level <= diggingLevel) {
