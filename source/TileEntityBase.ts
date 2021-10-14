@@ -104,7 +104,7 @@ implements TileEntity {
 		return "main";
 	}
 
-	getScreenByName(screenName: string) {
+	getScreenByName(screenName: string): UI.IWindow {
 		return null;
 	}
 

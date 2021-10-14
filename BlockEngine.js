@@ -30,7 +30,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 LIBRARY({
     name: "BlockEngine",
-    version: 5,
+    version: 6,
     shared: false,
     api: "CoreEngine"
 });
@@ -1201,7 +1201,7 @@ var ToolType;
         damage: 2,
         blockTypes: ["plant"],
         onItemUse: function (coords, item, block, player) {
-            if ((block.id == 2 || block.id == 3) && coords.side == 1) {
+            if ((block.id == 2 || block.id == 3) && coords.side != 0) {
                 var region = WorldRegion.getForActor(player);
                 region.setBlock(coords, 60, 0);
                 region.playSound(coords.x + .5, coords.y + 1, coords.z + .5, "step.gravel", 1, 0.8);

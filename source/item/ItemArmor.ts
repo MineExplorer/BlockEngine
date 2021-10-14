@@ -13,8 +13,6 @@ interface OnTakeOffListener {
 
 type ArmorMaterial = {durabilityFactor: number, enchantability?: number, repairMaterial?: number};
 
-type ArmorType = "helmet" | "chestplate" | "leggings" | "boots";
-
 type ArmorParams = {type: ArmorType, defence: number, texture: string, material?: string | ArmorMaterial};
 
 class ItemArmor extends ItemBase {

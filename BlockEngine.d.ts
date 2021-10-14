@@ -520,7 +520,6 @@ declare type ArmorMaterial = {
     enchantability?: number;
     repairMaterial?: number;
 };
-declare type ArmorType = "helmet" | "chestplate" | "leggings" | "boots";
 declare type ArmorParams = {
     type: ArmorType;
     defence: number;
@@ -725,7 +724,7 @@ declare abstract class TileEntityBase implements TileEntity {
     clientTick(): void;
     onCheckerTick(isInitialized: boolean, isLoaded: boolean, wasLoaded: boolean): void;
     getScreenName(player: number, coords: Callback.ItemUseCoordinates): string;
-    getScreenByName(screenName: string): any;
+    getScreenByName(screenName: string): UI.IWindow;
     /**
      * Called when player uses some item on a TileEntity. Replaces "click" function.
      * @returns true if should prevent opening UI.
