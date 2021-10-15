@@ -304,17 +304,32 @@ var WorldRegion = /** @class */ (function () {
     };
     WorldRegion.prototype.setBlock = function (x, y, z, id, data) {
         if (typeof x === "number") {
-            if (typeof id == "number") {
-                return this.blockSource.setBlock(x, y, z, id, data);
-            }
-            else {
-                return this.blockSource.setBlock(x, y, z, id);
-            }
+            this.blockSource.setBlock(x, y, z, id, data);
+        }
+        else {
+            var pos = x;
+            id = y;
+            data = z;
+            this.setBlock(pos.x, pos.y, pos.z, id, data);
+        }
+    };
+    WorldRegion.prototype.setExtraBlock = function (x, y, z, id, data) {
+        if (typeof x === "number") {
+            this.blockSource.setExtraBlock(x, y, z, id, data);
+        }
+        else {
+            var pos = x;
+            id = y;
+            data = z;
+            this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
+        }
+    };
+    WorldRegion.prototype.getExtraBlock = function (x, y, z) {
+        if (typeof x === "number") {
+            return this.blockSource.getExtraBlock(x, y, z);
         }
         var pos = x;
-        id = y;
-        data = z;
-        return this.setBlock(pos.x, pos.y, pos.z, id, data);
+        return this.blockSource.getExtraBlock(pos.x, pos.y, pos.z);
     };
     WorldRegion.prototype.destroyBlock = function (x, y, z, drop, player) {
         if (typeof x === "object") {
@@ -337,6 +352,27 @@ var WorldRegion = /** @class */ (function () {
         else {
             this.blockSource.destroyBlock(x, y, z, false);
         }
+    };
+    WorldRegion.prototype.breakBlock = function (x, y, z, allowDrop, entity, item) {
+        if (typeof x === "number") {
+            this.blockSource.breakBlock(x, y, z, allowDrop, entity, item);
+        }
+        else {
+            var pos = x;
+            item = allowDrop;
+            entity = z;
+            allowDrop = y;
+            this.breakBlock(pos.x, pos.y, pos.z, allowDrop, entity, item);
+        }
+    };
+    WorldRegion.prototype.breakBlockForJsResult = function (x, y, z, player, item) {
+        if (typeof x === "number") {
+            return this.blockSource.breakBlockForJsResult(x, y, z, player, item);
+        }
+        var pos = x;
+        player = y;
+        item = z;
+        return this.breakBlockForJsResult(pos.x, pos.y, pos.z);
     };
     WorldRegion.prototype.getNativeTileEntity = function (x, y, z) {
         if (typeof x === "number") {
@@ -475,7 +511,7 @@ var WorldRegion = /** @class */ (function () {
      * @param amount experience amount
      */
     WorldRegion.prototype.spawnExpOrbs = function (x, y, z, amount) {
-        return this.blockSource.spawnExpOrbs(x, y, z, amount);
+        this.blockSource.spawnExpOrbs(x, y, z, amount);
     };
     WorldRegion.prototype.listEntitiesInAABB = function (x1, y1, z1, x2, y2, z2, type, blacklist) {
         if (type === void 0) { type = -1; }
@@ -837,7 +873,7 @@ var BlockRegistry;
     BlockRegistry.createBlockWithRotation = createBlockWithRotation;
     function registerDrop(nameID, dropFunc, level) {
         Block.registerDropFunction(nameID, function (blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
-            if (!level || level <= diggingLevel) {
+            if (!level || diggingLevel >= level) {
                 return dropFunc(blockCoords, blockID, blockData, diggingLevel, enchant, item, region);
             }
             return [];

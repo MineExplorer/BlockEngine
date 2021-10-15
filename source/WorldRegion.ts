@@ -91,14 +91,40 @@ class WorldRegion {
 	setBlock(x: number, y: number, z: number, id: number, data: number): void;
 	setBlock(x: any, y: any, z?: any, id?: any, data?: any): void {
 		if (typeof x === "number") {
-			if (typeof id == "number") {
-				return this.blockSource.setBlock(x, y, z, id, data);
-			} else {
-				return this.blockSource.setBlock(x, y, z, id);
-			}
+			this.blockSource.setBlock(x, y, z, id, data);
+		} else {
+			let pos = x; id = y; data = z;
+			this.setBlock(pos.x, pos.y, pos.z, id, data);
 		}
-		let pos = x; id = y; data = z;
-		return this.setBlock(pos.x, pos.y, pos.z, id, data);
+	}
+
+	/**
+	 * Sets extra block (for example, water inside another blocks), on given coords by given id and data
+	 */
+	setExtraBlock(coords: Vector, state: BlockState): void;
+	setExtraBlock(coords: Vector, id: number, data: number): void;
+	setExtraBlock(x: number, y: number, z: number, id: number, data: number): void;
+	setExtraBlock(x: number, y: number, z: number, state: BlockState): void;
+	setExtraBlock(x: any, y: any, z?: any, id?: any, data?: any): void {
+		if (typeof x === "number") {
+			this.blockSource.setExtraBlock(x, y, z, id, data);
+		} else {
+			let pos = x; id = y; data = z;
+			this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
+		}
+	}
+
+	/**
+	 * @returns [[BlockState]] object of the extra block on given coords
+	 */
+	getExtraBlock(coords: Vector): BlockState;
+	getExtraBlock(x: number, y: number, z: number): BlockState;
+	getExtraBlock(x: any, y?: number, z?: number): BlockState {
+		if (typeof x === "number") {
+			return this.blockSource.getExtraBlock(x, y, z);
+		}
+		let pos = x;
+		return this.blockSource.getExtraBlock(pos.x, pos.y, pos.z);
 	}
 
 	/**
@@ -128,6 +154,46 @@ class WorldRegion {
 		} else {
 			this.blockSource.destroyBlock(x, y, z, false);
 		}
+	}
+
+	/**
+	 * Destroys block on coords by entity using specified item.
+	 * 1.16 only!
+	 * @param x X coord of the block
+	 * @param y Y coord of the block
+	 * @param z Z coord of the block
+	 * @param allowDrop whether to provide drop for the block or not
+	 * @param entity Entity id or -1 id if entity is not specified
+	 * @param item Tool which broke block
+	 */
+	breakBlock(coords: Vector, allowDrop: boolean, entity: number, item: ItemInstance): void;
+	breakBlock(x: number, y: number, z: number, allowDrop: boolean, entity: number, item: ItemInstance): void;
+	breakBlock(x: any, y: any, z: any, allowDrop: any, entity?: number, item?: ItemInstance): void {
+		if (typeof x === "number") {
+			this.blockSource.breakBlock(x, y, z, allowDrop, entity, item);
+		} else {
+			let pos = x; item = allowDrop; entity = z; allowDrop = y;
+			this.breakBlock(pos.x, pos.y, pos.z, allowDrop, entity, item);
+		}
+	}
+
+	/**
+	 * Same as breakBlock, but returns object containing drop and experince.
+	 * 1.16 only!
+	 * @param x X coord of the block
+	 * @param y Y coord of the block
+	 * @param z Z coord of the block
+	 * @param entity Entity id or -1 id if entity is not specified
+	 * @param item Tool which broke block
+	 */
+	breakBlockForJsResult(coords: Vector, player: number, item: ItemInstance): {items: ItemInstance[], experience: number};
+	breakBlockForJsResult(x: number, y: number, z: number, player: number, item: ItemInstance): {items: ItemInstance[], experience: number};
+	breakBlockForJsResult(x: any, y: any, z: any, player?: number, item?: ItemInstance): {items: ItemInstance[], experience: number} {
+		if (typeof x === "number") {
+			return this.blockSource.breakBlockForJsResult(x, y, z, player, item);
+		}
+		let pos = x; player = y; item = z;
+		return this.breakBlockForJsResult(pos.x, pos.y, pos.z);
 	}
 
 	/**
@@ -358,7 +424,7 @@ class WorldRegion {
 	 * @param amount experience amount
 	 */
 	spawnExpOrbs(x: number, y: number, z: number, amount: number): void {
-		return this.blockSource.spawnExpOrbs(x, y, z, amount);
+		this.blockSource.spawnExpOrbs(x, y, z, amount);
 	}
 
 	/**

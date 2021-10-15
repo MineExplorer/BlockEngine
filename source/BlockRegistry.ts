@@ -41,7 +41,7 @@ namespace BlockRegistry {
 
     export function registerDrop(nameID: string | number, dropFunc: Block.DropFunction, level?: number): void {
         Block.registerDropFunction(nameID, function(blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
-            if (!level || level <= diggingLevel) {
+            if (!level || diggingLevel >= level) {
                 return dropFunc(blockCoords, blockID, blockData, diggingLevel, enchant, item, region);
             }
             return [];
