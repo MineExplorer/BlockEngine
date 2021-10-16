@@ -94,12 +94,13 @@ class WorldRegion {
 			this.blockSource.setBlock(x, y, z, id, data);
 		} else {
 			let pos = x; id = y; data = z;
-			this.setBlock(pos.x, pos.y, pos.z, id, data);
+			this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
 		}
 	}
 
 	/**
-	 * Sets extra block (for example, water inside another blocks), on given coords by given id and data
+	 * Sets extra block (for example, water inside another blocks), on given coords by given id and data.
+	 * 1.16 only!
 	 */
 	setExtraBlock(coords: Vector, state: BlockState): void;
 	setExtraBlock(coords: Vector, id: number, data: number): void;
@@ -115,6 +116,7 @@ class WorldRegion {
 	}
 
 	/**
+	 * 1.16 only!
 	 * @returns [[BlockState]] object of the extra block on given coords
 	 */
 	getExtraBlock(coords: Vector): BlockState;
@@ -173,7 +175,7 @@ class WorldRegion {
 			this.blockSource.breakBlock(x, y, z, allowDrop, entity, item);
 		} else {
 			let pos = x; item = allowDrop; entity = z; allowDrop = y;
-			this.breakBlock(pos.x, pos.y, pos.z, allowDrop, entity, item);
+			this.blockSource.breakBlock(pos.x, pos.y, pos.z, allowDrop, entity, item);
 		}
 	}
 
@@ -193,7 +195,7 @@ class WorldRegion {
 			return this.blockSource.breakBlockForJsResult(x, y, z, player, item);
 		}
 		let pos = x; player = y; item = z;
-		return this.breakBlockForJsResult(pos.x, pos.y, pos.z);
+		return this.blockSource.breakBlockForJsResult(pos.x, pos.y, pos.z, player, item);
 	}
 
 	/**
@@ -206,7 +208,7 @@ class WorldRegion {
 			return this.blockSource.getBlockEntity(x, y, z);
 		}
 		let pos = x;
-		return this.getNativeTileEntity(pos.x, pos.y, pos.z);
+		return this.blockSource.getBlockEntity(pos.x, pos.y, pos.z);
 	}
 
 	/**

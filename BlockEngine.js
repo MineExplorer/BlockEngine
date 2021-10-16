@@ -310,7 +310,7 @@ var WorldRegion = /** @class */ (function () {
             var pos = x;
             id = y;
             data = z;
-            this.setBlock(pos.x, pos.y, pos.z, id, data);
+            this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
         }
     };
     WorldRegion.prototype.setExtraBlock = function (x, y, z, id, data) {
@@ -362,7 +362,7 @@ var WorldRegion = /** @class */ (function () {
             item = allowDrop;
             entity = z;
             allowDrop = y;
-            this.breakBlock(pos.x, pos.y, pos.z, allowDrop, entity, item);
+            this.blockSource.breakBlock(pos.x, pos.y, pos.z, allowDrop, entity, item);
         }
     };
     WorldRegion.prototype.breakBlockForJsResult = function (x, y, z, player, item) {
@@ -372,14 +372,14 @@ var WorldRegion = /** @class */ (function () {
         var pos = x;
         player = y;
         item = z;
-        return this.breakBlockForJsResult(pos.x, pos.y, pos.z);
+        return this.blockSource.breakBlockForJsResult(pos.x, pos.y, pos.z, player, item);
     };
     WorldRegion.prototype.getNativeTileEntity = function (x, y, z) {
         if (typeof x === "number") {
             return this.blockSource.getBlockEntity(x, y, z);
         }
         var pos = x;
-        return this.getNativeTileEntity(pos.x, pos.y, pos.z);
+        return this.blockSource.getBlockEntity(pos.x, pos.y, pos.z);
     };
     WorldRegion.prototype.getTileEntity = function (x, y, z) {
         if (typeof x === "number") {

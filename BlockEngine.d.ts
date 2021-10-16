@@ -101,13 +101,15 @@ declare class WorldRegion {
     setBlock(x: number, y: number, z: number, state: BlockState): void;
     setBlock(x: number, y: number, z: number, id: number, data: number): void;
     /**
-     * Sets extra block (for example, water inside another blocks), on given coords by given id and data
+     * Sets extra block (for example, water inside another blocks), on given coords by given id and data.
+     * 1.16 only!
      */
     setExtraBlock(coords: Vector, state: BlockState): void;
     setExtraBlock(coords: Vector, id: number, data: number): void;
     setExtraBlock(x: number, y: number, z: number, id: number, data: number): void;
     setExtraBlock(x: number, y: number, z: number, state: BlockState): void;
     /**
+     * 1.16 only!
      * @returns [[BlockState]] object of the extra block on given coords
      */
     getExtraBlock(coords: Vector): BlockState;
