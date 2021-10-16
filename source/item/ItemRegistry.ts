@@ -24,12 +24,16 @@ namespace ItemRegistry {
 	let itemsRarity = {};
 	let armorMaterials = {};
 
-	export function isBlock(id: number) {
+	export function isBlock(id: number): boolean {
 		return IDRegistry.getIdInfo(id).startsWith("block");
 	}
 
-	export function isItem(id: number) {
+	export function isItem(id: number): boolean {
 		return IDRegistry.getIdInfo(id).startsWith("item");
+	}
+
+	export function getVanillaStringID(id: number): string {
+		return IDRegistry.getIdInfo(id).split(":")[1].split("#")[0];
 	}
 
 	export function getInstanceOf(itemID: string | number): Nullable<ItemBase> {

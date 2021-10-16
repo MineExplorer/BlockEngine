@@ -440,7 +440,7 @@ class WorldRegion {
 			return this.listEntitiesInAABB(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, z1, x2);
 		}
 		let entities = this.blockSource.listEntitiesInAABB(x1, y1, z1, x2, y2, z2, type, blacklist);
-		if ((type == 1 || type == 63) != blacklist) {
+		if (BlockEngine.getMainGameVersion() == 11 && (type == Native.EntityType.PLAYER) != blacklist) {
 			let players = Network.getConnectedPlayers();
 			let dimension = this.getDimension();
 			for (let ent of players) {

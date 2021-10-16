@@ -622,6 +622,7 @@ declare enum EnumRarity {
 declare namespace ItemRegistry {
     export function isBlock(id: number): boolean;
     export function isItem(id: number): boolean;
+    export function getVanillaStringID(id: number): string;
     export function getInstanceOf(itemID: string | number): Nullable<ItemBase>;
     /**
      * @returns EnumRarity value for item

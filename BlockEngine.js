@@ -521,7 +521,7 @@ var WorldRegion = /** @class */ (function () {
             return this.listEntitiesInAABB(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, z1, x2);
         }
         var entities = this.blockSource.listEntitiesInAABB(x1, y1, z1, x2, y2, z2, type, blacklist);
-        if ((type == 1 || type == 63) != blacklist) {
+        if (BlockEngine.getMainGameVersion() == 11 && (type == Native.EntityType.PLAYER) != blacklist) {
             var players = Network.getConnectedPlayers();
             var dimension = this.getDimension();
             for (var _i = 0, players_1 = players; _i < players_1.length; _i++) {
@@ -1343,6 +1343,10 @@ var ItemRegistry;
         return IDRegistry.getIdInfo(id).startsWith("item");
     }
     ItemRegistry.isItem = isItem;
+    function getVanillaStringID(id) {
+        return IDRegistry.getIdInfo(id).split(":")[1].split("#")[0];
+    }
+    ItemRegistry.getVanillaStringID = getVanillaStringID;
     function getInstanceOf(itemID) {
         var numericID = Item.getNumericId(itemID);
         return items[numericID] || null;
