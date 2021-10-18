@@ -11,9 +11,10 @@ EXPORT("ItemArmor", ItemArmor);
 EXPORT("ItemTool", ItemTool);
 EXPORT("ToolType", ToolType);
 // enums
+EXPORT("Side", Side);
 EXPORT("ItemCategory", ItemCategory);
 EXPORT("EnumRarity", EnumRarity);
-EXPORT("Side", Side);
+EXPORT("MiningLevel", MiningLevel);
 // APIs
 EXPORT("BlockRegistry", BlockRegistry);
 EXPORT("ItemRegistry", ItemRegistry);

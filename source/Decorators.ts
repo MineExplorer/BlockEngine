@@ -1,8 +1,3 @@
-enum Side {
-	Client,
-	Server
-}
-
 namespace BlockEngine {
 	export namespace Decorators {
 		function createField(target: object, field: string) {

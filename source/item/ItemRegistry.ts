@@ -5,20 +5,6 @@
 /// <reference path="ItemArmor.ts" />
 /// <reference path="ItemTool.ts" />
 
-enum ItemCategory {
-	BUILDING = 1,
-	NATURE = 2,
-	EQUIPMENT = 3,
-	ITEMS = 4
-}
-
-enum EnumRarity {
-	COMMON,
-	UNCOMMON,
-	RARE,
-	EPIC
-}
-
 namespace ItemRegistry {
 	let items = {};
 	let itemsRarity = {};

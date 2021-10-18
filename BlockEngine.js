@@ -60,11 +60,6 @@ Network.addClientPacket("blockengine.clientMessage", function (data) {
     var message = data.texts.map(Translation.translate).join("");
     Game.message(message);
 });
-var Side;
-(function (Side) {
-    Side[Side["Client"] = 0] = "Client";
-    Side[Side["Server"] = 1] = "Server";
-})(Side || (Side = {}));
 var BlockEngine;
 (function (BlockEngine) {
     var Decorators;
@@ -109,6 +104,32 @@ var BlockEngine;
         Decorators.ContainerEvent = ContainerEvent;
     })(Decorators = BlockEngine.Decorators || (BlockEngine.Decorators = {}));
 })(BlockEngine || (BlockEngine = {}));
+var Side;
+(function (Side) {
+    Side[Side["Client"] = 0] = "Client";
+    Side[Side["Server"] = 1] = "Server";
+})(Side || (Side = {}));
+var ItemCategory;
+(function (ItemCategory) {
+    ItemCategory[ItemCategory["BUILDING"] = 1] = "BUILDING";
+    ItemCategory[ItemCategory["NATURE"] = 2] = "NATURE";
+    ItemCategory[ItemCategory["EQUIPMENT"] = 3] = "EQUIPMENT";
+    ItemCategory[ItemCategory["ITEMS"] = 4] = "ITEMS";
+})(ItemCategory || (ItemCategory = {}));
+var EnumRarity;
+(function (EnumRarity) {
+    EnumRarity[EnumRarity["COMMON"] = 0] = "COMMON";
+    EnumRarity[EnumRarity["UNCOMMON"] = 1] = "UNCOMMON";
+    EnumRarity[EnumRarity["RARE"] = 2] = "RARE";
+    EnumRarity[EnumRarity["EPIC"] = 3] = "EPIC";
+})(EnumRarity || (EnumRarity = {}));
+var MiningLevel;
+(function (MiningLevel) {
+    MiningLevel[MiningLevel["STONE"] = 1] = "STONE";
+    MiningLevel[MiningLevel["IRON"] = 2] = "IRON";
+    MiningLevel[MiningLevel["DIAMOND"] = 3] = "DIAMOND";
+    MiningLevel[MiningLevel["OBSIDIAN"] = 4] = "OBSIDIAN";
+})(MiningLevel || (MiningLevel = {}));
 var Vector3 = /** @class */ (function () {
     function Vector3(vx, vy, vz) {
         if (typeof (vx) == "number") {
@@ -871,6 +892,12 @@ var BlockRegistry;
         setRotationFunction(stringID, hasVertical);
     }
     BlockRegistry.createBlockWithRotation = createBlockWithRotation;
+    function createStairs(nameID) {
+        /*Block.createBlock(nameID, {
+
+        })*/
+    }
+    BlockRegistry.createStairs = createStairs;
     function registerDrop(nameID, dropFunc, level) {
         Block.registerDropFunction(nameID, function (blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
             if (!level || diggingLevel >= level) {
@@ -1316,20 +1343,6 @@ var ItemTool = /** @class */ (function (_super) {
 /// <reference path="ItemThrowable.ts" />
 /// <reference path="ItemArmor.ts" />
 /// <reference path="ItemTool.ts" />
-var ItemCategory;
-(function (ItemCategory) {
-    ItemCategory[ItemCategory["BUILDING"] = 1] = "BUILDING";
-    ItemCategory[ItemCategory["NATURE"] = 2] = "NATURE";
-    ItemCategory[ItemCategory["EQUIPMENT"] = 3] = "EQUIPMENT";
-    ItemCategory[ItemCategory["ITEMS"] = 4] = "ITEMS";
-})(ItemCategory || (ItemCategory = {}));
-var EnumRarity;
-(function (EnumRarity) {
-    EnumRarity[EnumRarity["COMMON"] = 0] = "COMMON";
-    EnumRarity[EnumRarity["UNCOMMON"] = 1] = "UNCOMMON";
-    EnumRarity[EnumRarity["RARE"] = 2] = "RARE";
-    EnumRarity[EnumRarity["EPIC"] = 3] = "EPIC";
-})(EnumRarity || (EnumRarity = {}));
 var ItemRegistry;
 (function (ItemRegistry) {
     var items = {};
@@ -1963,9 +1976,10 @@ EXPORT("ItemArmor", ItemArmor);
 EXPORT("ItemTool", ItemTool);
 EXPORT("ToolType", ToolType);
 // enums
+EXPORT("Side", Side);
 EXPORT("ItemCategory", ItemCategory);
 EXPORT("EnumRarity", EnumRarity);
-EXPORT("Side", Side);
+EXPORT("MiningLevel", MiningLevel);
 // APIs
 EXPORT("BlockRegistry", BlockRegistry);
 EXPORT("ItemRegistry", ItemRegistry);
