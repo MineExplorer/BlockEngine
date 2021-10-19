@@ -5,7 +5,34 @@ namespace BlockRegistry {
 		return numericID;
 	}
 
-    export function getBlockRotation(player: number, hasVertical?: boolean): number {
+    export function createBlockWithRotation(stringID: string, params: Block.BlockVariation, blockType?: string | Block.SpecialType, hasVertical?: boolean): void {
+        let texture = params.texture;
+        let textures = [
+			[texture[3], texture[2], texture[0], texture[1], texture[4], texture[5]],
+			[texture[2], texture[3], texture[1], texture[0], texture[5], texture[4]],
+			[texture[0], texture[1], texture[3], texture[2], texture[5], texture[4]],
+			[texture[0], texture[1], texture[2], texture[3], texture[4], texture[5]],
+			[texture[0], texture[1], texture[4], texture[5], texture[3], texture[2]],
+			[texture[0], texture[1], texture[5], texture[4], texture[2], texture[3]]
+		]
+		let variations = [];
+		for (let i = 0; i < textures.length; i++) {
+			variations.push({name: params.name, texture: textures[i], inCreative: params.inCreative && i == 0});
+		}
+		let numericID = createBlock(stringID, variations, blockType);
+		setInventoryModel(numericID, texture);
+        setRotationFunction(numericID, hasVertical);
+    }
+
+	export function setInventoryModel(blockID: number, texture: [string, number][]) {
+		let render = new ICRender.Model();
+		let model = BlockRenderer.createTexturedBlock(texture);
+		render.addEntry(model);
+		ItemModel.getFor(blockID, 0).setHandModel(model);
+		ItemModel.getFor(blockID, 0).setUiModel(model);
+	}
+
+	export function getBlockRotation(player: number, hasVertical?: boolean): number {
 		let pitch = EntityGetPitch(player);
 		if (hasVertical) {
 			if (pitch < -45) return 0;
@@ -27,29 +54,6 @@ namespace BlockRegistry {
 		});
 	}
 
-    export function createBlockWithRotation(stringID: string, params: Block.BlockVariation, blockType?: string | Block.SpecialType, hasVertical?: boolean): void {
-        let texture = params.texture;
-        let textures = [
-			[texture[3], texture[2], texture[0], texture[1], texture[4], texture[5]],
-			[texture[2], texture[3], texture[1], texture[0], texture[5], texture[4]],
-			[texture[0], texture[1], texture[3], texture[2], texture[5], texture[4]],
-			[texture[0], texture[1], texture[2], texture[3], texture[4], texture[5]],
-			[texture[0], texture[1], texture[4], texture[5], texture[3], texture[2]],
-			[texture[0], texture[1], texture[5], texture[4], texture[2], texture[3]]
-		]
-		let variations = [];
-		for (let i = 0; i < textures.length; i++) {
-			variations.push({name: params.name, texture: textures[i], inCreative: params.inCreative && i == 0});
-		}
-		let numericID = createBlock(stringID, variations, blockType);
-		let render = new ICRender.Model();
-		let model = BlockRenderer.createTexturedBlock(texture);
-		render.addEntry(model);
-		ItemModel.getFor(numericID, 0).setHandModel(model);
-		ItemModel.getFor(numericID, 0).setUiModel(model);
-        setRotationFunction(numericID, hasVertical);
-    }
-
     export function registerDrop(nameID: string | number, dropFunc: Block.DropFunction, level?: number): void {
         Block.registerDropFunction(nameID, function(blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
             if (!level || diggingLevel >= level) {
@@ -68,6 +72,10 @@ namespace BlockRegistry {
         });
         addBlockDropOnExplosion(nameID);
     }
+
+	export function registerOnExplosionFunction(nameID: string | number, func: Block.PopResourcesFunction) {
+		Block.registerPopResourcesFunction(nameID, func);
+	}
 
     export function addBlockDropOnExplosion(nameID: string | number) {
 		Block.registerPopResourcesFunction(nameID, function(coords, block, region) {

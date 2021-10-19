@@ -451,11 +451,13 @@ declare namespace EntityCustomData {
 }
 declare namespace BlockRegistry {
     function createBlock(nameID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): number;
+    function createBlockWithRotation(stringID: string, params: Block.BlockVariation, blockType?: string | Block.SpecialType, hasVertical?: boolean): void;
+    function setInventoryModel(blockID: number, texture: [string, number][]): void;
     function getBlockRotation(player: number, hasVertical?: boolean): number;
     function setRotationFunction(id: string | number, hasVertical?: boolean, placeSound?: string): void;
-    function createBlockWithRotation(stringID: string, params: Block.BlockVariation, blockType?: string | Block.SpecialType, hasVertical?: boolean): void;
     function registerDrop(nameID: string | number, dropFunc: Block.DropFunction, level?: number): void;
     function setDestroyLevel(nameID: string | number, level: number): void;
+    function registerOnExplosionFunction(nameID: string | number, func: Block.PopResourcesFunction): void;
     function addBlockDropOnExplosion(nameID: string | number): void;
 }
 declare class ItemStack implements ItemInstance {
@@ -626,8 +628,10 @@ declare class ItemTool extends ItemCommon implements ToolParams {
     constructor(stringID: string, name: string, icon: string | Item.TextureData, toolMaterial: string | ToolMaterial, toolData?: ToolParams, inCreative?: boolean);
 }
 declare namespace ItemRegistry {
+    export function getType(id: number): string;
     export function isBlock(id: number): boolean;
     export function isItem(id: number): boolean;
+    export function isVanilla(id: number): boolean;
     export function getVanillaStringID(id: number): string;
     export function getInstanceOf(itemID: string | number): Nullable<ItemBase>;
     /**

@@ -875,6 +875,33 @@ var BlockRegistry;
         return numericID;
     }
     BlockRegistry.createBlock = createBlock;
+    function createBlockWithRotation(stringID, params, blockType, hasVertical) {
+        var texture = params.texture;
+        var textures = [
+            [texture[3], texture[2], texture[0], texture[1], texture[4], texture[5]],
+            [texture[2], texture[3], texture[1], texture[0], texture[5], texture[4]],
+            [texture[0], texture[1], texture[3], texture[2], texture[5], texture[4]],
+            [texture[0], texture[1], texture[2], texture[3], texture[4], texture[5]],
+            [texture[0], texture[1], texture[4], texture[5], texture[3], texture[2]],
+            [texture[0], texture[1], texture[5], texture[4], texture[2], texture[3]]
+        ];
+        var variations = [];
+        for (var i = 0; i < textures.length; i++) {
+            variations.push({ name: params.name, texture: textures[i], inCreative: params.inCreative && i == 0 });
+        }
+        var numericID = createBlock(stringID, variations, blockType);
+        setInventoryModel(numericID, texture);
+        setRotationFunction(numericID, hasVertical);
+    }
+    BlockRegistry.createBlockWithRotation = createBlockWithRotation;
+    function setInventoryModel(blockID, texture) {
+        var render = new ICRender.Model();
+        var model = BlockRenderer.createTexturedBlock(texture);
+        render.addEntry(model);
+        ItemModel.getFor(blockID, 0).setHandModel(model);
+        ItemModel.getFor(blockID, 0).setUiModel(model);
+    }
+    BlockRegistry.setInventoryModel = setInventoryModel;
     function getBlockRotation(player, hasVertical) {
         var pitch = EntityGetPitch(player);
         if (hasVertical) {
@@ -900,29 +927,6 @@ var BlockRegistry;
         });
     }
     BlockRegistry.setRotationFunction = setRotationFunction;
-    function createBlockWithRotation(stringID, params, blockType, hasVertical) {
-        var texture = params.texture;
-        var textures = [
-            [texture[3], texture[2], texture[0], texture[1], texture[4], texture[5]],
-            [texture[2], texture[3], texture[1], texture[0], texture[5], texture[4]],
-            [texture[0], texture[1], texture[3], texture[2], texture[5], texture[4]],
-            [texture[0], texture[1], texture[2], texture[3], texture[4], texture[5]],
-            [texture[0], texture[1], texture[4], texture[5], texture[3], texture[2]],
-            [texture[0], texture[1], texture[5], texture[4], texture[2], texture[3]]
-        ];
-        var variations = [];
-        for (var i = 0; i < textures.length; i++) {
-            variations.push({ name: params.name, texture: textures[i], inCreative: params.inCreative && i == 0 });
-        }
-        var numericID = createBlock(stringID, variations, blockType);
-        var render = new ICRender.Model();
-        var model = BlockRenderer.createTexturedBlock(texture);
-        render.addEntry(model);
-        ItemModel.getFor(numericID, 0).setHandModel(model);
-        ItemModel.getFor(numericID, 0).setUiModel(model);
-        setRotationFunction(numericID, hasVertical);
-    }
-    BlockRegistry.createBlockWithRotation = createBlockWithRotation;
     function registerDrop(nameID, dropFunc, level) {
         Block.registerDropFunction(nameID, function (blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
             if (!level || diggingLevel >= level) {
@@ -942,6 +946,10 @@ var BlockRegistry;
         addBlockDropOnExplosion(nameID);
     }
     BlockRegistry.setDestroyLevel = setDestroyLevel;
+    function registerOnExplosionFunction(nameID, func) {
+        Block.registerPopResourcesFunction(nameID, func);
+    }
+    BlockRegistry.registerOnExplosionFunction = registerOnExplosionFunction;
     function addBlockDropOnExplosion(nameID) {
         Block.registerPopResourcesFunction(nameID, function (coords, block, region) {
             if (Math.random() >= 0.25)
@@ -1373,14 +1381,22 @@ var ItemRegistry;
     var items = {};
     var itemsRarity = {};
     var armorMaterials = {};
+    function getType(id) {
+        return IDRegistry.getIdInfo(id).split(":")[0];
+    }
+    ItemRegistry.getType = getType;
     function isBlock(id) {
-        return IDRegistry.getIdInfo(id).startsWith("block");
+        return getType(id) == "block";
     }
     ItemRegistry.isBlock = isBlock;
     function isItem(id) {
-        return IDRegistry.getIdInfo(id).startsWith("item");
+        return getType(id) == "item";
     }
     ItemRegistry.isItem = isItem;
+    function isVanilla(id) {
+        return !IDRegistry.getNameByID(id);
+    }
+    ItemRegistry.isVanilla = isVanilla;
     function getVanillaStringID(id) {
         return IDRegistry.getIdInfo(id).split(":")[1].split("#")[0];
     }

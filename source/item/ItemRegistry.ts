@@ -10,12 +10,20 @@ namespace ItemRegistry {
 	let itemsRarity = {};
 	let armorMaterials = {};
 
+	export function getType(id: number): string {
+		return IDRegistry.getIdInfo(id).split(":")[0];
+	}
+
 	export function isBlock(id: number): boolean {
-		return IDRegistry.getIdInfo(id).startsWith("block");
+		return getType(id) == "block";
 	}
 
 	export function isItem(id: number): boolean {
-		return IDRegistry.getIdInfo(id).startsWith("item");
+		return getType(id) == "item";
+	}
+
+	export function isVanilla(id: number): boolean {
+		return !IDRegistry.getNameByID(id);
 	}
 
 	export function getVanillaStringID(id: number): string {
