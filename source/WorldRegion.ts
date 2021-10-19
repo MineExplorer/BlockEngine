@@ -91,10 +91,18 @@ class WorldRegion {
 	setBlock(x: number, y: number, z: number, id: number, data: number): void;
 	setBlock(x: any, y: any, z?: any, id?: any, data?: any): void {
 		if (typeof x === "number") {
-			this.blockSource.setBlock(x, y, z, id, data);
+			if (typeof id == "number") {
+				this.blockSource.setBlock(x, y, z, id, data);
+			} else {
+				this.blockSource.setBlock(x, y, z, id);
+			}
 		} else {
 			let pos = x; id = y; data = z;
-			this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
+			if (typeof id == "number") {
+				this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
+			} else {
+				this.blockSource.setBlock(pos.x, pos.y, pos.z, id);
+			}
 		}
 	}
 
@@ -108,10 +116,18 @@ class WorldRegion {
 	setExtraBlock(x: number, y: number, z: number, state: BlockState): void;
 	setExtraBlock(x: any, y: any, z?: any, id?: any, data?: any): void {
 		if (typeof x === "number") {
-			this.blockSource.setExtraBlock(x, y, z, id, data);
+			if (typeof id == "number") {
+				this.blockSource.setExtraBlock(x, y, z, id, data);
+			} else {
+				this.blockSource.setExtraBlock(x, y, z, id);
+			}
 		} else {
 			let pos = x; id = y; data = z;
-			this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
+			if (typeof id == "number") {
+				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
+			} else {
+				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id);
+			}
 		}
 	}
 

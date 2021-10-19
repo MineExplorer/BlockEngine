@@ -450,13 +450,10 @@ declare namespace EntityCustomData {
     function putField(entity: number, key: string, value: any): void;
 }
 declare namespace BlockRegistry {
-    function getBlockRotation(player: any, hasVertical: any): number;
+    function createBlock(nameID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): number;
+    function getBlockRotation(player: number, hasVertical?: boolean): number;
     function setRotationFunction(id: string | number, hasVertical?: boolean, placeSound?: string): void;
-    function createBlockWithRotation(stringID: string, params: {
-        name: string;
-        texture: [string, number][];
-    }, blockType?: string | Block.SpecialType, hasVertical?: boolean): void;
-    function createStairs(nameID: string): void;
+    function createBlockWithRotation(stringID: string, params: Block.BlockVariation, blockType?: string | Block.SpecialType, hasVertical?: boolean): void;
     function registerDrop(nameID: string | number, dropFunc: Block.DropFunction, level?: number): void;
     function setDestroyLevel(nameID: string | number, level: number): void;
     function addBlockDropOnExplosion(nameID: string | number): void;

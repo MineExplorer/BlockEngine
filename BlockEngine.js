@@ -325,24 +325,44 @@ var WorldRegion = /** @class */ (function () {
     };
     WorldRegion.prototype.setBlock = function (x, y, z, id, data) {
         if (typeof x === "number") {
-            this.blockSource.setBlock(x, y, z, id, data);
+            if (typeof id == "number") {
+                this.blockSource.setBlock(x, y, z, id, data);
+            }
+            else {
+                this.blockSource.setBlock(x, y, z, id);
+            }
         }
         else {
             var pos = x;
             id = y;
             data = z;
-            this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
+            if (typeof id == "number") {
+                this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
+            }
+            else {
+                this.blockSource.setBlock(pos.x, pos.y, pos.z, id);
+            }
         }
     };
     WorldRegion.prototype.setExtraBlock = function (x, y, z, id, data) {
         if (typeof x === "number") {
-            this.blockSource.setExtraBlock(x, y, z, id, data);
+            if (typeof id == "number") {
+                this.blockSource.setExtraBlock(x, y, z, id, data);
+            }
+            else {
+                this.blockSource.setExtraBlock(x, y, z, id);
+            }
         }
         else {
             var pos = x;
             id = y;
             data = z;
-            this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
+            if (typeof id == "number") {
+                this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
+            }
+            else {
+                this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id);
+            }
         }
     };
     WorldRegion.prototype.getExtraBlock = function (x, y, z) {
@@ -849,6 +869,12 @@ var EntityCustomData;
 })(EntityCustomData || (EntityCustomData = {}));
 var BlockRegistry;
 (function (BlockRegistry) {
+    function createBlock(nameID, defineData, blockType) {
+        var numericID = IDRegistry.genBlockID(nameID);
+        Block.createBlock(nameID, defineData, blockType);
+        return numericID;
+    }
+    BlockRegistry.createBlock = createBlock;
     function getBlockRotation(player, hasVertical) {
         var pitch = EntityGetPitch(player);
         if (hasVertical) {
@@ -886,18 +912,17 @@ var BlockRegistry;
         ];
         var variations = [];
         for (var i = 0; i < textures.length; i++) {
-            variations.push({ name: params.name, texture: textures[i], inCreative: i == 3 });
+            variations.push({ name: params.name, texture: textures[i], inCreative: params.inCreative && i == 0 });
         }
-        Block.createBlock(stringID, variations, blockType);
-        setRotationFunction(stringID, hasVertical);
+        var numericID = createBlock(stringID, variations, blockType);
+        var render = new ICRender.Model();
+        var model = BlockRenderer.createTexturedBlock(texture);
+        render.addEntry(model);
+        ItemModel.getFor(numericID, 0).setHandModel(model);
+        ItemModel.getFor(numericID, 0).setUiModel(model);
+        setRotationFunction(numericID, hasVertical);
     }
     BlockRegistry.createBlockWithRotation = createBlockWithRotation;
-    function createStairs(nameID) {
-        /*Block.createBlock(nameID, {
-
-        })*/
-    }
-    BlockRegistry.createStairs = createStairs;
     function registerDrop(nameID, dropFunc, level) {
         Block.registerDropFunction(nameID, function (blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
             if (!level || diggingLevel >= level) {
@@ -909,7 +934,7 @@ var BlockRegistry;
     }
     BlockRegistry.registerDrop = registerDrop;
     function setDestroyLevel(nameID, level) {
-        Block.registerDropFunction(nameID, function (blockCoords, blockID, blockData, diggingLevel) {
+        Block.registerDropFunction(nameID, function (сoords, blockID, blockData, diggingLevel) {
             if (diggingLevel >= level) {
                 return [[Block.getNumericId(nameID), 1, 0]];
             }
