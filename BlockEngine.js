@@ -406,7 +406,7 @@ var WorldRegion = /** @class */ (function () {
             this.blockSource.breakBlock(pos.x, pos.y, pos.z, allowDrop, entity, item);
         }
     };
-    WorldRegion.prototype.breakBlockForJsResult = function (x, y, z, player, item) {
+    WorldRegion.prototype.breakBlockForResult = function (x, y, z, player, item) {
         if (typeof x === "number") {
             return this.blockSource.breakBlockForJsResult(x, y, z, player, item);
         }

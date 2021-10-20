@@ -160,11 +160,11 @@ declare class WorldRegion {
      * @param entity Entity id or -1 id if entity is not specified
      * @param item Tool which broke block
      */
-    breakBlockForJsResult(coords: Vector, player: number, item: ItemInstance): {
+    breakBlockForResult(coords: Vector, player: number, item: ItemInstance): {
         items: ItemInstance[];
         experience: number;
     };
-    breakBlockForJsResult(x: number, y: number, z: number, player: number, item: ItemInstance): {
+    breakBlockForResult(x: number, y: number, z: number, player: number, item: ItemInstance): {
         items: ItemInstance[];
         experience: number;
     };
