@@ -471,9 +471,60 @@ declare class ItemStack implements ItemInstance {
     getItemInstance(): Nullable<ItemBase>;
     getMaxStack(): number;
     getMaxDamage(): number;
+    /**
+     * Decreases stack count by specified value.
+     * @param count amount to decrease
+     */
     decrease(count: number): void;
+    /**
+     * Sets all stack values to 0.
+     */
     clear(): void;
+    /**
+     * Applies damage to the item and destroys it if its max damage reached
+     * @param damage amount to apply
+     */
     applyDamage(damage: number): void;
+    /**
+     * @returns item's custom name
+     */
+    getCustomName(): string;
+    /**
+    * Sets item's custom name. Creates new ItemExtraData instance if
+    * it doesn't exist.
+    */
+    setCustomName(name: string): void;
+    /**
+     * @returns true if the item is enchanted, false otherwise
+     */
+    isEnchanted(): boolean;
+    /**
+     * Adds a new enchantment to the item. Creates new ItemExtraData instance if
+     * it doesn't exist.
+     * @param id enchantment id, one of the Native.Enchantment constants
+     * @param level enchantment level, generally between 1 and 5
+     */
+    addEnchant(id: number, level: number): void;
+    /**
+     * Removes enchantments by its id
+     * @param id enchantment id, one of the Native.Enchantment constants
+     */
+    removeEnchant(id: number): void;
+    /**
+     * Removes all the enchantments of the item
+     */
+    removeAllEnchants(): void;
+    /**
+     * @param id enchantment id, one of the Native.Enchantment constants
+     * @returns level of the specified enchantment
+     */
+    getEnchantLevel(id: number): number;
+    /**
+     * @returns all the enchantments of the item in the readable format
+     */
+    getEnchants(): {
+        [key: number]: number;
+    };
 }
 interface ItemBehavior {
     onNameOverride?(item: ItemInstance, translation: string, name: string): string;

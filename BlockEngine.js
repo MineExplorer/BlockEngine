@@ -990,18 +990,29 @@ var ItemStack = /** @class */ (function () {
     ItemStack.prototype.getMaxDamage = function () {
         return Item.getMaxDamage(this.id);
     };
+    /**
+     * Decreases stack count by specified value.
+     * @param count amount to decrease
+     */
     ItemStack.prototype.decrease = function (count) {
         this.count -= count;
         if (this.count <= 0)
             this.clear();
     };
+    /**
+     * Sets all stack values to 0.
+     */
     ItemStack.prototype.clear = function () {
         this.id = this.data = this.count = 0;
         this.extra = null;
     };
+    /**
+     * Applies damage to the item and destroys it if its max damage reached
+     * @param damage amount to apply
+     */
     ItemStack.prototype.applyDamage = function (damage) {
-        var enchant = ToolAPI.getEnchantExtraData(this.extra);
-        if (Math.random() < 1 / (enchant.unbreaking + 1)) {
+        var unbreakingLevel = this.getEnchantLevel(Native.Enchantment.UNBREAKING);
+        if (Math.random() < 1 / (unbreakingLevel + 1)) {
             this.data += damage;
         }
         if (this.data >= this.getMaxDamage()) {
@@ -1015,6 +1026,70 @@ var ItemStack = /** @class */ (function () {
                 this.clear();
             }
         }
+    };
+    /**
+     * @returns item's custom name
+     */
+    ItemStack.prototype.getCustomName = function () {
+        var _a;
+        return ((_a = this.extra) === null || _a === void 0 ? void 0 : _a.getCustomName()) || "";
+    };
+    /**
+    * Sets item's custom name. Creates new ItemExtraData instance if
+    * it doesn't exist.
+    */
+    ItemStack.prototype.setCustomName = function (name) {
+        var _a;
+        (_a = this.extra) !== null && _a !== void 0 ? _a : (this.extra = new ItemExtraData());
+        this.extra.setCustomName(name);
+    };
+    /**
+     * @returns true if the item is enchanted, false otherwise
+     */
+    ItemStack.prototype.isEnchanted = function () {
+        var _a;
+        return ((_a = this.extra) === null || _a === void 0 ? void 0 : _a.isEnchanted()) || false;
+    };
+    /**
+     * Adds a new enchantment to the item. Creates new ItemExtraData instance if
+     * it doesn't exist.
+     * @param id enchantment id, one of the Native.Enchantment constants
+     * @param level enchantment level, generally between 1 and 5
+     */
+    ItemStack.prototype.addEnchant = function (id, level) {
+        var _a;
+        (_a = this.extra) !== null && _a !== void 0 ? _a : (this.extra = new ItemExtraData());
+        this.extra.addEnchant(id, level);
+    };
+    /**
+     * Removes enchantments by its id
+     * @param id enchantment id, one of the Native.Enchantment constants
+     */
+    ItemStack.prototype.removeEnchant = function (id) {
+        var _a;
+        (_a = this.extra) === null || _a === void 0 ? void 0 : _a.removeEnchant(id);
+    };
+    /**
+     * Removes all the enchantments of the item
+     */
+    ItemStack.prototype.removeAllEnchants = function () {
+        var _a;
+        (_a = this.extra) === null || _a === void 0 ? void 0 : _a.removeAllEnchants();
+    };
+    /**
+     * @param id enchantment id, one of the Native.Enchantment constants
+     * @returns level of the specified enchantment
+     */
+    ItemStack.prototype.getEnchantLevel = function (id) {
+        var _a;
+        return ((_a = this.extra) === null || _a === void 0 ? void 0 : _a.getEnchantLevel(id)) || 0;
+    };
+    /**
+     * @returns all the enchantments of the item in the readable format
+     */
+    ItemStack.prototype.getEnchants = function () {
+        var _a;
+        return ((_a = this.extra) === null || _a === void 0 ? void 0 : _a.getEnchants()) || null;
     };
     return ItemStack;
 }());
