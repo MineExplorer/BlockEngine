@@ -50,8 +50,8 @@ class ItemArmor extends ItemBase {
 			armorMaterial = ItemRegistry.getArmorMaterial(armorMaterial);
 		}
 		this.armorMaterial = armorMaterial;
-		let index = Native.ArmorType[this.armorType];
-		let maxDamage = armorMaterial.durabilityFactor * ItemArmor.maxDamageArray[index];
+		const index = Native.ArmorType[this.armorType];
+		const maxDamage = armorMaterial.durabilityFactor * ItemArmor.maxDamageArray[index];
 		this.setMaxDamage(maxDamage);
 		if (armorMaterial.enchantability) {
 			this.setEnchantType(Native.EnchantType[this.armorType], armorMaterial.enchantability);

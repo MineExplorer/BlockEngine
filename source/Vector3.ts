@@ -31,7 +31,7 @@ class Vector3 implements Vector {
 			this.z = vz;
 		}
 		else {
-			let v = vx;
+			const v = vx;
 			this.x = v.x;
 			this.y = v.y;
 			this.z = v.z;
@@ -54,7 +54,7 @@ class Vector3 implements Vector {
 			this.z = vz;
 			return this;
 		}
-		let v = vx;
+		const v = vx;
 		return this.set(v.x, v.y, v.z);
     }
 
@@ -67,7 +67,7 @@ class Vector3 implements Vector {
 			this.z += vz;
 			return this;
 		}
-		let v = vx;
+		const v = vx;
 		return this.add(v.x, v.y, v.z);
     }
 
@@ -84,7 +84,7 @@ class Vector3 implements Vector {
 			this.z -= vz;
 			return this;
 		}
-		let v = vx;
+		const v = vx;
 		return this.sub(v.x, v.y, v.z);
     }
 
@@ -94,7 +94,7 @@ class Vector3 implements Vector {
 		if (typeof(vx) == "number") {
 			return this.set(this.y * vz - this.z * vy, this.z * vx - this.x * vz, this.x * vy - this.y * vx);
 		}
-		let v = vx;
+		const v = vx;
 		return this.cross(v.x, v.y, v.z);
     }
 
@@ -104,12 +104,12 @@ class Vector3 implements Vector {
 		if (typeof(vx) == "number") {
 			return this.x * vx + this.y * vy + this.z * vz;
 		}
-		let v = vx;
+		const v = vx;
 		return this.dot(v.x, v.y, v.z);
     }
 
     normalize(): Vector3 {
-        let len = this.length();
+        const len = this.length();
         this.x /= len;
         this.y /= len;
         this.z /= len;
@@ -135,12 +135,12 @@ class Vector3 implements Vector {
     distanceSquared(vx: Vector): number;
     distanceSquared(vx: any, vy?: number, vz?: number) {
 		if (typeof(vx) == "number") {
-			let dx = vx - this.x;
-			let dy = vy - this.y;
-			let dz = vz - this.z;
+			const dx = vx - this.x;
+			const dy = vy - this.y;
+			const dz = vz - this.z;
 			return dx * dx + dy * dy + dz * dz;
 		}
-		let v = vx;
+		const v = vx;
 		return this.distanceSquared(v.x, v.y, v.z);
     }
 
@@ -150,7 +150,7 @@ class Vector3 implements Vector {
 		if (typeof(vx) == "number") {
 			return Math.sqrt(this.distanceSquared(vx, vy, vz));
 		}
-		let v = vx;
+		const v = vx;
 		return this.distance(v.x, v.y, v.z);
     }
 
@@ -162,7 +162,7 @@ class Vector3 implements Vector {
     }
 
     scaleTo(len: number): Vector3 {
-        let factor = len / this.length();
+        const factor = len / this.length();
         return this.scale(factor);
     }
 

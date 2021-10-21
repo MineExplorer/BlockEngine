@@ -14,7 +14,7 @@ class WorldRegion {
 	 * was not created yet)
 	 */
 	static getForDimension(dimension: number): Nullable<WorldRegion> {
-		let blockSource = BlockSource.getDefaultForDimension(dimension);
+		const blockSource = BlockSource.getDefaultForDimension(dimension);
 		if (blockSource) {
 			return new WorldRegion(blockSource);
 		}
@@ -27,7 +27,7 @@ class WorldRegion {
 	 * and interface was not created)
 	 */
 	static getForActor(entityUid: number): Nullable<WorldRegion> {
-		let blockSource = BlockSource.getDefaultForActor(entityUid);
+		const blockSource = BlockSource.getDefaultForActor(entityUid);
 		if (blockSource) {
 			return new WorldRegion(blockSource);
 		}
@@ -35,7 +35,7 @@ class WorldRegion {
 	}
 
 	static getCurrentWorldGenRegion(): Nullable<WorldRegion> {
-		let blockSource = BlockSource.getCurrentWorldGenRegion();
+		const blockSource = BlockSource.getCurrentWorldGenRegion();
 		if (blockSource) {
 			return new WorldRegion(blockSource);
 		}
@@ -58,7 +58,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			return this.blockSource.getBlock(x, y, z);
 		}
-		let pos = x;
+		const pos = x;
 		return this.blockSource.getBlock(pos.x, pos.y, pos.z);
 	}
 
@@ -97,7 +97,7 @@ class WorldRegion {
 				this.blockSource.setBlock(x, y, z, id);
 			}
 		} else {
-			let pos = x; id = y; data = z;
+			const pos = x; id = y; data = z;
 			if (typeof id == "number") {
 				this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
 			} else {
@@ -122,7 +122,7 @@ class WorldRegion {
 				this.blockSource.setExtraBlock(x, y, z, id);
 			}
 		} else {
-			let pos = x; id = y; data = z;
+			const pos = x; id = y; data = z;
 			if (typeof id == "number") {
 				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
 			} else {
@@ -141,7 +141,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			return this.blockSource.getExtraBlock(x, y, z);
 		}
-		let pos = x;
+		const pos = x;
 		return this.blockSource.getExtraBlock(pos.x, pos.y, pos.z);
 	}
 
@@ -154,17 +154,17 @@ class WorldRegion {
 	destroyBlock(x: number, y: number, z: number, drop?: boolean, player?: number): void;
 	destroyBlock(x: any, y: any, z: any, drop?: any, player?: any): void {
 		if (typeof x === "object") {
-			let pos = x, drop = y, player = z;
+			const pos = x, drop = y, player = z;
 			this.destroyBlock(pos.x, pos.y, pos.z, drop, player);
 			return;
 		}
 
 		if (drop) {
-			let block = this.getBlock(x, y, z);
-			let item = player ? Entity.getCarriedItem(player) : new ItemStack();
-			let result = Block.getBlockDropViaItem(block, item, new Vector3(x, y, z), this.blockSource);
+			const block = this.getBlock(x, y, z);
+			const item = player ? Entity.getCarriedItem(player) : new ItemStack();
+			const result = Block.getBlockDropViaItem(block, item, new Vector3(x, y, z), this.blockSource);
 			if (result) {
-				for (let dropItem of result) {
+				for (const dropItem of result) {
 					this.dropItem(x + .5, y + .5, z + .5, dropItem[0], dropItem[1], dropItem[2], dropItem[3] || null);
 				}
 			}
@@ -190,7 +190,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			this.blockSource.breakBlock(x, y, z, allowDrop, entity, item);
 		} else {
-			let pos = x; item = allowDrop; entity = z; allowDrop = y;
+			const pos = x; item = allowDrop; entity = z; allowDrop = y;
 			this.blockSource.breakBlock(pos.x, pos.y, pos.z, allowDrop, entity, item);
 		}
 	}
@@ -210,7 +210,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			return this.blockSource.breakBlockForJsResult(x, y, z, player, item);
 		}
-		let pos = x; player = y; item = z;
+		const pos = x; player = y; item = z;
 		return this.blockSource.breakBlockForJsResult(pos.x, pos.y, pos.z, player, item);
 	}
 
@@ -223,7 +223,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			return this.blockSource.getBlockEntity(x, y, z);
 		}
-		let pos = x;
+		const pos = x;
 		return this.blockSource.getBlockEntity(pos.x, pos.y, pos.z);
 	}
 
@@ -234,10 +234,10 @@ class WorldRegion {
 	getTileEntity(x: number, y: number, z: number): TileEntity;
 	getTileEntity(x: Vector | number, y?: number, z?: number): TileEntity {
 		if (typeof x === "number") {
-			let tileEntity = TileEntity.getTileEntity(x, y, z, this.blockSource);
+			const tileEntity = TileEntity.getTileEntity(x, y, z, this.blockSource);
 			return (tileEntity && tileEntity.__initialized) ? tileEntity : null;
 		}
-		let pos = x;
+		const pos = x;
 		return this.getTileEntity(pos.x, pos.y, pos.z);
 	}
 
@@ -252,7 +252,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			return TileEntity.addTileEntity(x, y, z, this.blockSource);
 		}
-		let pos = x;
+		const pos = x;
 		return this.addTileEntity(pos.x, pos.y, pos.z);
 	}
 
@@ -268,7 +268,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			return TileEntity.destroyTileEntityAtCoords(x, y, z, this.blockSource);
 		}
-		let pos = x;
+		const pos = x;
 		return this.removeTileEntity(pos.x, pos.y, pos.z);
 	}
 
@@ -283,7 +283,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			return World.getContainer(x, y, z, this.blockSource);
 		}
-		let pos = x;
+		const pos = x;
 		return this.getContainer(pos.x, pos.y, pos.z);
 	}
 
@@ -298,7 +298,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			this.blockSource.explode(x, y, z, power, fire || false);
 		} else {
-			let pos = x;
+			const pos = x;
 			power = y;
 			fire = z || false;
 			this.blockSource.explode(pos.x, pos.y, pos.z, power, fire);
@@ -329,7 +329,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			return this.blockSource.getBiomeTemperatureAt(x, y, z);
 		}
-		let pos = x;
+		const pos = x;
 		return this.blockSource.getBiomeTemperatureAt(pos.x, pos.y, pos.z);
 	}
 
@@ -378,7 +378,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			return this.blockSource.getLightLevel(x, y, z);
 		}
-		let pos = x;
+		const pos = x;
 		return this.blockSource.getLightLevel(pos.x, pos.y, pos.z);
 	}
 
@@ -391,7 +391,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			return this.blockSource.canSeeSky(x, y, z);
 		}
-		let pos = x;
+		const pos = x;
 		return this.blockSource.canSeeSky(pos.x, pos.y, pos.z);
 	}
 
@@ -404,7 +404,7 @@ class WorldRegion {
 		if (typeof x === "number") {
 			return this.blockSource.getGrassColor(x, y, z);
 		}
-		let pos = x;
+		const pos = x;
 		return this.blockSource.getGrassColor(pos.x, pos.y, pos.z);
 	}
 
@@ -454,16 +454,16 @@ class WorldRegion {
 	listEntitiesInAABB(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number, type?: number, blacklist?: boolean): number[];
 	listEntitiesInAABB(x1: any, y1: any, z1?: any, x2?: any, y2?: number, z2?: number, type: number = -1, blacklist: boolean = true): number[] {
 		if (typeof x1 == "object") {
-			let pos1 = x1, pos2 = y1;
+			const pos1 = x1, pos2 = y1;
 			return this.listEntitiesInAABB(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, z1, x2);
 		}
-		let entities = this.blockSource.listEntitiesInAABB(x1, y1, z1, x2, y2, z2, type, blacklist);
+		const entities = this.blockSource.listEntitiesInAABB(x1, y1, z1, x2, y2, z2, type, blacklist);
 		if (BlockEngine.getMainGameVersion() == 11 && (type == Native.EntityType.PLAYER) != blacklist) {
-			let players = Network.getConnectedPlayers();
-			let dimension = this.getDimension();
-			for (let ent of players) {
+			const players = Network.getConnectedPlayers();
+			const dimension = this.getDimension();
+			for (const ent of players) {
 				if (Entity.getDimension(ent) != dimension) continue;
-				let c = Entity.getPosition(ent);
+				const c = Entity.getPosition(ent);
 				if ((c.x >= x1 && c.x <= x2) && (c.y - 1.62 >= y1 && c.y - 1.62 <= y2) && (c.z >= z1 && c.z <= z2)) {
 					entities.push(ent);
 				}
@@ -502,9 +502,9 @@ class WorldRegion {
 	sendPacketInRadius(coords: Vector, radius: number, packetName: string, data: object): void {
 		const dimension = this.getDimension();
 		const clientsList = Network.getConnectedClients();
-		for (let client of clientsList) {
-			let player = client.getPlayerUid();
-			let entPos = Entity.getPosition(player);
+		for (const client of clientsList) {
+			const player = client.getPlayerUid();
+			const entPos = Entity.getPosition(player);
 			if (Entity.getDimension(player) == dimension && Entity.getDistanceBetweenCoords(entPos, coords) <= radius) {
 				client.send(packetName, data);
 			}

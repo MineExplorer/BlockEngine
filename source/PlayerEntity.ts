@@ -35,7 +35,7 @@ class PlayerEntity {
     addItemToInventory(item: ItemInstance): void;
     addItemToInventory(id: number, count: number, data: number, extra?: ItemExtraData): void;
     addItemToInventory(id: any, count?: number, data?: number, extra?: ItemExtraData): void {
-        let item = id;
+        const item = id;
         if (typeof item == "object") {
             this.actor.addItemToInventory(item.id, item.count, item.data, item.extra || null, true);
         } else {
@@ -47,7 +47,7 @@ class PlayerEntity {
      * @returns inventory slot's contents.
      */
     getInventorySlot(slot: number): ItemStack {
-        let item = this.actor.getInventorySlot(slot);
+        const item = this.actor.getInventorySlot(slot);
         return new ItemStack(item);
     }
 
@@ -68,7 +68,7 @@ class PlayerEntity {
      * @returns item in player's hand
     */
     getCarriedItem(): ItemStack {
-        let item = Entity.getCarriedItem(this.getUid());
+        const item = Entity.getCarriedItem(this.getUid());
         return new ItemStack(item);
     }
 
@@ -94,7 +94,7 @@ class PlayerEntity {
      * @param amount amount of items to decrease, default is 1
      */
     decreaseCarriedItem(amount: number = 1) {
-        let item = this.getCarriedItem();
+        const item = this.getCarriedItem();
         this.setCarriedItem(item.id, item.count - amount, item.data, item.extra);
     }
 
@@ -102,7 +102,7 @@ class PlayerEntity {
      * @returns armor slot's contents.
      */
     getArmor(slot: number): ItemInstance {
-        let item = this.actor.getArmor(slot);
+        const item = this.actor.getArmor(slot);
         return new ItemStack(item);
     }
 

@@ -139,9 +139,9 @@ implements TileEntity {
             return false;
         }
 
-       	let screenName = this.getScreenName(player, coords);
+		const screenName = this.getScreenName(player, coords);
     	if (screenName) {
-            let client = Network.getClientForPlayer(player);
+            const client = Network.getClientForPlayer(player);
             if (client) {
             	this.container.openFor(client, screenName);
                 return true;
@@ -183,13 +183,11 @@ implements TileEntity {
 
 	@BlockEngine.Decorators.ContainerEvent(Side.Client)
 	setLiquidScale(container: any, window: any, content: any, data: {scale: string, liquid: string, amount: number}): void {
-		let gui = container.getUiAdapter();
+		const gui = container.getUiAdapter();
 		if (gui) {
-			let size = gui.getBinding(data.scale, "element_rect");
-            if (!size) {
-                return;
-            }
-            let texture = LiquidRegistry.getLiquidUITexture(data.liquid, size.width(), size.height());
+			const size = gui.getBinding(data.scale, "element_rect");
+            if (!size) return;
+            const texture = LiquidRegistry.getLiquidUITexture(data.liquid, size.width(), size.height());
             gui.setBinding(data.scale, "texture", texture);
             gui.setBinding(data.scale, "value", data.amount);
 		}

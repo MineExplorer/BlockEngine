@@ -6,9 +6,9 @@
 /// <reference path="ItemTool.ts" />
 
 namespace ItemRegistry {
-	let items = {};
-	let itemsRarity = {};
-	let armorMaterials = {};
+	const items = {};
+	const itemsRarity = {};
+	const armorMaterials = {};
 
 	export function getType(id: number): string {
 		return IDRegistry.getIdInfo(id).split(":")[0];
@@ -31,7 +31,7 @@ namespace ItemRegistry {
 	}
 
 	export function getInstanceOf(itemID: string | number): Nullable<ItemBase> {
-		let numericID = Item.getNumericId(itemID);
+		const numericID = Item.getNumericId(itemID);
 		return items[numericID] || null;
 	}
 
@@ -63,7 +63,7 @@ namespace ItemRegistry {
 	}
 
 	export function setRarity(id: string | number, rarity: number, preventNameOverride?: boolean): void {
-		let numericID = Item.getNumericId(id);
+		const numericID = Item.getNumericId(id);
 		itemsRarity[numericID] = rarity;
 		//@ts-ignore
 		if (!preventNameOverride && !Item.nameOverrideFunctions[numericID]) {
@@ -129,7 +129,7 @@ namespace ItemRegistry {
 		}
 		if ('onDispense' in itemFuncs) {
 			Item.registerDispenseFunction(itemID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, blockSource: BlockSource) {
-				let region = new WorldRegion(blockSource);
+				const region = new WorldRegion(blockSource);
 				itemFuncs.onDispense(coords, new ItemStack(item), region);
 			});
 		}
@@ -152,8 +152,8 @@ namespace ItemRegistry {
 	}
 
 	export function createItem(stringID: string, params: ItemDescription): void {
-		let numericID = IDRegistry.genItemID(stringID);
-		let inCreative = params.inCreative ?? true;
+		const numericID = IDRegistry.genItemID(stringID);
+		const inCreative = params.inCreative ?? true;
 		let icon: Item.TextureData;
 		if (typeof params.icon == "string")
 			icon = {name: params.icon};
@@ -189,7 +189,7 @@ namespace ItemRegistry {
 	};
 
 	export function createArmor(stringID: string, params: ArmorDescription): ItemArmor {
-		let item = new ItemArmor(stringID, params.name, params.icon, params, params.inCreative);
+		const item = new ItemArmor(stringID, params.name, params.icon, params, params.inCreative);
 		registerItem(item);
 		if (params.category) item.setCategory(params.category);
 		if (params.glint) item.setGlint(true);
@@ -208,7 +208,7 @@ namespace ItemRegistry {
 	};
 
 	export function createTool(stringID: string, params: ToolDescription, toolData?: ToolParams) {
-		let item = new ItemTool(stringID, params.name, params.icon, params.material, toolData, params.inCreative);
+		const item = new ItemTool(stringID, params.name, params.icon, params.material, toolData, params.inCreative);
 		registerItem(item);
 		if (params.category) item.setCategory(params.category);
 		if (params.glint) item.setGlint(true);

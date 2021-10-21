@@ -5,8 +5,8 @@ LIBRARY({
 	api: "CoreEngine"
 });
 
-let EntityGetYaw = ModAPI.requireGlobal("Entity.getYaw");
-let EntityGetPitch = ModAPI.requireGlobal("Entity.getPitch");
+const EntityGetYaw = ModAPI.requireGlobal("Entity.getYaw");
+const EntityGetPitch = ModAPI.requireGlobal("Entity.getPitch");
 
 namespace BlockEngine {
 	const gameVersion = getMCPEVersion().array;
@@ -25,6 +25,6 @@ namespace BlockEngine {
 }
 
 Network.addClientPacket("blockengine.clientMessage", function(data: {texts: string[]}) {
-	let message = data.texts.map(Translation.translate).join("");
+	const message = data.texts.map(Translation.translate).join("");
 	Game.message(message);
 });

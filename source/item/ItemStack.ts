@@ -55,12 +55,12 @@ class ItemStack implements ItemInstance {
 	 * @param damage amount to apply
 	 */
 	applyDamage(damage: number): void {
-		let unbreakingLevel = this.getEnchantLevel(Native.Enchantment.UNBREAKING);
+		const unbreakingLevel = this.getEnchantLevel(Native.Enchantment.UNBREAKING);
 		if (Math.random() < 1 / (unbreakingLevel + 1)) {
 			this.data += damage;
 		}
 		if (this.data >= this.getMaxDamage()) {
-			let tool = ToolAPI.getToolData(this.id);
+			const tool = ToolAPI.getToolData(this.id);
 			if (tool && tool.brokenId) {
 				this.id = tool.brokenId;
 				this.data = 0;

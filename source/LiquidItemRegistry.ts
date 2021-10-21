@@ -11,8 +11,8 @@ namespace LiquidItemRegistry {
 	 */
 	type FullData = {id: number, data: number, amount: number, storage?: number};
 
-	export let EmptyByFull = {};
-	export let FullByEmpty = {};
+	export const EmptyByFull = {};
+	export const FullByEmpty = {};
 
 	/**
 	 * Registers liquid storage item
@@ -29,7 +29,7 @@ namespace LiquidItemRegistry {
 	}
 
 	export function getItemLiquid(id: number, data: number): string {
-		let empty = EmptyByFull[id];
+		const empty = EmptyByFull[id];
 		if (empty) {
 			return empty.liquid;
 		}
@@ -37,13 +37,13 @@ namespace LiquidItemRegistry {
 	}
 
 	export function getEmptyItem(id: number, data: number): EmptyData {
-		let emptyData = EmptyByFull[id];
+		const emptyData = EmptyByFull[id];
 		if (emptyData) {
-			let amount = emptyData.storage - data;
+			const amount = emptyData.storage - data;
 			return {id: emptyData.id, data: 0, liquid: emptyData.liquid, amount: amount, storage: emptyData.storage};
 		}
 
-		let empty = LiquidRegistry.getEmptyItem(id, data);
+		const empty = LiquidRegistry.getEmptyItem(id, data);
 		if (empty) {
 			return {id: empty.id, data: empty.data, liquid: empty.liquid, amount: 1000};
 		}
@@ -51,17 +51,17 @@ namespace LiquidItemRegistry {
 	}
 
 	export function getFullItem(id: number, data: number, liquid: string): FullData {
-		let emptyData = EmptyByFull[id];
+		const emptyData = EmptyByFull[id];
 		if (emptyData && data > 0) {
 			return {id: id, data: 0, amount: data, storage: emptyData.storage}
 		}
 
-		let fullData = FullByEmpty[id+":"+liquid];
+		const fullData = FullByEmpty[id+":"+liquid];
 		if (fullData) {
 			return {id: fullData.id, data: 0, amount: fullData.storage, storage: fullData.storage}
 		}
 
-		let full = LiquidRegistry.getFullItem(id, data, liquid);
+		const full = LiquidRegistry.getFullItem(id, data, liquid);
 		if (full) {
 			return {id: full.id, data: full.data, amount: 1000};
 		}

@@ -13,7 +13,7 @@ extends ToolAPI.ToolMaterial {
 }
 
 namespace ToolType {
-	export let SWORD: ToolParams = {
+	export const SWORD: ToolParams = {
 		handEquipped: true,
 		isWeapon: true,
 		enchantType: Native.EnchantType.weapon,
@@ -21,7 +21,7 @@ namespace ToolType {
 		blockTypes: ["fibre", "plant"],
 		calcDestroyTime: function(item, coords, block, params, destroyTime, enchant) {
 			if (block.id == 30) return 0.08;
-			let material = ToolAPI.getBlockMaterialName(block.id);
+			const material = ToolAPI.getBlockMaterialName(block.id);
 			if (material == "plant" || block.id == 86 || block.id == 91 || block.id == 103 || block.id == 127 || block.id == 410) {
 				return params.base / 1.5;
 			}
@@ -29,14 +29,14 @@ namespace ToolType {
 		}
 	}
 
-	export let SHOVEL: ToolParams = {
+	export const SHOVEL: ToolParams = {
 		handEquipped: true,
 		enchantType: Native.EnchantType.shovel,
 		damage: 2,
 		blockTypes: ["dirt"],
 		onItemUse: function(coords, item, block, player) {
 			if (block.id == 2 && coords.side == 1) {
-				let region = WorldRegion.getForActor(player);
+				const region = WorldRegion.getForActor(player);
 				region.setBlock(coords, 198, 0);
 				region.playSound(coords.x + .5, coords.y + 1, coords.z + .5, "step.grass", 0.5, 0.8);
 				item.applyDamage(1);
@@ -45,20 +45,20 @@ namespace ToolType {
 		}
 	}
 
-	export let PICKAXE: ToolParams = {
+	export const PICKAXE: ToolParams = {
 		handEquipped: true,
 		enchantType: Native.EnchantType.pickaxe,
 		damage: 2,
 		blockTypes: ["stone"],
 	}
 
-	export let AXE: ToolParams = {
+	export const AXE: ToolParams = {
 		handEquipped: true,
 		enchantType: Native.EnchantType.axe,
 		damage: 3,
 		blockTypes: ["wood"],
 		onItemUse: function(coords, item, block, player) {
-			let region = WorldRegion.getForActor(player);
+			const region = WorldRegion.getForActor(player);
 			let logID: number;
 			if (block.id == 17) {
 				if (block.data == 0) logID = VanillaTileID.stripped_oak_log;
@@ -78,14 +78,14 @@ namespace ToolType {
 		}
 	}
 
-	export let HOE: ToolParams = {
+	export const HOE: ToolParams = {
 		handEquipped: true,
 		enchantType: Native.EnchantType.pickaxe,
 		damage: 2,
 		blockTypes: ["plant"],
 		onItemUse: function(coords, item, block, player) {
 			if ((block.id == 2 || block.id == 3) && coords.side != 0) {
-				let region = WorldRegion.getForActor(player);
+				const region = WorldRegion.getForActor(player);
 				if (region.getBlockId(coords.x, coords.y + 1, coords.z) != 0) return;
 				region.setBlock(coords, 60, 0);
 				region.playSound(coords.x + .5, coords.y + 1, coords.z + .5, "step.gravel", 1, 0.8);
@@ -95,11 +95,11 @@ namespace ToolType {
 		}
 	}
 
-	export let SHEARS: ToolParams = {
+	export const SHEARS: ToolParams = {
 		blockTypes: ["plant", "fibre", "wool"],
 		modifyEnchant(enchantData, item, coords, block) {
 			if (block) {
-				let material = ToolAPI.getBlockMaterialName(block.id);
+				const material = ToolAPI.getBlockMaterialName(block.id);
 				if (material == "fibre" || material == "plant") {
 					enchantData.silk = true;
 				}
@@ -111,7 +111,7 @@ namespace ToolType {
 		},
 		onDestroy: function(item, coords, block, player) {
 			if (block.id == 31 || block.id == 32 || block.id == 18 || block.id == 161) {
-				let region = WorldRegion.getForActor(player);
+				const region = WorldRegion.getForActor(player);
 				region.destroyBlock(coords);
 				region.dropItem(coords.x + .5, coords.y + .5, coords.z + .5, block.id, 1, block.data);
 			}

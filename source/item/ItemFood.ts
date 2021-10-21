@@ -10,8 +10,8 @@ extends ItemBase {
 }
 
 Callback.addCallback("FoodEaten", function(food: number, saturation: number, player: number) {
-	let item = Entity.getCarriedItem(player);
-	let itemInstance = ItemRegistry.getInstanceOf(item.id) as ItemFood;
+	const item = Entity.getCarriedItem(player);
+	const itemInstance = ItemRegistry.getInstanceOf(item.id) as ItemFood;
 	if (itemInstance && itemInstance.onFoodEaten) {
 		itemInstance.onFoodEaten(item, food, saturation, player);
 	}

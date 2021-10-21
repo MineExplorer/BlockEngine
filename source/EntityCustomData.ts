@@ -19,14 +19,14 @@ namespace EntityCustomData {
 	}
 
 	export function getField(entity: number, key: string): any {
-		let playerData = getData(entity);
+		const playerData = getData(entity);
 		if (playerData) {
 			return playerData[key];
 		}
 	}
 
 	export function putField(entity: number, key: string, value: any): void {
-		let data = getData(entity);
+		const data = getData(entity);
 		data[key] = value;
 	}
 
