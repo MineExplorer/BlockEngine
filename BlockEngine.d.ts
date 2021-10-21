@@ -459,6 +459,7 @@ declare namespace BlockRegistry {
     function setDestroyLevel(nameID: string | number, level: number): void;
     function registerOnExplosionFunction(nameID: string | number, func: Block.PopResourcesFunction): void;
     function addBlockDropOnExplosion(nameID: string | number): void;
+    function getBlockDrop(x: number, y: number, z: number, block: Tile, level: number, item: ItemInstance, region?: BlockSource): ItemInstanceArray[];
 }
 declare class ItemStack implements ItemInstance {
     id: number;

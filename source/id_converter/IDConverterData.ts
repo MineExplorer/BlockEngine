@@ -1,6 +1,6 @@
 /// <reference path="IDConverter.ts" />
 
-IDConverter.registerOld("charcoal", VanillaItemID.coal, 1);
+IDConverter.registerOld("charcoal", 263, 1);
 IDConverter.registerOld("oak_boat", 333, 0);
 IDConverter.registerOld("spruce_boat", 333, 1);
 IDConverter.registerOld("birch_boat", 333, 2);
