@@ -16,9 +16,10 @@ EXPORT("ItemCategory", ItemCategory);
 EXPORT("EnumRarity", EnumRarity);
 EXPORT("MiningLevel", MiningLevel);
 // APIs
+EXPORT("BlockEngine", BlockEngine);
+EXPORT("BlockModeler", BlockModeler);
 EXPORT("BlockRegistry", BlockRegistry);
 EXPORT("ItemRegistry", ItemRegistry);
 EXPORT("LiquidItemRegistry", LiquidItemRegistry);
 EXPORT("EntityCustomData", EntityCustomData);
 EXPORT("IDConverter", IDConverter);
-EXPORT("BlockEngine", BlockEngine);

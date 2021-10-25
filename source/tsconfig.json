@@ -19,6 +19,7 @@
 		"WorldRegion.ts",
 		"PlayerEntity.ts",
 		"EntityCustomData.ts",
+		"BlockModeler.ts",
 		"BlockRegistry.ts",
 		"item/ItemStack.ts",
 		"item/ItemRegistry.ts",

@@ -1,12 +1,12 @@
 namespace BlockRegistry {
-	export function createBlock(nameID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): number {
-		const numericID = IDRegistry.genBlockID(nameID);
+	export function createBlock(nameID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): void {
+		IDRegistry.genBlockID(nameID);
 		Block.createBlock(nameID, defineData, blockType);
-		return numericID;
 	}
 
     export function createBlockWithRotation(stringID: string, params: Block.BlockVariation, blockType?: string | Block.SpecialType, hasVertical?: boolean): void {
-        const texture = params.texture;
+        const numericID = IDRegistry.genBlockID(stringID);
+		const texture = params.texture;
         const textures = [
 			[texture[3], texture[2], texture[0], texture[1], texture[4], texture[5]],
 			[texture[2], texture[3], texture[1], texture[0], texture[5], texture[4]],
@@ -19,17 +19,30 @@ namespace BlockRegistry {
 		for (let i = 0; i < 6; i++) {
 			variations.push({name: params.name, texture: textures[i], inCreative: params.inCreative && i == 0});
 		}
-		const numericID = createBlock(stringID, variations, blockType);
-		setInventoryModel(numericID, texture);
+		Block.createBlock(stringID, variations, blockType);
+		BlockModeler.setInventoryModel(numericID, BlockRenderer.createTexturedBlock(texture));
         setRotationFunction(numericID, hasVertical);
     }
 
-	export function setInventoryModel(blockID: number, texture: [string, number][]) {
-		const render = new ICRender.Model();
-		const model = BlockRenderer.createTexturedBlock(texture);
-		render.addEntry(model);
-		ItemModel.getFor(blockID, 0).setHandModel(model);
-		ItemModel.getFor(blockID, 0).setUiModel(model);
+	export function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType: string | Block.SpecialType): void {
+		const numericID = IDRegistry.genBlockID(stringID);
+		Block.createBlock(stringID, defineData, blockType);
+		Block.registerPlaceFunction(numericID, function(coords, item, block, player, region) {
+			const place = getPlacePosition(coords, block, region);
+			if (!place) return;
+			let data = getBlockRotation(player) - 2;
+			if (coords.side == 0 || coords.side >= 2 && coords.vec.y - coords.y >= 0.5) {
+				data += 4;
+			}
+			region.setBlock(place.x, place.y, place.z, item.id, data);
+			//World.playSound(place.x, place.y, place.z, placeSound || "dig.stone", 1, 0.8);
+			return place;
+		});
+		BlockModeler.setStairsRenderModel(numericID);
+		const model = BlockRenderer.createModel();
+		model.addBox(0, 0, 0, 1, 0.5, 1, numericID, 0);
+		model.addBox(0, 0.5, 0, 1, 1, 0.5, numericID, 0);
+		BlockModeler.setInventoryModel(numericID, model);
 	}
 
 	export function getBlockRotation(player: number, hasVertical?: boolean): number {
@@ -44,9 +57,18 @@ namespace BlockRegistry {
 		return rotation;
 	}
 
+	export function getPlacePosition(coords: Callback.ItemUseCoordinates, block: Tile, region: BlockSource): Vector {
+		if (World.canTileBeReplaced(block.id, block.data)) return coords;
+		const place = coords.relative;
+		block = region.getBlock(place.x, place.y, place.z);
+		if (World.canTileBeReplaced(block.id, block.data)) return place;
+		return null;
+	}
+
 	export function setRotationFunction(id: string | number, hasVertical?: boolean, placeSound?: string): void {
 		Block.registerPlaceFunction(id, function(coords, item, block, player, region) {
-			const place = World.canTileBeReplaced(block.id, block.data) ? coords : coords.relative;
+			const place = getPlacePosition(coords, block, region);
+			if (!place) return;
 			const rotation = getBlockRotation(player, hasVertical);
 			region.setBlock(place.x, place.y, place.z, item.id, rotation);
 			//World.playSound(place.x, place.y, place.z, placeSound || "dig.stone", 1, 0.8);
