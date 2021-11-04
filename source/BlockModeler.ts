@@ -91,7 +91,7 @@ namespace BlockModeler {
 		}
 	}
 
-	export function setInventoryModel(blockID: number, model: RenderMesh | ICRender.Model | BlockRenderer.Model, data: number = -1): void {
+	export function setInventoryModel(blockID: number, model: RenderMesh | ICRender.Model | BlockRenderer.Model, data: number = 0): void {
 		ItemModel.getFor(blockID, data).setHandModel(model);
 		ItemModel.getFor(blockID, data).setUiModel(model);
 	}

@@ -1,7 +1,6 @@
 /// <reference path="ToolType.ts" />
 
-class ItemTool
-extends ItemCommon
+class ItemTool extends ItemCommon
 implements ToolParams {
 	handEquipped: boolean = false;
 	brokenId: number = 0;

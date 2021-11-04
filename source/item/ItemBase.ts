@@ -13,8 +13,9 @@ class ItemBase {
 	readonly id: number;
 	name: string;
 	icon: {name: string, meta: number};
-	maxStack: number;
-	maxDamage: number;
+	maxStack: number = 64;
+	maxDamage: number = 0;
+	inCreative: boolean = false;
 	item: Item.NativeItem;
 
 	constructor(stringID: string, name?: string, icon?: string|Item.TextureData) {
@@ -115,5 +116,13 @@ class ItemBase {
 
 	setRarity(rarity: number): void {
 		ItemRegistry.setRarity(this.id, rarity);
+	}
+
+	addDefaultToCreative(): void {
+		const wasInCreative = ItemRegistry.getInstanceOf(this.id)?.inCreative;
+		if (!wasInCreative) {
+			Item.addToCreative(this.id, 1, 0);
+			this.inCreative = true;
+		}
 	}
  }

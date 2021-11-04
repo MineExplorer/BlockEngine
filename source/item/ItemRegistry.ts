@@ -151,32 +151,28 @@ namespace ItemRegistry {
 		food?: number
 	}
 
-	export function createItem(stringID: string, params: ItemDescription): void {
-		const numericID = IDRegistry.genItemID(stringID);
-		const inCreative = params.inCreative ?? true;
-		let icon: Item.TextureData;
-		if (typeof params.icon == "string")
-			icon = {name: params.icon};
-		else
-			icon = params.icon;
-
+	export function createItem(stringID: string, params: ItemDescription): ItemBase {
+		let item: ItemBase;
 		if (params.type == "food") {
-			Item.createFoodItem(stringID, params.name, icon, {food: params.food, stack: params.stack || 64, isTech: !inCreative});
+			item = new ItemFood(stringID, params.name, params.icon, params.food, params.inCreative);
 		}
 		else if (params.type == "throwable") {
-			Item.createThrowableItem(stringID, params.name, icon, {stack: params.stack || 64, isTech: !inCreative});
+			item = new ItemThrowable(stringID, params.name, params.icon, params.inCreative);
 		}
 		else {
-			Item.createItem(stringID, params.name, icon, {stack: params.stack || 64, isTech: !inCreative});
+			item = new ItemCommon(stringID, params.name, params.icon, params.inCreative);
 		}
 
-		Item.setCategory(numericID, params.category || ItemCategory.ITEMS);
-		if (params.maxDamage) Item.setMaxDamage(numericID, params.maxDamage);
-		if (params.handEquipped) Item.setToolRender(numericID, true);
-		if (params.allowedInOffhand) Item.setAllowedInOffhand(numericID, true);
-		if (params.glint) Item.setGlint(numericID, true);
-		if (params.enchant) Item.setEnchantType(numericID, params.enchant.type, params.enchant.value);
-		if (params.rarity) setRarity(numericID, params.rarity);
+		item.setCategory(params.category || ItemCategory.ITEMS);
+		if (params.stack) item.setMaxStack(params.stack);
+		if (params.maxDamage) item.setMaxDamage(params.maxDamage);
+		if (params.handEquipped) item.setHandEquipped(true);
+		if (params.allowedInOffhand) item.allowInOffHand();
+		if (params.glint) item.setGlint(true);
+		if (params.enchant) item.setEnchantType(params.enchant.type, params.enchant.value);
+		if (params.rarity) item.setRarity(params.rarity);
+		items[item.id] = item;
+		return item;
 	}
 
 	interface ArmorDescription extends ArmorParams {

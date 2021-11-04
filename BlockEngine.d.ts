@@ -555,6 +555,7 @@ declare class ItemBase {
     };
     maxStack: number;
     maxDamage: number;
+    inCreative: boolean;
     item: Item.NativeItem;
     constructor(stringID: string, name?: string, icon?: string | Item.TextureData);
     setName(name: string): void;
@@ -607,6 +608,7 @@ declare class ItemBase {
      */
     addRepairItem(itemID: number): void;
     setRarity(rarity: number): void;
+    addDefaultToCreative(): void;
 }
 declare class ItemCommon extends ItemBase {
     constructor(stringID: string, name?: string, icon?: string | Item.TextureData, inCreative?: boolean);
@@ -735,7 +737,7 @@ declare namespace ItemRegistry {
         rarity?: number;
         food?: number;
     }
-    export function createItem(stringID: string, params: ItemDescription): void;
+    export function createItem(stringID: string, params: ItemDescription): ItemBase;
     interface ArmorDescription extends ArmorParams {
         name: string;
         icon: string | Item.TextureData;

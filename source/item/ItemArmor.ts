@@ -34,10 +34,11 @@ class ItemArmor extends ItemBase {
 			armor: this.defence,
 			durability: 0,
 			texture: this.texture,
-			isTech: !inCreative
+			isTech: true
 		});
 		this.setCategory(ItemCategory.EQUIPMENT);
 		if (params.material) this.setMaterial(params.material);
+		if (inCreative) this.addDefaultToCreative();
 		ItemArmor.registerListeners(this.id, this);
 	}
 

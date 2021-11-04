@@ -1,9 +1,9 @@
-class ItemFood
-extends ItemBase {
+class ItemFood extends ItemBase {
 	constructor(stringID: string, name?: string, icon?: string|Item.TextureData, food?: number, inCreative: boolean = true) {
 		super(stringID, name, icon);
-		this.item = Item.createFoodItem(this.stringID, this.name, this.icon, {food: food, isTech: !inCreative});
+		this.item = Item.createFoodItem(this.stringID, this.name, this.icon, {food: food, isTech: true});
 		this.setCategory(ItemCategory.ITEMS);
+		if (inCreative) this.addDefaultToCreative();
 	}
 
 	onFoodEaten(item: ItemInstance, food: number, saturation: number, player: number): void {}
