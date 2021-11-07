@@ -197,7 +197,8 @@ class WorldRegion {
 
 	/**
 	 * Same as breakBlock, but returns object containing drop and experince.
-	 * 1.16 only!
+	 * Has reverse compatibility with 1.11 but it doesn't suppot experience and
+	 * based on BlockRegistry.getBlockDrop.
 	 * @param x X coord of the block
 	 * @param y Y coord of the block
 	 * @param z Z coord of the block
@@ -207,11 +208,24 @@ class WorldRegion {
 	breakBlockForResult(coords: Vector, player: number, item: ItemInstance): {items: ItemInstance[], experience: number};
 	breakBlockForResult(x: number, y: number, z: number, player: number, item: ItemInstance): {items: ItemInstance[], experience: number};
 	breakBlockForResult(x: any, y: any, z: any, player?: number, item?: ItemInstance): {items: ItemInstance[], experience: number} {
-		if (typeof x === "number") {
+		if (typeof x === "object") {
+			const pos = x; player = y; item = z;
+			return this.breakBlockForResult(pos.x, pos.y, pos.z, player, item);
+		}
+		if (BlockEngine.getMainGameVersion() >= 16) {
 			return this.blockSource.breakBlockForJsResult(x, y, z, player, item);
 		}
-		const pos = x; player = y; item = z;
-		return this.blockSource.breakBlockForJsResult(pos.x, pos.y, pos.z, player, item);
+		const block = this.blockSource.getBlock(x, y, z);
+		this.blockSource.setBlock(x, y, z, 0, 0);
+		const level = ToolAPI.getToolLevelViaBlock(item.id, block.id);
+		const drop = BlockRegistry.getBlockDrop(x, y, z, block, level, item, this.blockSource);
+		const items: ItemInstance[] = [];
+		if (drop) {
+			for (let item of drop) {
+				items.push(new ItemStack(item[0], item[1], item[2], item[3]));
+			}
+		}
+		return {items: items, experience: 0};
 	}
 
 	/**
