@@ -100,11 +100,11 @@ namespace BlockRegistry {
         addBlockDropOnExplosion(nameID);
     }
 
-	export function registerOnExplosionFunction(nameID: string | number, func: Block.PopResourcesFunction) {
+	export function registerOnExplosionFunction(nameID: string | number, func: Block.PopResourcesFunction): void {
 		Block.registerPopResourcesFunction(nameID, func);
 	}
 
-    export function addBlockDropOnExplosion(nameID: string | number) {
+    export function addBlockDropOnExplosion(nameID: string | number): void {
 		Block.registerPopResourcesFunction(nameID, function(coords, block, region) {
 			if (Math.random() >= 0.25) return;
             const dropFunc = Block.getDropFunction(block.id);

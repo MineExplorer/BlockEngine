@@ -14,7 +14,7 @@ namespace BlockModeler {
 		}
 	}
 
-	export function setStairsRenderModel(id: number) {
+	export function setStairsRenderModel(id: number): void {
 		const boxes: BoxVertexes[] = [
 			[0, 0, 0, 1, 0.5, 1],
 			[0.5, 0.5, 0.5, 1, 1, 1],
@@ -30,7 +30,7 @@ namespace BlockModeler {
 		createStairsRenderModel(id, 4, newBoxes);
 	}
 
-	export function createStairsRenderModel(id: number, startData: number, boxes: BoxVertexes[]) {
+	export function createStairsRenderModel(id: number, startData: number, boxes: BoxVertexes[]): void {
 		const modelConditionData = [
 			{data: 3, posR: [-1, 0], posB: [0, 1]},
 			{data: 2, posR: [1, 0], posB: [0, -1]},

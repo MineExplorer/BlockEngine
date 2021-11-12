@@ -11,11 +11,11 @@ const EntityGetPitch = ModAPI.requireGlobal("Entity.getPitch");
 namespace BlockEngine {
 	const gameVersion = getMCPEVersion().array;
 
-	export function getGameVersion() {
+	export function getGameVersion(): number[] {
 		return gameVersion;
 	}
 
-	export function getMainGameVersion() {
+	export function getMainGameVersion(): number {
 		return gameVersion[1];
 	}
 

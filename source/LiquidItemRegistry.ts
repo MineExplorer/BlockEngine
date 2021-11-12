@@ -21,7 +21,7 @@ namespace LiquidItemRegistry {
 	 * @param fullId id of item with luquid
 	 * @param storage capacity of liquid in mB
 	 */
-	export function registerItem(liquid: string, emptyId: number, fullId: number, storage: number) {
+	export function registerItem(liquid: string, emptyId: number, fullId: number, storage: number): void {
 		EmptyByFull[fullId] = {id: emptyId, liquid: liquid, storage: storage};
 		FullByEmpty[emptyId+":"+liquid] = {id: fullId, storage: storage};
 		Item.setMaxDamage(fullId, storage);
