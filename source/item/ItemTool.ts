@@ -10,7 +10,7 @@ implements ToolParams {
 	toolMaterial: ToolMaterial;
 	enchantType: number;
 
-	constructor(stringID: string, name: string, icon: string|Item.TextureData, toolMaterial: string | ToolMaterial, toolData?: ToolParams, inCreative?: boolean) {
+	constructor(stringID: string, name: string, icon: string | Item.TextureData, toolMaterial: string | ToolMaterial, toolData?: ToolParams, inCreative?: boolean) {
 		super(stringID, name, icon, inCreative);
 		this.setMaxStack(1);
 		this.setCategory(ItemCategory.EQUIPMENT);

@@ -18,7 +18,7 @@ class ItemBase {
 	inCreative: boolean = false;
 	item: Item.NativeItem;
 
-	constructor(stringID: string, name?: string, icon?: string|Item.TextureData) {
+	constructor(stringID: string, name?: string, icon?: string | Item.TextureData) {
 		this.stringID = stringID;
 		this.id = IDRegistry.genItemID(stringID);
 		this.setName(name || stringID);

@@ -1,5 +1,5 @@
 class ItemFood extends ItemBase {
-	constructor(stringID: string, name?: string, icon?: string|Item.TextureData, food?: number, inCreative: boolean = true) {
+	constructor(stringID: string, name?: string, icon?: string | Item.TextureData, food?: number, inCreative: boolean = true) {
 		super(stringID, name, icon);
 		this.item = Item.createFoodItem(this.stringID, this.name, this.icon, {food: food, isTech: true});
 		this.setCategory(ItemCategory.ITEMS);
