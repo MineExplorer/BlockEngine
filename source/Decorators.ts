@@ -4,11 +4,13 @@ namespace BlockEngine {
 			target[field] = {...target[field]};
 		}
 
+		/** Client side method decorator for TileEntity */
 		export function ClientSide(target: TileEntityBase, propertyName: string) {
 			createField(target, "client");
 			target.client[propertyName] = target[propertyName];
 		}
 
+		/** Adds method as network event in TileEntity */
 		export function NetworkEvent(side: Side) {
 			return (target: TileEntityBase, propertyName: string) => {
 				if (side == Side.Client) {
@@ -23,6 +25,7 @@ namespace BlockEngine {
 			}
 		}
 
+		/** Adds method as container event in TileEntity */
 		export function ContainerEvent(side: Side) {
 			return (target: TileEntityBase, propertyName: string) => {
 				if (side == Side.Client) {

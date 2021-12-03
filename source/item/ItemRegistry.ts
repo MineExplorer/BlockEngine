@@ -26,7 +26,7 @@ namespace ItemRegistry {
 	}
 
 	/**
-	 * @returns whether item is item from the original game
+	 * @returns whether item is an item from the original game
 	 */
 	export function isVanilla(id: number): boolean {
 		return !IDRegistry.getNameByID(id);

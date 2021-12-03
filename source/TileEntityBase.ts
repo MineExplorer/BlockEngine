@@ -50,19 +50,23 @@ implements TileEntity {
 		this.onCreate();
 	}
 
+	/** @deprecated */
 	init(): void {
 		this.region = new WorldRegion(this.blockSource);
 		this.onInit();
 	}
 
+	/** @deprecated */
 	load(): void {
 		this.onLoad();
 	}
 
+	/** @deprecated */
 	unload(): void {
 		this.onUnload();
 	}
 
+	/** @deprecated */
 	tick(): void {
 		this.onTick();
 	}
@@ -92,10 +96,19 @@ implements TileEntity {
 	 */
 	onTick(): void {}
 
+	/**
+	 * Called when the client copy is created
+	 */
 	clientLoad(): void {}
 
+	/**
+	 * Called on destroying the client copy
+	 */
 	clientUnload(): void {}
 
+	/**
+	 * Called every tick on client thread
+	 */
 	clientTick(): void {}
 
 	onCheckerTick(isInitialized: boolean, isLoaded: boolean, wasLoaded: boolean): void {}
@@ -140,7 +153,7 @@ implements TileEntity {
         }
 
 		const screenName = this.getScreenName(player, coords);
-    	if (screenName) {
+    	if (screenName && this.getScreenByName("main")) {
             const client = Network.getClientForPlayer(player);
             if (client) {
             	this.container.openFor(client, screenName);
@@ -152,12 +165,13 @@ implements TileEntity {
 
 	destroyBlock(coords: Callback.ItemUseCoordinates, player: number): void {}
 
+	/** @deprecated */
 	redstone(params: {power: number, signal: number, onLoad: boolean}): void {
 		this.onRedstoneUpdate(params.power);
 	}
 
 	/**
-	 * Occurs when redstone signal on TileEntity block was updated. Replaces "redstone" function
+	 * Occurs when redstone signal on TileEntity block was updated
 	 * @param signal signal power (0-15)
 	 */
 	onRedstoneUpdate(signal: number): void {}
