@@ -8,8 +8,8 @@ class BlockBase {
 		this.id = IDRegistry.genBlockID(stringID);
 	}
 
-	addVariant(name: string, texture: [string, number][], inCreative) {
-		this.variants.push();
+	addVariant(name: string, texture: [string, number][], inCreative: boolean = false) {
+		this.variants.push({name: name, texture: texture, inCreative: inCreative});
 	}
 
 	create(blockType?: Block.SpecialType | string) {
@@ -31,7 +31,7 @@ class BlockBase {
 		return this;
 	}
 
-	registerTileEntity(prototype: any) {
+	registerTileEntity(prototype: TileEntity.TileEntityPrototype) {
 		TileEntity.registerPrototype(this.id, prototype);
 	}
 }

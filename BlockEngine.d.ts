@@ -461,8 +461,82 @@ declare namespace BlockModeler {
     export function setInventoryModel(blockID: number, model: RenderMesh | ICRender.Model | BlockRenderer.Model, data?: number): void;
     export {};
 }
+declare class BlockBase {
+    stringID: string;
+    id: number;
+    variants: Array<Block.BlockVariation>;
+    constructor(stringID: string);
+    addVariant(name: string, texture: [string, number][], inCreative?: boolean): void;
+    create(blockType?: Block.SpecialType | string): void;
+    setDestroyTime(destroyTime: number): this;
+    setBlockMaterial(material: string, level: number): this;
+    setShape(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number, data?: number): this;
+    registerTileEntity(prototype: TileEntity.TileEntityPrototype): void;
+}
 declare namespace BlockRegistry {
     function createBlock(nameID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): void;
+    /**
+     * Sets destroy time for the block with specified id
+     */
+    function setDestroyTime(blockID: string | number, time: number): void;
+    /**
+     * Makes block inherit some properties of the vanilla block
+     */
+    function setBaseBlock(blockID: string | number, material: number): void;
+    /**
+     * Sets sound type of the block.
+     */
+    function setSoundType(blockID: string | number, sound: Block.Sound): void;
+    /**
+     * If true, sets block to be not transparent. Default is false
+     */
+    function setSolid(blockID: string | number, isSolid: boolean): void;
+    /**
+     * If true, all block faces are rendered, otherwise back faces are not
+     * rendered (for optimization purposes). Default is false
+     */
+    function setRenderAllFaces(blockID: string | number, renderAllFaces: boolean): void;
+    /**
+     * Sets render type of the block. Default is 0 (full block), use other
+     * values to change block's shape
+     */
+    function setRenderType(blockID: string | number, renderType: number): void;
+    /**
+     * Specifies the layer that is used to render the block. Default is 4
+     */
+    function setRenderLayer(blockID: string | number, renderLayer: number): void;
+    /**
+     * Specifues light level which block emits. Value from 0 to 15, default is 0 (no light)
+     */
+    function setLightLevel(blockID: string | number, lightLevel: number): void;
+    /**
+     * Specifies how the block passes light level. Default is 0 (transparent), use values
+     * from 1 to 15 to make the block opaque
+     */
+    function setLightOpacity(blockID: string | number, lightOpacity: number): void;
+    /**
+     * Specifies how block resists to the explosions. Default value is 3
+     */
+    function setExplosionResistance(blockID: string | number, resistance: number): void;
+    /**
+     * Sets block friction. Friction specifies how player walks on the block.
+     * The higher the friction is, the more difficult it is to change speed
+     * and direction. Default value is 0.6
+     */
+    function setFriction(blockID: string | number, friction: number): void;
+    /**
+     * If non-zero value is used, the shadows will be rendered on the block.
+     * Default is 0 (no shadows), allows float values from 0 to 1
+     */
+    function setTranslucency(blockID: string | number, translucency: number): void;
+    /**
+     * Sets block color when displayed on the vanilla maps
+     */
+    function setMapColor(blockID: string | number, color: number): void;
+    /**
+     * Makes block use biome color source when displayed on the vanilla maps.
+     */
+    function setBlockColorSource(blockID: string | number, color: Block.ColorSource): void;
     function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType, hasVertical?: boolean): void;
     function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType: string | Block.SpecialType): void;
     function getBlockRotation(player: number, hasVertical?: boolean): number;

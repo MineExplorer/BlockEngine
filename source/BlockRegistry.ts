@@ -1,7 +1,116 @@
+/// <reference path="BlockBase.ts" />
+
 namespace BlockRegistry {
+	//@ts-ignore
+	const NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
+
 	export function createBlock(nameID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): void {
 		IDRegistry.genBlockID(nameID);
 		Block.createBlock(nameID, defineData, blockType);
+	}
+
+	/**
+	 * Sets destroy time for the block with specified id
+	 */
+	export function setDestroyTime(blockID: string | number, time: number): void {
+		Block.setDestroyTime(blockID, time);
+	}
+
+	/**
+	 * Makes block inherit some properties of the vanilla block
+	 */
+	export function setBaseBlock(blockID: string | number, material: number): void {
+		NativeBlock.setMaterialBase(Block.getNumericId(blockID), material);
+	}
+
+	/**
+	 * Sets sound type of the block.
+	 */
+	export function setSoundType(blockID: string | number, sound: Block.Sound): void {
+		NativeBlock.setSoundType(Block.getNumericId(blockID), sound);
+	}
+
+	/**
+	 * If true, sets block to be not transparent. Default is false
+	 */
+	export function setSolid(blockID: string | number, isSolid: boolean): void {
+		NativeBlock.setSolid(Block.getNumericId(blockID), isSolid);
+	}
+
+	/**
+	 * If true, all block faces are rendered, otherwise back faces are not
+	 * rendered (for optimization purposes). Default is false
+	 */
+	export function setRenderAllFaces(blockID: string | number, renderAllFaces: boolean): void {
+		NativeBlock.setRenderAllFaces(Block.getNumericId(blockID), renderAllFaces);
+	}
+
+	/**
+	 * Sets render type of the block. Default is 0 (full block), use other
+	 * values to change block's shape
+	 */
+	export function setRenderType(blockID: string | number, renderType: number): void {
+		NativeBlock.setRenderType(Block.getNumericId(blockID), renderType);
+	}
+
+	/**
+	 * Specifies the layer that is used to render the block. Default is 4
+	 */
+	export function setRenderLayer(blockID: string | number, renderLayer: number): void {
+		NativeBlock.setRenderLayer(Block.getNumericId(blockID), renderLayer);
+	}
+
+	/**
+	 * Specifues light level which block emits. Value from 0 to 15, default is 0 (no light)
+	 */
+	export function setLightLevel(blockID: string | number, lightLevel: number): void {
+		NativeBlock.setLightLevel(Block.getNumericId(blockID), lightLevel);
+	}
+
+	/**
+	 * Specifies how the block passes light level. Default is 0 (transparent), use values
+	 * from 1 to 15 to make the block opaque
+	 */
+	export function setLightOpacity(blockID: string | number, lightOpacity: number): void {
+		NativeBlock.setLightOpacity(Block.getNumericId(blockID), lightOpacity);
+	}
+
+	/**
+	 * Specifies how block resists to the explosions. Default value is 3
+	 */
+	export function setExplosionResistance(blockID: string | number, resistance: number): void {
+		NativeBlock.setExplosionResistance(Block.getNumericId(blockID), resistance);
+	}
+
+	/**
+	 * Sets block friction. Friction specifies how player walks on the block.
+	 * The higher the friction is, the more difficult it is to change speed
+	 * and direction. Default value is 0.6
+	 */
+	export function setFriction(blockID: string | number, friction: number): void {
+		NativeBlock.setFriction(Block.getNumericId(blockID), friction);
+	}
+
+	/**
+	 * If non-zero value is used, the shadows will be rendered on the block.
+	 * Default is 0 (no shadows), allows float values from 0 to 1
+	 */
+	export function setTranslucency(blockID: string | number, translucency: number): void {
+		NativeBlock.setTranslucency(Block.getNumericId(blockID), translucency);
+	}
+
+	/**
+	 * Sets block color when displayed on the vanilla maps
+	 */
+	export function setMapColor(blockID: string | number, color: number): void {
+		NativeBlock.setMapColor(Block.getNumericId(blockID), color);
+	}
+
+	/**
+	 * Makes block use biome color source when displayed on the vanilla maps.
+	 */
+	export function setBlockColorSource(blockID: string | number, color: Block.ColorSource): void {
+		NativeBlock.setBlockColorSource(Block.getNumericId(blockID), color);
 	}
 
     export function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType, hasVertical?: boolean): void {

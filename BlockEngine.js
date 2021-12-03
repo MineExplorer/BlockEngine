@@ -976,13 +976,150 @@ var BlockModeler;
     }
     BlockModeler.setInventoryModel = setInventoryModel;
 })(BlockModeler || (BlockModeler = {}));
+var BlockBase = /** @class */ (function () {
+    function BlockBase(stringID) {
+        this.variants = [];
+        this.stringID = stringID;
+        this.id = IDRegistry.genBlockID(stringID);
+    }
+    BlockBase.prototype.addVariant = function (name, texture, inCreative) {
+        if (inCreative === void 0) { inCreative = false; }
+        this.variants.push({ name: name, texture: texture, inCreative: inCreative });
+    };
+    BlockBase.prototype.create = function (blockType) {
+        Block.createBlock(this.stringID, this.variants, blockType);
+    };
+    BlockBase.prototype.setDestroyTime = function (destroyTime) {
+        Block.setDestroyTime(this.stringID, destroyTime);
+        return this;
+    };
+    BlockBase.prototype.setBlockMaterial = function (material, level) {
+        Block.setBlockMaterial(this.stringID, material, level);
+        return this;
+    };
+    BlockBase.prototype.setShape = function (x1, y1, z1, x2, y2, z2, data) {
+        Block.setShape(this.id, x1, y1, z1, x2, y2, z2, data);
+        return this;
+    };
+    BlockBase.prototype.registerTileEntity = function (prototype) {
+        TileEntity.registerPrototype(this.id, prototype);
+    };
+    return BlockBase;
+}());
+/// <reference path="BlockBase.ts" />
 var BlockRegistry;
 (function (BlockRegistry) {
+    //@ts-ignore
+    var NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
     function createBlock(nameID, defineData, blockType) {
         IDRegistry.genBlockID(nameID);
         Block.createBlock(nameID, defineData, blockType);
     }
     BlockRegistry.createBlock = createBlock;
+    /**
+     * Sets destroy time for the block with specified id
+     */
+    function setDestroyTime(blockID, time) {
+        Block.setDestroyTime(blockID, time);
+    }
+    BlockRegistry.setDestroyTime = setDestroyTime;
+    /**
+     * Makes block inherit some properties of the vanilla block
+     */
+    function setBaseBlock(blockID, material) {
+        NativeBlock.setMaterialBase(Block.getNumericId(blockID), material);
+    }
+    BlockRegistry.setBaseBlock = setBaseBlock;
+    /**
+     * Sets sound type of the block.
+     */
+    function setSoundType(blockID, sound) {
+        NativeBlock.setSoundType(Block.getNumericId(blockID), sound);
+    }
+    BlockRegistry.setSoundType = setSoundType;
+    /**
+     * If true, sets block to be not transparent. Default is false
+     */
+    function setSolid(blockID, isSolid) {
+        NativeBlock.setSolid(Block.getNumericId(blockID), isSolid);
+    }
+    BlockRegistry.setSolid = setSolid;
+    /**
+     * If true, all block faces are rendered, otherwise back faces are not
+     * rendered (for optimization purposes). Default is false
+     */
+    function setRenderAllFaces(blockID, renderAllFaces) {
+        NativeBlock.setRenderAllFaces(Block.getNumericId(blockID), renderAllFaces);
+    }
+    BlockRegistry.setRenderAllFaces = setRenderAllFaces;
+    /**
+     * Sets render type of the block. Default is 0 (full block), use other
+     * values to change block's shape
+     */
+    function setRenderType(blockID, renderType) {
+        NativeBlock.setRenderType(Block.getNumericId(blockID), renderType);
+    }
+    BlockRegistry.setRenderType = setRenderType;
+    /**
+     * Specifies the layer that is used to render the block. Default is 4
+     */
+    function setRenderLayer(blockID, renderLayer) {
+        NativeBlock.setRenderLayer(Block.getNumericId(blockID), renderLayer);
+    }
+    BlockRegistry.setRenderLayer = setRenderLayer;
+    /**
+     * Specifues light level which block emits. Value from 0 to 15, default is 0 (no light)
+     */
+    function setLightLevel(blockID, lightLevel) {
+        NativeBlock.setLightLevel(Block.getNumericId(blockID), lightLevel);
+    }
+    BlockRegistry.setLightLevel = setLightLevel;
+    /**
+     * Specifies how the block passes light level. Default is 0 (transparent), use values
+     * from 1 to 15 to make the block opaque
+     */
+    function setLightOpacity(blockID, lightOpacity) {
+        NativeBlock.setLightOpacity(Block.getNumericId(blockID), lightOpacity);
+    }
+    BlockRegistry.setLightOpacity = setLightOpacity;
+    /**
+     * Specifies how block resists to the explosions. Default value is 3
+     */
+    function setExplosionResistance(blockID, resistance) {
+        NativeBlock.setExplosionResistance(Block.getNumericId(blockID), resistance);
+    }
+    BlockRegistry.setExplosionResistance = setExplosionResistance;
+    /**
+     * Sets block friction. Friction specifies how player walks on the block.
+     * The higher the friction is, the more difficult it is to change speed
+     * and direction. Default value is 0.6
+     */
+    function setFriction(blockID, friction) {
+        NativeBlock.setFriction(Block.getNumericId(blockID), friction);
+    }
+    BlockRegistry.setFriction = setFriction;
+    /**
+     * If non-zero value is used, the shadows will be rendered on the block.
+     * Default is 0 (no shadows), allows float values from 0 to 1
+     */
+    function setTranslucency(blockID, translucency) {
+        NativeBlock.setTranslucency(Block.getNumericId(blockID), translucency);
+    }
+    BlockRegistry.setTranslucency = setTranslucency;
+    /**
+     * Sets block color when displayed on the vanilla maps
+     */
+    function setMapColor(blockID, color) {
+        NativeBlock.setMapColor(Block.getNumericId(blockID), color);
+    }
+    BlockRegistry.setMapColor = setMapColor;
+    /**
+     * Makes block use biome color source when displayed on the vanilla maps.
+     */
+    function setBlockColorSource(blockID, color) {
+        NativeBlock.setBlockColorSource(Block.getNumericId(blockID), color);
+    }
+    BlockRegistry.setBlockColorSource = setBlockColorSource;
     function createBlockWithRotation(stringID, defineData, blockType, hasVertical) {
         var numericID = IDRegistry.genBlockID(stringID);
         var variations = [];
