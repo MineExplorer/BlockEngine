@@ -1018,34 +1018,38 @@ var BlockRegistry;
     BlockRegistry.createBlock = createBlock;
     /**
      * Sets destroy time for the block with specified id
+     * @param time block destroy time
      */
     function setDestroyTime(blockID, time) {
         Block.setDestroyTime(blockID, time);
     }
     BlockRegistry.setDestroyTime = setDestroyTime;
     /**
-     * Makes block inherit some properties of the vanilla block
+     * Sets the block type of another block, which allows to inherit some of its properties
+     * @param baseBlock id of the block to inherit type
      */
-    function setBaseBlock(blockID, material) {
-        NativeBlock.setMaterialBase(Block.getNumericId(blockID), material);
+    function setBaseBlock(blockID, baseBlock) {
+        NativeBlock.setMaterialBase(Block.getNumericId(blockID), baseBlock);
     }
     BlockRegistry.setBaseBlock = setBaseBlock;
     /**
      * Sets sound type of the block.
+     * @param sound block sound type
      */
     function setSoundType(blockID, sound) {
         NativeBlock.setSoundType(Block.getNumericId(blockID), sound);
     }
     BlockRegistry.setSoundType = setSoundType;
     /**
-     * If true, sets block to be not transparent. Default is false
+     * Sets block to be transparent or opaque.
+     * @param isSolid if true, sets block to be opaque.
      */
     function setSolid(blockID, isSolid) {
         NativeBlock.setSolid(Block.getNumericId(blockID), isSolid);
     }
     BlockRegistry.setSolid = setSolid;
     /**
-     * If true, all block faces are rendered, otherwise back faces are not
+     * @param renderAllFaces If true, all block faces are rendered, otherwise back faces are not
      * rendered (for optimization purposes). Default is false
      */
     function setRenderAllFaces(blockID, renderAllFaces) {
@@ -1053,54 +1057,59 @@ var BlockRegistry;
     }
     BlockRegistry.setRenderAllFaces = setRenderAllFaces;
     /**
-     * Sets render type of the block. Default is 0 (full block), use other
-     * values to change block's shape
+     * Sets render type of the block.
+     * @param renderType default is 0 (full block), use other values to change block's model
      */
     function setRenderType(blockID, renderType) {
         NativeBlock.setRenderType(Block.getNumericId(blockID), renderType);
     }
     BlockRegistry.setRenderType = setRenderType;
     /**
-     * Specifies the layer that is used to render the block. Default is 4
+     * Specifies the layer that is used to render the block.
+     * @param renderLayer default is 4
      */
     function setRenderLayer(blockID, renderLayer) {
         NativeBlock.setRenderLayer(Block.getNumericId(blockID), renderLayer);
     }
     BlockRegistry.setRenderLayer = setRenderLayer;
     /**
-     * Specifues light level which block emits. Value from 0 to 15, default is 0 (no light)
+     * Sets level of the light emitted by the block.
+     * @param lightLevel value from 0 (no light) to 15
      */
     function setLightLevel(blockID, lightLevel) {
         NativeBlock.setLightLevel(Block.getNumericId(blockID), lightLevel);
     }
     BlockRegistry.setLightLevel = setLightLevel;
     /**
-     * Specifies how the block passes light level. Default is 0 (transparent), use values
-     * from 1 to 15 to make the block opaque
+     * Specifies how opaque block is.
+     * @param lightOpacity Value from 0 to 15 which will be substracted
+     * from the light level when the light passes through the block
      */
     function setLightOpacity(blockID, lightOpacity) {
         NativeBlock.setLightOpacity(Block.getNumericId(blockID), lightOpacity);
     }
     BlockRegistry.setLightOpacity = setLightOpacity;
     /**
-     * Specifies how block resists to the explosions. Default value is 3
+     * Specifies how block resists to the explosions.
+     * @param resistance integer value, default is 3
      */
     function setExplosionResistance(blockID, resistance) {
         NativeBlock.setExplosionResistance(Block.getNumericId(blockID), resistance);
     }
     BlockRegistry.setExplosionResistance = setExplosionResistance;
     /**
-     * Sets block friction. Friction specifies how player walks on the block.
+     * Sets block friction. It specifies how player walks on the block.
      * The higher the friction is, the more difficult it is to change speed
-     * and direction. Default value is 0.6
+     * and direction.
+     * @param friction float value, default is 0.6
      */
     function setFriction(blockID, friction) {
         NativeBlock.setFriction(Block.getNumericId(blockID), friction);
     }
     BlockRegistry.setFriction = setFriction;
     /**
-     * If non-zero value is used, the shadows will be rendered on the block.
-     * Default is 0 (no shadows), allows float values from 0 to 1
+     * Specifies rendering of shadows on the block.
+     * @param translucency float value from 0 (no shadows) to 1
      */
     function setTranslucency(blockID, translucency) {
         NativeBlock.setTranslucency(Block.getNumericId(blockID), translucency);
@@ -1108,13 +1117,15 @@ var BlockRegistry;
     BlockRegistry.setTranslucency = setTranslucency;
     /**
      * Sets block color when displayed on the vanilla maps
+     * @param color map color of the block
      */
     function setMapColor(blockID, color) {
         NativeBlock.setMapColor(Block.getNumericId(blockID), color);
     }
     BlockRegistry.setMapColor = setMapColor;
     /**
-     * Makes block use biome color source when displayed on the vanilla maps.
+     * Makes block use biome color when displayed on the vanilla maps.
+     * @param color block color source
      */
     function setBlockColorSource(blockID, color) {
         NativeBlock.setBlockColorSource(Block.getNumericId(blockID), color);

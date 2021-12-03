@@ -477,64 +477,75 @@ declare namespace BlockRegistry {
     function createBlock(nameID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): void;
     /**
      * Sets destroy time for the block with specified id
+     * @param time block destroy time
      */
     function setDestroyTime(blockID: string | number, time: number): void;
     /**
-     * Makes block inherit some properties of the vanilla block
+     * Sets the block type of another block, which allows to inherit some of its properties
+     * @param baseBlock id of the block to inherit type
      */
-    function setBaseBlock(blockID: string | number, material: number): void;
+    function setBaseBlock(blockID: string | number, baseBlock: number): void;
     /**
      * Sets sound type of the block.
+     * @param sound block sound type
      */
     function setSoundType(blockID: string | number, sound: Block.Sound): void;
     /**
-     * If true, sets block to be not transparent. Default is false
+     * Sets block to be transparent or opaque.
+     * @param isSolid if true, sets block to be opaque.
      */
     function setSolid(blockID: string | number, isSolid: boolean): void;
     /**
-     * If true, all block faces are rendered, otherwise back faces are not
+     * @param renderAllFaces If true, all block faces are rendered, otherwise back faces are not
      * rendered (for optimization purposes). Default is false
      */
     function setRenderAllFaces(blockID: string | number, renderAllFaces: boolean): void;
     /**
-     * Sets render type of the block. Default is 0 (full block), use other
-     * values to change block's shape
+     * Sets render type of the block.
+     * @param renderType default is 0 (full block), use other values to change block's model
      */
     function setRenderType(blockID: string | number, renderType: number): void;
     /**
-     * Specifies the layer that is used to render the block. Default is 4
+     * Specifies the layer that is used to render the block.
+     * @param renderLayer default is 4
      */
     function setRenderLayer(blockID: string | number, renderLayer: number): void;
     /**
-     * Specifues light level which block emits. Value from 0 to 15, default is 0 (no light)
+     * Sets level of the light emitted by the block.
+     * @param lightLevel value from 0 (no light) to 15
      */
     function setLightLevel(blockID: string | number, lightLevel: number): void;
     /**
-     * Specifies how the block passes light level. Default is 0 (transparent), use values
-     * from 1 to 15 to make the block opaque
+     * Specifies how opaque block is.
+     * @param lightOpacity Value from 0 to 15 which will be substracted
+     * from the light level when the light passes through the block
      */
     function setLightOpacity(blockID: string | number, lightOpacity: number): void;
     /**
-     * Specifies how block resists to the explosions. Default value is 3
+     * Specifies how block resists to the explosions.
+     * @param resistance integer value, default is 3
      */
     function setExplosionResistance(blockID: string | number, resistance: number): void;
     /**
-     * Sets block friction. Friction specifies how player walks on the block.
+     * Sets block friction. It specifies how player walks on the block.
      * The higher the friction is, the more difficult it is to change speed
-     * and direction. Default value is 0.6
+     * and direction.
+     * @param friction float value, default is 0.6
      */
     function setFriction(blockID: string | number, friction: number): void;
     /**
-     * If non-zero value is used, the shadows will be rendered on the block.
-     * Default is 0 (no shadows), allows float values from 0 to 1
+     * Specifies rendering of shadows on the block.
+     * @param translucency float value from 0 (no shadows) to 1
      */
     function setTranslucency(blockID: string | number, translucency: number): void;
     /**
      * Sets block color when displayed on the vanilla maps
+     * @param color map color of the block
      */
     function setMapColor(blockID: string | number, color: number): void;
     /**
-     * Makes block use biome color source when displayed on the vanilla maps.
+     * Makes block use biome color when displayed on the vanilla maps.
+     * @param color block color source
      */
     function setBlockColorSource(blockID: string | number, color: Block.ColorSource): void;
     function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType, hasVertical?: boolean): void;

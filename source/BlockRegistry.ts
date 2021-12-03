@@ -11,34 +11,38 @@ namespace BlockRegistry {
 
 	/**
 	 * Sets destroy time for the block with specified id
+	 * @param time block destroy time
 	 */
 	export function setDestroyTime(blockID: string | number, time: number): void {
 		Block.setDestroyTime(blockID, time);
 	}
 
 	/**
-	 * Makes block inherit some properties of the vanilla block
+	 * Sets the block type of another block, which allows to inherit some of its properties
+	 * @param baseBlock id of the block to inherit type
 	 */
-	export function setBaseBlock(blockID: string | number, material: number): void {
-		NativeBlock.setMaterialBase(Block.getNumericId(blockID), material);
+	export function setBaseBlock(blockID: string | number, baseBlock: number): void {
+		NativeBlock.setMaterialBase(Block.getNumericId(blockID), baseBlock);
 	}
 
 	/**
 	 * Sets sound type of the block.
+	 * @param sound block sound type
 	 */
 	export function setSoundType(blockID: string | number, sound: Block.Sound): void {
 		NativeBlock.setSoundType(Block.getNumericId(blockID), sound);
 	}
 
 	/**
-	 * If true, sets block to be not transparent. Default is false
+	 * Sets block to be transparent or opaque.
+	 * @param isSolid if true, sets block to be opaque.
 	 */
 	export function setSolid(blockID: string | number, isSolid: boolean): void {
 		NativeBlock.setSolid(Block.getNumericId(blockID), isSolid);
 	}
 
 	/**
-	 * If true, all block faces are rendered, otherwise back faces are not
+	 * @param renderAllFaces If true, all block faces are rendered, otherwise back faces are not
 	 * rendered (for optimization purposes). Default is false
 	 */
 	export function setRenderAllFaces(blockID: string | number, renderAllFaces: boolean): void {
@@ -46,54 +50,59 @@ namespace BlockRegistry {
 	}
 
 	/**
-	 * Sets render type of the block. Default is 0 (full block), use other
-	 * values to change block's shape
+	 * Sets render type of the block.
+	 * @param renderType default is 0 (full block), use other values to change block's model
 	 */
 	export function setRenderType(blockID: string | number, renderType: number): void {
 		NativeBlock.setRenderType(Block.getNumericId(blockID), renderType);
 	}
 
 	/**
-	 * Specifies the layer that is used to render the block. Default is 4
+	 * Specifies the layer that is used to render the block.
+	 * @param renderLayer default is 4
 	 */
 	export function setRenderLayer(blockID: string | number, renderLayer: number): void {
 		NativeBlock.setRenderLayer(Block.getNumericId(blockID), renderLayer);
 	}
 
 	/**
-	 * Specifues light level which block emits. Value from 0 to 15, default is 0 (no light)
+	 * Sets level of the light emitted by the block.
+	 * @param lightLevel value from 0 (no light) to 15
 	 */
 	export function setLightLevel(blockID: string | number, lightLevel: number): void {
 		NativeBlock.setLightLevel(Block.getNumericId(blockID), lightLevel);
 	}
 
 	/**
-	 * Specifies how the block passes light level. Default is 0 (transparent), use values
-	 * from 1 to 15 to make the block opaque
+	 * Specifies how opaque block is.
+	 * @param lightOpacity Value from 0 to 15 which will be substracted
+	 * from the light level when the light passes through the block
 	 */
 	export function setLightOpacity(blockID: string | number, lightOpacity: number): void {
 		NativeBlock.setLightOpacity(Block.getNumericId(blockID), lightOpacity);
 	}
 
 	/**
-	 * Specifies how block resists to the explosions. Default value is 3
+	 * Specifies how block resists to the explosions.
+	 * @param resistance integer value, default is 3
 	 */
 	export function setExplosionResistance(blockID: string | number, resistance: number): void {
 		NativeBlock.setExplosionResistance(Block.getNumericId(blockID), resistance);
 	}
 
 	/**
-	 * Sets block friction. Friction specifies how player walks on the block.
+	 * Sets block friction. It specifies how player walks on the block.
 	 * The higher the friction is, the more difficult it is to change speed
-	 * and direction. Default value is 0.6
+	 * and direction.
+	 * @param friction float value, default is 0.6
 	 */
 	export function setFriction(blockID: string | number, friction: number): void {
 		NativeBlock.setFriction(Block.getNumericId(blockID), friction);
 	}
 
 	/**
-	 * If non-zero value is used, the shadows will be rendered on the block.
-	 * Default is 0 (no shadows), allows float values from 0 to 1
+	 * Specifies rendering of shadows on the block.
+	 * @param translucency float value from 0 (no shadows) to 1
 	 */
 	export function setTranslucency(blockID: string | number, translucency: number): void {
 		NativeBlock.setTranslucency(Block.getNumericId(blockID), translucency);
@@ -101,13 +110,15 @@ namespace BlockRegistry {
 
 	/**
 	 * Sets block color when displayed on the vanilla maps
+	 * @param color map color of the block
 	 */
 	export function setMapColor(blockID: string | number, color: number): void {
 		NativeBlock.setMapColor(Block.getNumericId(blockID), color);
 	}
 
 	/**
-	 * Makes block use biome color source when displayed on the vanilla maps.
+	 * Makes block use biome color when displayed on the vanilla maps.
+	 * @param color block color source
 	 */
 	export function setBlockColorSource(blockID: string | number, color: Block.ColorSource): void {
 		NativeBlock.setBlockColorSource(Block.getNumericId(blockID), color);
