@@ -20,7 +20,7 @@ namespace BlockRegistry {
 		return blockTypes[name] || null;
 	}
 
-	function extendBlockType(type: BlockType): void {
+	export function extendBlockType(type: BlockType): void {
 		if (type.extends) {
 			const parent = getBlockType(type.extends);
 			for (let key in parent) {
@@ -36,55 +36,6 @@ namespace BlockRegistry {
 		blockTypes[name] = type;
 		if (!isNative) Block.createSpecialType(convertBlockTypeToSpecialType(type), name);
 	}
-
-	createBlockType("opaque", {
-		baseBlock: 1,
-		solid: true,
-        lightOpacity: 15,
-        explosionResistance: 4,
-        renderLayer: 2,
-        translucency: 0,
-        sound: "stone"
-	}, true);
-
-	createBlockType("stone", {
-		extends: "opaque",
-		destroyTime: 1.5,
-		explosionResistance: 30
-	});
-
-	createBlockType("ore", {
-		extends: "opaque",
-		destroyTime: 3,
-		explosionResistance: 15
-	});
-
-	createBlockType("wood", {
-		extends: "opaque",
-		baseBlock: 17,
-		destroyTime: 2,
-		explosionResistance: 10,
-		sound: "wood"
-	});
-
-	createBlockType("leaves", {
-		baseBlock: 18,
-		destroyTime: 0.2,
-		explosionResistance: 1,
-		renderAllFaces: true,
-		renderLayer: 1,
-		lightOpacity: 1,
-		translucency: 0.5,
-		sound: "grass"
-	});
-
-	createBlockType("dirt", {
-		extends: "opaque",
-		baseBlock: 2,
-		destroyTime: 0.5,
-		explosionResistance: 2.5,
-		sound: "gravel"
-	});
 
 	export function convertBlockTypeToSpecialType(properites: BlockType): Block.SpecialType {
 		const type: Block.SpecialType = {};
@@ -498,4 +449,54 @@ namespace BlockRegistry {
 
 		return [[Block.convertBlockToItemId(id), 1, 0]];
 	}
+
+	// default block types
+	createBlockType("opaque", {
+		baseBlock: 1,
+		solid: true,
+        lightOpacity: 15,
+        explosionResistance: 4,
+        renderLayer: 2,
+        translucency: 0,
+        sound: "stone"
+	}, true);
+
+	createBlockType("stone", {
+		extends: "opaque",
+		destroyTime: 1.5,
+		explosionResistance: 30
+	});
+
+	createBlockType("ore", {
+		extends: "opaque",
+		destroyTime: 3,
+		explosionResistance: 15
+	});
+
+	createBlockType("wood", {
+		extends: "opaque",
+		baseBlock: 17,
+		destroyTime: 2,
+		explosionResistance: 10,
+		sound: "wood"
+	});
+
+	createBlockType("leaves", {
+		baseBlock: 18,
+		destroyTime: 0.2,
+		explosionResistance: 1,
+		renderAllFaces: true,
+		renderLayer: 1,
+		lightOpacity: 1,
+		translucency: 0.5,
+		sound: "grass"
+	});
+
+	createBlockType("dirt", {
+		extends: "opaque",
+		baseBlock: 2,
+		destroyTime: 0.5,
+		explosionResistance: 2.5,
+		sound: "gravel"
+	});
 }

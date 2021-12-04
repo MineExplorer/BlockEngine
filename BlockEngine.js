@@ -979,12 +979,16 @@ var BlockModeler;
 /// <reference path="BlockType.ts" />
 /// <reference path="BlockBehavior.ts" />
 var BlockBase = /** @class */ (function () {
-    function BlockBase(stringID, properties) {
-        if (properties === void 0) { properties = {}; }
+    function BlockBase(stringID, blockType) {
+        if (blockType === void 0) { blockType = {}; }
         this.variations = [];
+        this.isDefined = false;
         this.stringID = stringID;
         this.id = IDRegistry.genBlockID(stringID);
-        this.blockType = properties;
+        if (typeof blockType == "string") {
+            blockType = BlockRegistry.getBlockType(blockType);
+        }
+        this.blockType = blockType;
     }
     BlockBase.prototype.addVariation = function (name, texture, inCreative) {
         if (inCreative === void 0) { inCreative = false; }
@@ -994,8 +998,10 @@ var BlockBase = /** @class */ (function () {
         if (this.variations.length == 0) {
             this.addVariation(this.stringID + ".name", [["__missing", 0]]);
         }
+        BlockRegistry.extendBlockType(this.blockType);
         var blockType = BlockRegistry.convertBlockTypeToSpecialType(this.blockType);
         Block.createBlock(this.stringID, this.variations, blockType);
+        this.isDefined = true;
         if (this.category)
             Item.setCategory(this.id, this.category);
     };
@@ -1161,6 +1167,7 @@ var BlockRegistry;
             }
         }
     }
+    BlockRegistry.extendBlockType = extendBlockType;
     function createBlockType(name, type, isNative) {
         extendBlockType(type);
         blockTypes[name] = type;
@@ -1168,49 +1175,6 @@ var BlockRegistry;
             Block.createSpecialType(convertBlockTypeToSpecialType(type), name);
     }
     BlockRegistry.createBlockType = createBlockType;
-    createBlockType("opaque", {
-        baseBlock: 1,
-        solid: true,
-        lightOpacity: 15,
-        explosionResistance: 4,
-        renderLayer: 3,
-        translucency: 0,
-        sound: "stone"
-    });
-    createBlockType("stone", {
-        extends: "opaque",
-        destroyTime: 1.5,
-        explosionResistance: 30
-    });
-    createBlockType("ore", {
-        extends: "opaque",
-        destroyTime: 3,
-        explosionResistance: 15
-    });
-    createBlockType("wood", {
-        extends: "opaque",
-        baseBlock: 17,
-        destroyTime: 2,
-        explosionResistance: 10,
-        sound: "wood"
-    });
-    createBlockType("leaves", {
-        baseBlock: 18,
-        destroyTime: 0.2,
-        explosionResistance: 1,
-        renderAllFaces: true,
-        renderLayer: 1,
-        lightOpacity: 1,
-        translucency: 0.5,
-        sound: "grass"
-    });
-    createBlockType("dirt", {
-        extends: "opaque",
-        baseBlock: 2,
-        destroyTime: 0.5,
-        explosionResistance: 2.5,
-        sound: "gravel"
-    });
     function convertBlockTypeToSpecialType(properites) {
         var type = {};
         for (var key in properites) {
@@ -1662,6 +1626,50 @@ var BlockRegistry;
         return [[Block.convertBlockToItemId(id), 1, 0]];
     }
     BlockRegistry.getBlockDrop = getBlockDrop;
+    // default block types
+    createBlockType("opaque", {
+        baseBlock: 1,
+        solid: true,
+        lightOpacity: 15,
+        explosionResistance: 4,
+        renderLayer: 2,
+        translucency: 0,
+        sound: "stone"
+    }, true);
+    createBlockType("stone", {
+        extends: "opaque",
+        destroyTime: 1.5,
+        explosionResistance: 30
+    });
+    createBlockType("ore", {
+        extends: "opaque",
+        destroyTime: 3,
+        explosionResistance: 15
+    });
+    createBlockType("wood", {
+        extends: "opaque",
+        baseBlock: 17,
+        destroyTime: 2,
+        explosionResistance: 10,
+        sound: "wood"
+    });
+    createBlockType("leaves", {
+        baseBlock: 18,
+        destroyTime: 0.2,
+        explosionResistance: 1,
+        renderAllFaces: true,
+        renderLayer: 1,
+        lightOpacity: 1,
+        translucency: 0.5,
+        sound: "grass"
+    });
+    createBlockType("dirt", {
+        extends: "opaque",
+        baseBlock: 2,
+        destroyTime: 0.5,
+        explosionResistance: 2.5,
+        sound: "gravel"
+    });
 })(BlockRegistry || (BlockRegistry = {}));
 var ItemStack = /** @class */ (function () {
     function ItemStack(item, count, data, extra) {

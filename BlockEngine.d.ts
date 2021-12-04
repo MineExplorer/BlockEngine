@@ -554,7 +554,8 @@ declare class BlockBase implements BlockBehavior {
     category: number;
     variations: Array<Block.BlockVariation>;
     blockType: BlockType;
-    constructor(stringID: string, properties?: BlockType);
+    isDefined: boolean;
+    constructor(stringID: string, blockType?: BlockType | string);
     addVariation(name: string, texture: [string, number][], inCreative?: boolean): void;
     createBlock(): void;
     getDrop(coords: Vector, block: Tile, diggingLevel: number, enchant: ToolAPI.EnchantData, item: ItemStack, region: BlockSource): ItemInstanceArray[];
@@ -642,6 +643,7 @@ declare const NativeBlock: any;
 declare namespace BlockRegistry {
     function createBlock(nameID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void;
     function getBlockType(name: string): Nullable<BlockType>;
+    function extendBlockType(type: BlockType): void;
     function createBlockType(name: string, type: BlockType, isNative?: boolean): void;
     function convertBlockTypeToSpecialType(properites: BlockType): Block.SpecialType;
     /**

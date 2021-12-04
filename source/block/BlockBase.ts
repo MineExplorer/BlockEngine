@@ -8,11 +8,15 @@ implements BlockBehavior {
 	category: number;
 	variations: Array<Block.BlockVariation> = [];
 	blockType: BlockType;
+	isDefined: boolean  = false;
 
-	constructor(stringID: string, properties: BlockType = {}) {
+	constructor(stringID: string, blockType: BlockType | string = {}) {
 		this.stringID = stringID;
 		this.id = IDRegistry.genBlockID(stringID);
-		this.blockType = properties;
+		if (typeof blockType == "string") {
+			blockType = BlockRegistry.getBlockType(blockType);
+		}
+		this.blockType = blockType;
 	}
 
 	addVariation(name: string, texture: [string, number][], inCreative: boolean = false) {
@@ -23,8 +27,10 @@ implements BlockBehavior {
 		if (this.variations.length == 0) {
 			this.addVariation(this.stringID + ".name", [["__missing", 0]]);
 		}
+		BlockRegistry.extendBlockType(this.blockType);
 		const blockType = BlockRegistry.convertBlockTypeToSpecialType(this.blockType);
 		Block.createBlock(this.stringID, this.variations, blockType);
+		this.isDefined = true;
 		if (this.category) Item.setCategory(this.id, this.category);
 	}
 
