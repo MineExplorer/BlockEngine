@@ -1,22 +1,31 @@
+/// <reference path="BlockType.ts" />
+/// <reference path="BlockBehavior.ts" />
+
 class BlockBase
 implements BlockBehavior {
-	stringID: string;
-	id: number;
+	readonly stringID: string;
+	readonly id: number;
+	category: number;
 	variations: Array<Block.BlockVariation> = [];
+	blockType: BlockType;
 
-	constructor(stringID: string, blockType?: Block.SpecialType | string) {
+	constructor(stringID: string, properties: BlockType = {}) {
 		this.stringID = stringID;
 		this.id = IDRegistry.genBlockID(stringID);
-		this.createVariations();
-		Block.createBlock(this.stringID, this.variations, blockType);
+		this.blockType = properties;
 	}
 
 	addVariation(name: string, texture: [string, number][], inCreative: boolean = false) {
 		this.variations.push({name: name, texture: texture, inCreative: inCreative});
 	}
 
-	createVariations(): void {
-		this.addVariation(this.stringID + ".name", [["__missing", 0]]);
+	createBlock(): void {
+		if (this.variations.length == 0) {
+			this.addVariation(this.stringID + ".name", [["__missing", 0]]);
+		}
+		const blockType = BlockRegistry.convertBlockTypeToSpecialType(this.blockType);
+		Block.createBlock(this.stringID, this.variations, blockType);
+		if (this.category) Item.setCategory(this.id, this.category);
 	}
 
 	getDrop(coords: Vector, block: Tile, diggingLevel: number, enchant: ToolAPI.EnchantData, item: ItemStack, region: BlockSource): ItemInstanceArray[] {
@@ -34,7 +43,7 @@ implements BlockBehavior {
 	}
 
 	setDestroyTime(destroyTime: number): void {
-		Block.setDestroyTime(this.id, destroyTime);
+		this.blockType.destroyTime = destroyTime;
 	}
 
 	setBlockMaterial(material: string, level?: number, isNative?: boolean): void {
@@ -50,15 +59,7 @@ implements BlockBehavior {
 	 * @param baseBlock id of the block to inherit type
 	 */
 	setBaseBlock(baseBlock: number): void {
-		NativeBlock.setMaterialBase(this.id, baseBlock);
-	}
-
-	/**
-	 * Sets sound type of the block.
-	 * @param sound block sound type
-	 */
-	setSoundType(sound: Block.Sound): void {
-		NativeBlock.setSoundType(this.id, sound);
+		this.blockType.baseBlock = baseBlock;
 	}
 
 	/**
@@ -66,7 +67,7 @@ implements BlockBehavior {
 	 * @param isSolid if true, sets block to be opaque.
 	 */
 	setSolid(isSolid: boolean): void {
-		NativeBlock.setSolid(this.id, isSolid);
+		this.blockType.solid = isSolid;
 	}
 
 	/**
@@ -74,7 +75,7 @@ implements BlockBehavior {
 	 * rendered (for optimization purposes). Default is false
 	 */
 	setRenderAllFaces(renderAllFaces: boolean): void {
-		NativeBlock.setRenderAllFaces(this.id, renderAllFaces);
+		this.blockType.renderAllFaces = renderAllFaces;
 	}
 
 	/**
@@ -82,7 +83,7 @@ implements BlockBehavior {
 	 * @param renderType default is 0 (full block), use other values to change block's model
 	 */
 	setRenderType(renderType: number): void {
-		NativeBlock.setRenderType(this.id, renderType);
+		this.blockType.renderType = renderType;
 	}
 
 	/**
@@ -90,7 +91,7 @@ implements BlockBehavior {
 	 * @param renderLayer default is 4
 	 */
 	setRenderLayer(renderLayer: number): void {
-		NativeBlock.setRenderLayer(this.id, renderLayer);
+		this.blockType.renderLayer = renderLayer;
 	}
 
 	/**
@@ -98,7 +99,7 @@ implements BlockBehavior {
 	 * @param lightLevel value from 0 (no light) to 15
 	 */
 	setLightLevel(lightLevel: number): void {
-		NativeBlock.setLightLevel(this.id, lightLevel);
+		this.blockType.lightLevel = lightLevel;
 	}
 
 	/**
@@ -107,7 +108,7 @@ implements BlockBehavior {
 	 * from the light level when the light passes through the block
 	 */
 	setLightOpacity(lightOpacity: number): void {
-		NativeBlock.setLightOpacity(this.id, lightOpacity);
+		this.blockType.lightOpacity = lightOpacity;
 	}
 
 	/**
@@ -115,7 +116,7 @@ implements BlockBehavior {
 	 * @param resistance integer value, default is 3
 	 */
 	setExplosionResistance(resistance: number): void {
-		NativeBlock.setExplosionResistance(this.id, resistance);
+		this.blockType.explosionResistance = resistance;
 	}
 
 	/**
@@ -125,7 +126,7 @@ implements BlockBehavior {
 	 * @param friction float value, default is 0.6
 	 */
 	setFriction(friction: number): void {
-		NativeBlock.setFriction(this.id, friction);
+		this.blockType.friction = friction;
 	}
 
 	/**
@@ -133,7 +134,15 @@ implements BlockBehavior {
 	 * @param translucency float value from 0 (no shadows) to 1
 	 */
 	setTranslucency(translucency: number): void {
-		NativeBlock.setTranslucency(this.id, translucency);
+		this.blockType.translucency = translucency;
+	}
+
+	/**
+	 * Sets sound type of the block.
+	 * @param sound block sound type
+	 */
+	 setSoundType(sound: Block.Sound): void {
+		this.blockType.sound = sound;
 	}
 
 	/**
@@ -141,15 +150,15 @@ implements BlockBehavior {
 	 * @param color map color of the block
 	 */
 	setMapColor(color: number): void {
-		NativeBlock.setMapColor(this.id, color);
+		this.blockType.mapColor = color;
 	}
 
 	/**
 	 * Makes block use biome color when displayed on the vanilla maps.
 	 * @param color block color source
 	 */
-	setBlockColorSource(color: Block.ColorSource): void {
-		NativeBlock.setBlockColorSource(this.id, color);
+	setBlockColorSource(colorSource: Block.ColorSource): void {
+		this.blockType.colorSource = colorSource;
 	}
 
 	/**
@@ -157,7 +166,7 @@ implements BlockBehavior {
 	 * @param category item category, should be integer from 1 to 4.
 	 */
 	setCategory(category: number): void {
-		Item.setCategory(this.id, category);
+		this.category = category;
 	}
 
 	setRarity(rarity: number): void {

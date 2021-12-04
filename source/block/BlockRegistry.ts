@@ -1,4 +1,3 @@
-/// <reference path="BlockBehavior.ts" />
 /// <reference path="BlockBase.ts" />
 
 //@ts-ignore
@@ -6,10 +5,128 @@ const NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
 
 namespace BlockRegistry {
 	const blocks = {};
+	const blockTypes = {};
 
-	export function createBlock(nameID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): void {
+	export function createBlock(nameID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void {
 		IDRegistry.genBlockID(nameID);
+		if (typeof blockType == "object") {
+			extendBlockType(blockType);
+			blockType = convertBlockTypeToSpecialType(blockType);
+		}
 		Block.createBlock(nameID, defineData, blockType);
+	}
+
+	export function getBlockType(name: string): Nullable<BlockType> {
+		return blockTypes[name] || null;
+	}
+
+	function extendBlockType(type: BlockType): void {
+		if (type.extends) {
+			const parent = getBlockType(type.extends);
+			for (let key in parent) {
+				if (!(key in type)) {
+					type[key] = parent[key];
+				}
+			}
+		}
+	}
+
+	export function createBlockType(name: string, type: BlockType, isNative?: boolean): void {
+		extendBlockType(type);
+		blockTypes[name] = type;
+		if (!isNative) Block.createSpecialType(convertBlockTypeToSpecialType(type), name);
+	}
+
+	createBlockType("opaque", {
+		baseBlock: 1,
+		solid: true,
+        lightOpacity: 15,
+        explosionResistance: 4,
+        renderLayer: 2,
+        translucency: 0,
+        sound: "stone"
+	}, true);
+
+	createBlockType("stone", {
+		extends: "opaque",
+		destroyTime: 1.5,
+		explosionResistance: 30
+	});
+
+	createBlockType("ore", {
+		extends: "opaque",
+		destroyTime: 3,
+		explosionResistance: 15
+	});
+
+	createBlockType("wood", {
+		extends: "opaque",
+		baseBlock: 17,
+		destroyTime: 2,
+		explosionResistance: 10,
+		sound: "wood"
+	});
+
+	createBlockType("leaves", {
+		baseBlock: 18,
+		destroyTime: 0.2,
+		explosionResistance: 1,
+		renderAllFaces: true,
+		renderLayer: 1,
+		lightOpacity: 1,
+		translucency: 0.5,
+		sound: "grass"
+	});
+
+	createBlockType("dirt", {
+		extends: "opaque",
+		baseBlock: 2,
+		destroyTime: 0.5,
+		explosionResistance: 2.5,
+		sound: "gravel"
+	});
+
+	export function convertBlockTypeToSpecialType(properites: BlockType): Block.SpecialType {
+		const type: Block.SpecialType = {};
+		for (let key in properites) {
+			switch(key) {
+			case "baseBlock":
+				type.base = properites[key];
+			break;
+			case "renderAllFaces":
+				type.renderallfaces = properites[key];
+			break;
+			case "renderType":
+				type.rendertype = properites[key];
+			break;
+			case "renderLayer":
+				type.renderlayer = properites[key];
+			break;
+			case "lightLevel":
+				type.lightlevel = properites[key];
+			break;
+			case "lightOpacity":
+				type.lightopacity = properites[key];
+			break;
+			case "explosionResistance":
+				type.explosionres = properites[key];
+			break;
+			case "destroyTime":
+				type.destroytime = properites[key];
+			break;
+			case "mapColor":
+				type.mapcolor = properites[key];
+			break;
+			case "colorSource":
+				type.color_source = properites[key];
+			break;
+			case "extends": continue;
+			default:
+				type[key] = properites[key];
+			break;
+			}
+		}
+		return type;
 	}
 
 	/**
@@ -22,6 +139,7 @@ namespace BlockRegistry {
 
 	export function registerBlock(block: BlockBase): BlockBase {
 		blocks[block.id] = block;
+		block.createBlock();
 		registerBlockFuncs(block.id, block);
 		return block;
 	}
@@ -101,14 +219,6 @@ namespace BlockRegistry {
 	}
 
 	/**
-	 * Sets sound type of the block.
-	 * @param sound block sound type
-	 */
-	export function setSoundType(blockID: string | number, sound: Block.Sound): void {
-		NativeBlock.setSoundType(Block.getNumericId(blockID), sound);
-	}
-
-	/**
 	 * Sets block to be transparent or opaque.
 	 * @param isSolid if true, sets block to be opaque.
 	 */
@@ -181,6 +291,14 @@ namespace BlockRegistry {
 	 */
 	export function setTranslucency(blockID: string | number, translucency: number): void {
 		NativeBlock.setTranslucency(Block.getNumericId(blockID), translucency);
+	}
+
+	/**
+	 * Sets sound type of the block.
+	 * @param sound block sound type
+	 */
+	export function setSoundType(blockID: string | number, sound: Block.Sound): void {
+		NativeBlock.setSoundType(Block.getNumericId(blockID), sound);
 	}
 
 	/**
