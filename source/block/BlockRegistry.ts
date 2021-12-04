@@ -1,12 +1,87 @@
+/// <reference path="BlockBehavior.ts" />
 /// <reference path="BlockBase.ts" />
 
+//@ts-ignore
+const NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
+
 namespace BlockRegistry {
-	//@ts-ignore
-	const NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
+	const blocks = {};
 
 	export function createBlock(nameID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): void {
 		IDRegistry.genBlockID(nameID);
 		Block.createBlock(nameID, defineData, blockType);
+	}
+
+	/**
+	 * @returns instance of block class if it exists
+	 */
+	 export function getInstanceOf(blockID: string | number): Nullable<BlockBase> {
+		const numericID = Block.getNumericId(blockID);
+		return blocks[numericID] || null;
+	}
+
+	export function registerBlock(block: BlockBase): BlockBase {
+		blocks[block.id] = block;
+		registerBlockFuncs(block.id, block);
+		return block;
+	}
+
+	export function registerBlockFuncs(blockID: string | number, blockFuncs: BlockBehavior): void {
+		const numericID = Block.getNumericId(blockID);
+		if ('getDrop' in blockFuncs) {
+			Block.registerDropFunction(numericID, function(coords: Callback.ItemUseCoordinates, blockID: number, blockData: number, diggingLevel: number, enchant: ToolAPI.EnchantData, item: ItemInstance, region: BlockSource) {
+				return blockFuncs.getDrop(coords, {id: blockID, data: blockData}, diggingLevel, enchant, new ItemStack(item), region);
+			});
+		}
+		if ('onDestroy' in blockFuncs) {
+			Block.registerPopResourcesFunction(numericID, function(coords: Vector, block: Tile, region: BlockSource) {
+				blockFuncs.onDestroy(coords, block, region);
+			});
+		}
+		if ('onPlace' in blockFuncs) {
+			Block.registerPlaceFunction(numericID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, block: Tile, player: number, region: BlockSource) {
+				return blockFuncs.onPlace(coords, new ItemStack(item), block, player, region);
+			});
+		}
+		if ('onNeighbourChange' in blockFuncs) {
+			Block.registerNeighbourChangeFunction(numericID, function(coords: Vector, block: Tile, changeCoords: Vector, region: BlockSource) {
+				blockFuncs.onNeighbourChange(coords, block, changeCoords, region);
+			});
+		}
+		if ('onEntityInside' in blockFuncs) {
+			Block.registerEntityInsideFunction(numericID, function(coords: Vector, block: Tile, entity: number) {
+				blockFuncs.onEntityInside(coords, block, entity);
+			});
+		}
+		if ('onEntityStepOn' in blockFuncs) {
+			Block.registerEntityInsideFunction(numericID, function(coords: Vector, block: Tile, entity: number) {
+				blockFuncs.onEntityStepOn(coords, block, entity);
+			});
+		}
+		if ('onRandomTick' in blockFuncs) {
+			Block.setRandomTickCallback(numericID, function(x: number, y: number, z: number, id: number, data: number, region: BlockSource) {
+				blockFuncs.onRandomTick(x, y, z, {id: id, data: data}, region);
+			});
+		}
+		if ('onAnimateTick' in blockFuncs) {
+			Block.setAnimateTickCallback(numericID, function(x: number, y: number, z: number, id: number, data: number) {
+				blockFuncs.onAnimateTick(x, y, z, id, data);
+			});
+		}
+		if ('onClick' in blockFuncs) {
+			if (Block.registerClickFunction) {
+				Block.registerClickFunction(numericID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, block: Tile, player: number) {
+					blockFuncs.onClick(coords, new ItemStack(item), block, player);
+				});
+			}
+			else {
+				Callback.addCallback("ItemUse", function(coords: Callback.ItemUseCoordinates, item: ItemInstance, block: Tile, isExternal: boolean, player: number) {
+					if (block.id == numericID) {
+						blockFuncs.onClick(coords, new ItemStack(item), block, player);
+					}
+				});
+			}
+		}
 	}
 
 	/**

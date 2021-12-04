@@ -1,3 +1,4 @@
+/// <reference path="ItemBehavior.ts" />
 /// <reference path="ItemBase.ts" />
 /// <reference path="ItemCommon.ts" />
 /// <reference path="ItemFood.ts" />
@@ -130,7 +131,7 @@ namespace ItemRegistry {
 	 */
 	export function registerItem(itemInstance: ItemBase): ItemBase {
 		items[itemInstance.id] = itemInstance;
-		registerItemFuncs(itemInstance.id, itemInstance);
+		registerItemFuncs(itemInstance.id, itemInstance as any);
 		return itemInstance;
 	}
 
@@ -138,39 +139,40 @@ namespace ItemRegistry {
 	 * Registers all item functions from given object.
 	 * @param itemFuncs object which implements ItemBehavior interface
 	 */
-	export function registerItemFuncs(itemID: string | number, itemFuncs: ItemBase | ItemBehavior): void {
+	export function registerItemFuncs(itemID: string | number, itemFuncs: ItemBehavior): void {
+		const numericID = Item.getNumericId(itemID);
 		if ('onNameOverride' in itemFuncs) {
-			Item.registerNameOverrideFunction(itemID, function(item: ItemInstance, translation: string, name: string) {
+			Item.registerNameOverrideFunction(numericID, function(item: ItemInstance, translation: string, name: string) {
 				return getItemRarityColor(item.id) + itemFuncs.onNameOverride(item, translation, name);
 			});
 		}
 		if ('onIconOverride' in itemFuncs) {
-			Item.registerIconOverrideFunction(itemID, function(item: ItemInstance, isModUi: boolean)	{
+			Item.registerIconOverrideFunction(numericID, function(item: ItemInstance, isModUi: boolean)	{
 				return itemFuncs.onIconOverride(item, isModUi);
 			});
 		}
 		if ('onItemUse' in itemFuncs) {
-			Item.registerUseFunction(itemID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, block: Tile, player: number) {
+			Item.registerUseFunction(numericID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, block: Tile, player: number) {
 				itemFuncs.onItemUse(coords, new ItemStack(item), block, player);
 			});
 		}
 		if ('onNoTargetUse' in itemFuncs) {
-			Item.registerNoTargetUseFunction(itemID, function(item: ItemInstance, player: number) {
+			Item.registerNoTargetUseFunction(numericID, function(item: ItemInstance, player: number) {
 				itemFuncs.onNoTargetUse(new ItemStack(item), player);
 			});
 		}
 		if ('onUsingReleased' in itemFuncs) {
-			Item.registerUsingReleasedFunction(itemID, function(item: ItemInstance, ticks: number, player: number)	{
+			Item.registerUsingReleasedFunction(numericID, function(item: ItemInstance, ticks: number, player: number)	{
 				itemFuncs.onUsingReleased(new ItemStack(item), ticks, player);
 			});
 		}
 		if ('onUsingComplete' in itemFuncs) {
-			Item.registerUsingCompleteFunction(itemID, function(item: ItemInstance, player: number) {
+			Item.registerUsingCompleteFunction(numericID, function(item: ItemInstance, player: number) {
 				itemFuncs.onUsingComplete(new ItemStack(item), player);
 			});
 		}
 		if ('onDispense' in itemFuncs) {
-			Item.registerDispenseFunction(itemID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, blockSource: BlockSource) {
+			Item.registerDispenseFunction(numericID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, blockSource: BlockSource) {
 				const region = new WorldRegion(blockSource);
 				itemFuncs.onDispense(coords, new ItemStack(item), region);
 			});

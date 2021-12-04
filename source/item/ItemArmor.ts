@@ -1,14 +1,8 @@
-interface OnHurtListener {
-	onHurt: (params: {attacker: number, type: number, damage: number, bool1: boolean, bool2: boolean}, item: ItemInstance, slot: number, player: number) => ItemInstance | void
-}
-interface OnTickListener {
-	onTick: (item: ItemInstance, slot: number, player: number) => ItemInstance | void
-}
-interface OnTakeOnListener {
-	onTakeOn: (item: ItemInstance, slot: number, player: number) => void
-}
-interface OnTakeOffListener {
-	onTakeOff: (item: ItemInstance, slot: number, player: number) => void
+interface ArmorListeners {
+	onHurt?(params: {attacker: number, type: number, damage: number, bool1: boolean, bool2: boolean}, item: ItemInstance, slot: number, player: number): ItemInstance | void;
+	onTick?(item: ItemInstance, slot: number, player: number): ItemInstance | void;
+	onTakeOn?(item: ItemInstance, slot: number, player: number): void;
+	onTakeOff?(item: ItemInstance, slot: number, player: number): void;
 }
 
 type ArmorMaterial = {durabilityFactor: number, enchantability?: number, repairMaterial?: number};
@@ -66,7 +60,7 @@ class ItemArmor extends ItemBase {
 		Armor.preventDamaging(this.id);
 	}
 
-	static registerListeners(id: number, armorFuncs: ItemArmor | OnHurtListener | OnTickListener | OnTakeOnListener | OnTakeOffListener) {
+	static registerListeners(id: number, armorFuncs: ItemArmor | ArmorListeners) {
 		if ('onHurt' in armorFuncs) {
 			Armor.registerOnHurtListener(id, function(item, slot, player, type, value, attacker, bool1, bool2) {
 				return armorFuncs.onHurt({attacker: attacker, type: type, damage: value, bool1: bool1, bool2: bool2}, item, slot, player);

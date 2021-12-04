@@ -20,7 +20,7 @@
 		"PlayerEntity.ts",
 		"EntityCustomData.ts",
 		"BlockModeler.ts",
-		"BlockRegistry.ts",
+		"block/BlockRegistry.ts",
 		"item/ItemStack.ts",
 		"item/ItemRegistry.ts",
 		"id_converter/*",
