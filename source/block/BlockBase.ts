@@ -8,6 +8,7 @@ implements BlockBehavior {
 	category: number;
 	variations: Array<Block.BlockVariation> = [];
 	blockType: BlockType;
+	shapes: {[key: number]: BlockModeler.BoxVertexes} = {};
 	isDefined: boolean  = false;
 
 	constructor(stringID: string, blockType: BlockType | string = {}) {
@@ -31,10 +32,14 @@ implements BlockBehavior {
 		const blockType = BlockRegistry.convertBlockTypeToSpecialType(this.blockType);
 		Block.createBlock(this.stringID, this.variations, blockType);
 		this.isDefined = true;
+		for (let data in this.shapes) {
+			const box = this.shapes[data];
+			Block.setShape(this.id, box[0], box[1], box[2], box[3], box[4], box[5], parseInt(data));
+		}
 		if (this.category) Item.setCategory(this.id, this.category);
 	}
 
-	getDrop(coords: Vector, block: Tile, diggingLevel: number, enchant: ToolAPI.EnchantData, item: ItemStack, region: BlockSource): ItemInstanceArray[] {
+	getDrop(coords: Vector, block: Tile, level: number, enchant: ToolAPI.EnchantData, item: ItemStack, region: BlockSource): ItemInstanceArray[] {
 		return [[block.id, 1, block.data]];
 	}
 
@@ -56,8 +61,15 @@ implements BlockBehavior {
 		ToolAPI.registerBlockMaterial(this.id, material, level, isNative);
 	}
 
-	setShape(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number, data?: number): void {
-		Block.setShape(this.id, x1, y1, z1, x2, y2, z2, data);
+	/**
+	 * Sets block box shape
+	 * @param id block numeric id
+	 * @params x1, y1, z1 position of block lower corner (0, 0, 0 for solid block)
+	 * @params x2, y2, z2 position of block upper conner (1, 1, 1 for solid block)
+	 * @param data sets shape for one block variation if specified and for all variations otherwise
+	 */
+	setShape(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number, data: number = -1): void {
+		this.shapes[data] = [x1, y1, z1, x2, y2, z2];
 	}
 
 	/**
@@ -147,7 +159,7 @@ implements BlockBehavior {
 	 * Sets sound type of the block.
 	 * @param sound block sound type
 	 */
-	 setSoundType(sound: Block.Sound): void {
+	setSoundType(sound: Block.Sound): void {
 		this.blockType.sound = sound;
 	}
 

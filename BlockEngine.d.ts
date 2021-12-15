@@ -455,11 +455,10 @@ declare namespace EntityCustomData {
 }
 declare namespace BlockModeler {
     type BoxVertexes = [number, number, number, number, number, number];
-    export function getRotatedBoxVertexes(box: BoxVertexes, rotation: number): BoxVertexes;
-    export function setStairsRenderModel(id: number): void;
-    export function createStairsRenderModel(id: number, startData: number, boxes: BoxVertexes[]): void;
-    export function setInventoryModel(blockID: number, model: RenderMesh | ICRender.Model | BlockRenderer.Model, data?: number): void;
-    export {};
+    function getRotatedBoxVertexes(box: BoxVertexes, rotation: number): BoxVertexes;
+    function setStairsRenderModel(id: number): void;
+    function createStairsRenderModel(id: number, startData: number, boxes: BoxVertexes[]): void;
+    function setInventoryModel(blockID: number, model: RenderMesh | ICRender.Model | BlockRenderer.Model, data?: number): void;
 }
 interface BlockType {
     /**
@@ -554,6 +553,9 @@ declare class BlockBase implements BlockBehavior {
     category: number;
     variations: Array<Block.BlockVariation>;
     blockType: BlockType;
+    shapes: {
+        [key: number]: BlockModeler.BoxVertexes;
+    };
     isDefined: boolean;
     constructor(stringID: string, blockType?: BlockType | string);
     addVariation(name: string, texture: [string, number][], inCreative?: boolean): void;
@@ -562,6 +564,13 @@ declare class BlockBase implements BlockBehavior {
     onDestroy(coords: Vector, block: Tile, region: BlockSource): void;
     setDestroyTime(destroyTime: number): void;
     setBlockMaterial(material: string, level?: number, isNative?: boolean): void;
+    /**
+     * Sets block box shape
+     * @param id block numeric id
+     * @params x1, y1, z1 position of block lower corner (0, 0, 0 for solid block)
+     * @params x2, y2, z2 position of block upper conner (1, 1, 1 for solid block)
+     * @param data sets shape for one block variation if specified and for all variations otherwise
+     */
     setShape(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number, data?: number): void;
     /**
      * Sets the block type of another block, which allows to inherit some of its properties
@@ -819,7 +828,7 @@ interface ItemBehavior extends BlockItemBehavior {
     onUsingReleased?(item: ItemStack, ticks: number, player: number): void;
     onUsingComplete?(item: ItemStack, player: number): void;
 }
-declare class ItemBase {
+declare abstract class ItemBase {
     readonly stringID: string;
     readonly id: number;
     name: string;

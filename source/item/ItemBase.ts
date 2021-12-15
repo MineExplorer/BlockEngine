@@ -1,4 +1,4 @@
-class ItemBase {
+abstract class ItemBase {
 	readonly stringID: string;
 	readonly id: number;
 	name: string;

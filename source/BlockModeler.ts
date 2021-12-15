@@ -1,5 +1,5 @@
 namespace BlockModeler {
-	type BoxVertexes = [number, number, number, number, number, number];
+	export type BoxVertexes = [number, number, number, number, number, number];
 
 	export function getRotatedBoxVertexes(box: BoxVertexes, rotation: number): BoxVertexes {
 		switch (rotation) {
