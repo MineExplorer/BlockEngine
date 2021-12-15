@@ -9,7 +9,9 @@ implements BlockBehavior {
 	variations: Array<Block.BlockVariation> = [];
 	blockType: BlockType;
 	shapes: {[key: number]: BlockModeler.BoxVertexes} = {};
-	isDefined: boolean  = false;
+	isDefined: boolean = false;
+	blockMaterial: string;
+	miningLevel: number = 0;
 
 	constructor(stringID: string, blockType: BlockType | string = {}) {
 		this.stringID = stringID;
@@ -40,7 +42,10 @@ implements BlockBehavior {
 	}
 
 	getDrop(coords: Vector, block: Tile, level: number, enchant: ToolAPI.EnchantData, item: ItemStack, region: BlockSource): ItemInstanceArray[] {
-		return [[block.id, 1, block.data]];
+		if (level >= this.miningLevel) {
+			return [[block.id, 1, block.data]];
+		}
+		return [];
 	}
 
 	onDestroy(coords: Vector, block: Tile, region: BlockSource): void {
@@ -57,8 +62,10 @@ implements BlockBehavior {
 		this.blockType.destroyTime = destroyTime;
 	}
 
-	setBlockMaterial(material: string, level?: number, isNative?: boolean): void {
-		ToolAPI.registerBlockMaterial(this.id, material, level, isNative);
+	setBlockMaterial(material: string, level: number = 0): void {
+		this.blockMaterial = material;
+		this.miningLevel = level;
+		BlockRegistry.setBlockMaterial(this.id, material, level);
 	}
 
 	/**

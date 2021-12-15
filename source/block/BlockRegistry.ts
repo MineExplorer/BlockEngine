@@ -83,7 +83,7 @@ namespace BlockRegistry {
 	/**
 	 * @returns instance of block class if it exists
 	 */
-	 export function getInstanceOf(blockID: string | number): Nullable<BlockBase> {
+	export function getInstanceOf(blockID: string | number): Nullable<BlockBase> {
 		const numericID = Block.getNumericId(blockID);
 		return blocks[numericID] || null;
 	}
@@ -266,6 +266,18 @@ namespace BlockRegistry {
 	 */
 	export function setBlockColorSource(blockID: string | number, color: Block.ColorSource): void {
 		NativeBlock.setBlockColorSource(Block.getNumericId(blockID), color);
+	}
+
+	/**
+	 * Registers block material and digging level. If you are registering
+	 * block with 'stone' material ensure that its block type has baseBlock
+	 * id 1 to be correctly destroyed by pickaxes
+	 * @param nameID block numeric or string id
+	 * @param material material name
+	 * @param level block's digging level
+	 */
+	export function setBlockMaterial(blockID: string | number, material: string, level?: number) {
+		ToolAPI.registerBlockMaterial(Block.getNumericId(blockID), material, level, material == "stone");
 	}
 
     export function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType, hasVertical?: boolean): void {
