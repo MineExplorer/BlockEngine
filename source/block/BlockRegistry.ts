@@ -103,8 +103,15 @@ namespace BlockRegistry {
 			});
 		}
 		if ('onDestroy' in blockFuncs) {
+			Callback.addCallback("DestroyBlock", function (coords: ItemUseCoordinates, block: Tile, player: number) {
+				if (block.id == numericID) {
+					blockFuncs.onDestroy(coords, block, BlockSource.getDefaultForActor(player), player);
+				}
+			});
+		}
+		if ('onBreak' in blockFuncs) {
 			Block.registerPopResourcesFunction(numericID, function(coords: Vector, block: Tile, region: BlockSource) {
-				blockFuncs.onDestroy(coords, block, region);
+				blockFuncs.onBreak(coords, block, region);
 			});
 		}
 		if ('onPlace' in blockFuncs) {
