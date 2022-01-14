@@ -103,7 +103,7 @@ namespace BlockRegistry {
 			});
 		}
 		if ('onDestroy' in blockFuncs) {
-			Callback.addCallback("DestroyBlock", function (coords: ItemUseCoordinates, block: Tile, player: number) {
+			Callback.addCallback("DestroyBlock", function (coords: Callback.ItemUseCoordinates, block: Tile, player: number) {
 				if (block.id == numericID) {
 					blockFuncs.onDestroy(coords, block, BlockSource.getDefaultForActor(player), player);
 				}

@@ -48,7 +48,7 @@ implements BlockBehavior {
 		return [];
 	}
 
-	onDestroy(coords: Vector, block: Tile, region: BlockSource): void {
+	onBreak(coords: Vector, block: Tile, region: BlockSource): void {
 		if (Math.random() >= 0.25) return;
 		const enchant = ToolAPI.getEnchantExtraData();
 		const item = new ItemStack();
