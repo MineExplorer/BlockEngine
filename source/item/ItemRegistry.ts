@@ -205,7 +205,7 @@ namespace ItemRegistry {
 	export function createItem(stringID: string, params: ItemDescription): ItemBase {
 		let item: ItemBase;
 		if (params.type == "food") {
-			item = new ItemFood(stringID, params.name, params.icon, params.food, params.inCreative);
+			return createFood(stringID, params);
 		}
 		else if (params.type == "throwable") {
 			item = new ItemThrowable(stringID, params.name, params.icon, params.inCreative);
@@ -226,13 +226,33 @@ namespace ItemRegistry {
 		return item;
 	}
 
+	interface FoodDescription extends FoodParams {
+		name: string,
+		icon: string|Item.TextureData,
+		stack?: number,
+		inCreative?: boolean,
+		category?: number,
+		glint?: boolean,
+		rarity?: number
+	}
+
+	export function createFood(stringID: string, params: FoodDescription): ItemFood {
+		const item = new ItemFood(stringID, params.name, params.icon, params, params.inCreative);
+		if (params.stack) item.setMaxStack(params.stack);
+		if (params.category) item.setCategory(params.category);
+		if (params.glint) item.setGlint(true);
+		if (params.rarity) item.setRarity(params.rarity);
+		items[item.id] = item;
+		return item;
+	}
+
 	interface ArmorDescription extends ArmorParams {
 		name: string,
 		icon: string | Item.TextureData,
 		inCreative?: boolean
 		category?: number,
 		glint?: boolean,
-		rarity?: number
+		rarity?: number,
 	};
 
 	/**

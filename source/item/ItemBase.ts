@@ -104,6 +104,15 @@ abstract class ItemBase {
 		this.item.addRepairItem(itemID);
 	}
 
+	 /**
+     * Sets properties for the item from JSON-like object. Uses vanilla mechanics.
+     * @param id string or numeric item id
+     * @param props object containing properties
+     */
+	setProperties(props: object): void {
+		this.item.setProperties(JSON.stringify(props));
+	}
+
 	setRarity(rarity: number): void {
 		ItemRegistry.setRarity(this.id, rarity);
 	}
