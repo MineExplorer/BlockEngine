@@ -1,4 +1,6 @@
 /// <reference path="BlockBase.ts" />
+/// <reference path="BlockRotative.ts" />
+/// <reference path="BlockStairs.ts" />
 
 //@ts-ignore
 const NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
@@ -7,13 +9,24 @@ namespace BlockRegistry {
 	const blocks = {};
 	const blockTypes = {};
 
-	export function createBlock(nameID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void {
-		IDRegistry.genBlockID(nameID);
-		if (typeof blockType == "object") {
-			extendBlockType(blockType);
-			blockType = convertBlockTypeToSpecialType(blockType);
+	export function createBlock(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void {
+		const block = new BlockBase(stringID, blockType);
+		for (let variation of defineData) {
+			block.addVariation(variation.name, variation.texture, variation.inCreative);
 		}
-		Block.createBlock(nameID, defineData, blockType);
+		registerBlock(block);
+	}
+
+    export function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType, hasVerticalFacings?: boolean): void {
+		const block = new BlockRotative(stringID, blockType, hasVerticalFacings);
+		for (let variation of defineData) {
+			block.addVariation(variation.name, variation.texture, variation.inCreative);
+		}
+		registerBlock(block);
+    }
+
+	export function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): void {
+		registerBlock(new BlockStairs(stringID, defineData[0], blockType));
 	}
 
 	export function getBlockType(name: string): Nullable<BlockType> {
@@ -21,12 +34,12 @@ namespace BlockRegistry {
 	}
 
 	export function extendBlockType(type: BlockType): void {
-		if (type.extends) {
-			const parent = getBlockType(type.extends);
-			for (let key in parent) {
-				if (!(key in type)) {
-					type[key] = parent[key];
-				}
+		if (!type.extends) return;
+
+		const parent = getBlockType(type.extends);
+		for (let key in parent) {
+			if (!(key in type)) {
+				type[key] = parent[key];
 			}
 		}
 	}
@@ -34,7 +47,9 @@ namespace BlockRegistry {
 	export function createBlockType(name: string, type: BlockType, isNative?: boolean): void {
 		extendBlockType(type);
 		blockTypes[name] = type;
-		if (!isNative) Block.createSpecialType(convertBlockTypeToSpecialType(type), name);
+		if (!isNative) {
+			Block.createSpecialType(convertBlockTypeToSpecialType(type), name);
+		}
 	}
 
 	export function convertBlockTypeToSpecialType(properites: BlockType): Block.SpecialType {
@@ -89,9 +104,9 @@ namespace BlockRegistry {
 	}
 
 	export function registerBlock(block: BlockBase): BlockBase {
-		blocks[block.id] = block;
 		block.createBlock();
 		registerBlockFuncs(block.id, block);
+		blocks[block.id] = block;
 		return block;
 	}
 
@@ -285,52 +300,6 @@ namespace BlockRegistry {
 	 */
 	export function setBlockMaterial(blockID: string | number, material: string, level?: number) {
 		ToolAPI.registerBlockMaterial(Block.getNumericId(blockID), material, level, material == "stone");
-	}
-
-    export function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType, hasVertical?: boolean): void {
-		const numericID = IDRegistry.genBlockID(stringID);
-		const variations = [];
-		for (let i = 0; i < defineData.length; i++) {
-			const variation = defineData[i];
-			const texture = variation.texture;
-			const textures = [
-				[texture[3], texture[2], texture[0], texture[1], texture[4], texture[5]],
-				[texture[2], texture[3], texture[1], texture[0], texture[5], texture[4]],
-				[texture[0], texture[1], texture[3], texture[2], texture[5], texture[4]],
-				[texture[0], texture[1], texture[2], texture[3], texture[4], texture[5]],
-				[texture[0], texture[1], texture[4], texture[5], texture[3], texture[2]],
-				[texture[0], texture[1], texture[5], texture[4], texture[2], texture[3]]
-			]
-			for (let data = 0; data < 6; data++) {
-				variations.push({name: variation.name, texture: textures[data], inCreative: variation.inCreative && data == 0});
-			}
-		}
-		Block.createBlock(stringID, variations, blockType);
-		for (let i = 0; i < defineData.length; i++) {
-			BlockModeler.setInventoryModel(numericID, BlockRenderer.createTexturedBlock(defineData[i].texture), i * 6);
-		}
-        setRotationFunction(numericID, hasVertical);
-    }
-
-	export function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType: string | Block.SpecialType): void {
-		const numericID = IDRegistry.genBlockID(stringID);
-		Block.createBlock(stringID, defineData, blockType);
-		Block.registerPlaceFunction(numericID, function(coords, item, block, player, region) {
-			const place = getPlacePosition(coords, block, region);
-			if (!place) return;
-			let data = getBlockRotation(player) - 2;
-			if (coords.side == 0 || coords.side >= 2 && coords.vec.y - coords.y >= 0.5) {
-				data += 4;
-			}
-			region.setBlock(place.x, place.y, place.z, item.id, data);
-			//World.playSound(place.x, place.y, place.z, placeSound || "dig.stone", 1, 0.8);
-			return place;
-		});
-		BlockModeler.setStairsRenderModel(numericID);
-		const model = BlockRenderer.createModel();
-		model.addBox(0, 0, 0, 1, 0.5, 1, numericID, 0);
-		model.addBox(0, 0.5, 0, 1, 1, 0.5, numericID, 0);
-		BlockModeler.setInventoryModel(numericID, model);
 	}
 
 	export function getBlockRotation(player: number, hasVertical?: boolean): number {

@@ -16,7 +16,9 @@ implements BlockBehavior {
 	constructor(stringID: string, blockType: BlockType | string = {}) {
 		this.stringID = stringID;
 		this.id = IDRegistry.genBlockID(stringID);
-		if (typeof blockType == "string") {
+		if (typeof blockType == "object") {
+			BlockRegistry.extendBlockType(blockType);
+		} else {
 			blockType = BlockRegistry.getBlockType(blockType);
 		}
 		this.blockType = blockType;
@@ -30,8 +32,23 @@ implements BlockBehavior {
 		if (this.variations.length == 0) {
 			this.addVariation(this.stringID + ".name", [["__missing", 0]]);
 		}
-		BlockRegistry.extendBlockType(this.blockType);
-		const blockType = BlockRegistry.convertBlockTypeToSpecialType(this.blockType);
+		let blockType = null;
+		if (this.blockType) {
+			blockType = BlockRegistry.convertBlockTypeToSpecialType(this.blockType);
+		}
+
+		// remove duplicated items in creative
+		const duplicatedInstance = BlockRegistry.getInstanceOf(this.id);
+		if (duplicatedInstance) {
+			const variations = duplicatedInstance.variations;
+			for (let i = 0; i < Math.min(this.variations.length, variations.length); i++) {
+				if (variations[i].inCreative) {
+					this.variations[i].inCreative = false;
+					Logger.Log(`Skipped duplicated adding to creative for block ${this.stringID}:${i}`, "BlockEngine");
+				}
+			}
+		}
+
 		Block.createBlock(this.stringID, this.variations, blockType);
 		this.isDefined = true;
 		for (let data in this.shapes) {

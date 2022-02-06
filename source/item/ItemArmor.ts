@@ -7,7 +7,7 @@ interface ArmorListeners {
 
 type ArmorMaterial = {durabilityFactor: number, enchantability?: number, repairMaterial?: number};
 
-type ArmorParams = {type: ArmorType, defence: number, texture: string, material?: string | ArmorMaterial};
+type ArmorParams = {type: ArmorType, defence: number, knockbackResistance?: number, texture: string, material?: string | ArmorMaterial};
 
 class ItemArmor extends ItemBase {
 	private static maxDamageArray: number[] = [11, 16, 15, 13]
@@ -26,6 +26,7 @@ class ItemArmor extends ItemBase {
 		this.item = Item.createArmorItem(this.stringID, this.name, this.icon, {
 			type: this.armorType,
 			armor: this.defence,
+			knockbackResist: params.knockbackResistance * 0.1125 || 0,
 			durability: 0,
 			texture: this.texture,
 			isTech: true
