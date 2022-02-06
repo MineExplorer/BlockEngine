@@ -427,7 +427,6 @@ class WorldRegion {
 	 * @param x X coord of the place where item will be dropped
 	 * @param y Y coord of the place where item will be dropped
 	 * @param z Z coord of the place where item will be dropped
-	 * @param item object representing item stack
 	 * @returns drop entity id
 	 */
 	dropItem(x: number, y: number, z: number, item: ItemInstance): number;
@@ -437,6 +436,19 @@ class WorldRegion {
 			return this.blockSource.spawnDroppedItem(x, y, z, item.id, item.count, item.data, item.extra || null);
         }
 		return this.blockSource.spawnDroppedItem(x, y, z, item, count, data, extra || null);
+	}
+
+	/**
+	 * Creates dropped item at the block center and returns entity id
+	 * @param x X coord of the block where item will be dropped
+	 * @param y Y coord of the block where item will be dropped
+	 * @param z Z coord of the block where item will be dropped
+	 * @returns drop entity id
+	 */
+	dropAtBlock(x: number, y: number, z: number, item: ItemInstance): number;
+	dropAtBlock(x: number, y: number, z: number, id: number, count: number, data: number, extra?: ItemExtraData): number;
+	dropAtBlock(x: number, y: number, z: number, item: any, count?: any, data?: any, extra?: any): number {
+		return this.dropItem(x + .5, y + .5, z + .5, item, count, data, extra);
 	}
 
 	/**
