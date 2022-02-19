@@ -14,6 +14,7 @@ extends ToolAPI.ToolMaterial {
 
 namespace ToolType {
 	export const SWORD: ToolParams = {
+		__flag: "__sword",
 		handEquipped: true,
 		isWeapon: true,
 		enchantType: Native.EnchantType.weapon,
@@ -30,6 +31,7 @@ namespace ToolType {
 	}
 
 	export const SHOVEL: ToolParams = {
+		__flag: "__shovel",
 		handEquipped: true,
 		enchantType: Native.EnchantType.shovel,
 		damage: 2,
@@ -46,6 +48,7 @@ namespace ToolType {
 	}
 
 	export const PICKAXE: ToolParams = {
+		__flag: "__pickaxe",
 		handEquipped: true,
 		enchantType: Native.EnchantType.pickaxe,
 		damage: 2,
@@ -53,6 +56,7 @@ namespace ToolType {
 	}
 
 	export const AXE: ToolParams = {
+		__flag: "__axe",
 		handEquipped: true,
 		enchantType: Native.EnchantType.axe,
 		damage: 3,
@@ -79,6 +83,7 @@ namespace ToolType {
 	}
 
 	export const HOE: ToolParams = {
+		__flag: "__hoe",
 		handEquipped: true,
 		enchantType: Native.EnchantType.pickaxe,
 		damage: 2,
@@ -96,6 +101,7 @@ namespace ToolType {
 	}
 
 	export const SHEARS: ToolParams = {
+		__flag: "__shears",
 		blockTypes: ["plant", "fibre", "wool"],
 		modifyEnchant(enchantData, item, coords, block) {
 			if (block) {
