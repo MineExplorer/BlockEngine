@@ -61,23 +61,39 @@ namespace ToolType {
 		enchantType: Native.EnchantType.axe,
 		damage: 3,
 		blockTypes: ["wood"],
-		onItemUse: function(coords, item, block, player) {
-			const region = WorldRegion.getForActor(player);
-			let logID: number;
-			if (block.id == 17) {
-				if (block.data == 0) logID = VanillaTileID.stripped_oak_log;
-				if (block.data == 1) logID = VanillaTileID.stripped_spruce_log;
-				if (block.data == 2) logID = VanillaTileID.stripped_birch_log;
-				if (block.data == 3) logID = VanillaTileID.stripped_jungle_log;
-			}
-			else if (block.id == 162) {
-				if (block.data == 0) logID = VanillaTileID.stripped_acacia_log;
-				else logID = VanillaTileID.stripped_dark_oak_log;
-			}
+		onItemUse: function(coords, item, tile, player) {
+			const logID = this.getStrippedLogId(tile);
 			if (logID) {
-				region.setBlock(coords, logID, 0);
+				const region = WorldRegion.getForActor(player);
+				if (BlockEngine.getMainGameVersion() >= 16) {
+					const block = region.getBlock(coords);
+					const states = {"pillar_axis": block.getState(EBlockStates.PILLAR_AXIS)};
+					if (logID == VanillaTileID.stripped_warped_stem || logID == VanillaTileID.stripped_crimson_stem) {
+						states["deprecated"] = 0;
+					}
+					const block2 = new BlockState(logID, states);
+					region.setBlock(coords, block2);
+				} else {
+					region.setBlock(coords, logID, 0);
+				}
 				item.applyDamage(1);
 				Entity.setCarriedItem(player, item.id, item.count, item.data, item.extra);
+			}
+		},
+		getStrippedLogId: function(block: Tile) {
+			switch (block.id) {
+				case 17:
+					if (block.data == 0) return VanillaTileID.stripped_oak_log;
+					if (block.data == 1) return VanillaTileID.stripped_spruce_log;
+					if (block.data == 2) return VanillaTileID.stripped_birch_log;
+					return VanillaTileID.stripped_jungle_log;
+				case 162:
+					if (block.data == 0) return VanillaTileID.stripped_acacia_log;
+					return VanillaTileID.stripped_dark_oak_log;
+				case VanillaTileID.warped_stem:
+					return VanillaTileID.stripped_warped_stem;
+				case VanillaTileID.crimson_stem:
+					return VanillaTileID.stripped_crimson_stem;
 			}
 		}
 	}
