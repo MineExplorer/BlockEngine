@@ -3,9 +3,11 @@
  */
 class WorldRegion {
 	blockSource: BlockSource;
+	private isDeprecated = false;
 
 	constructor(blockSource: BlockSource) {
 		this.blockSource = blockSource;
+		this.isDeprecated = BlockEngine.getMainGameVersion() < 16;
 	}
 
 	/**
@@ -107,14 +109,34 @@ class WorldRegion {
 	}
 
 	/**
-	 * Sets extra block (for example, water inside another blocks), on given coords by given id and data.
-	 * 1.16 only!
+	 * Doesn't support Legacy version.
+	 * @returns [[BlockState]] object of the extra block on given coords
+	 */
+	getExtraBlock(coords: Vector): BlockState;
+	getExtraBlock(x: number, y: number, z: number): BlockState;
+	getExtraBlock(x: any, y?: number, z?: number): BlockState {
+		if (this.isDeprecated) {
+			return {id: 0, data: 0} as any;
+		}
+
+		if (typeof x === "number") {
+			return this.blockSource.getExtraBlock(x, y, z);
+		}
+		const pos = x;
+		return this.blockSource.getExtraBlock(pos.x, pos.y, pos.z);
+	}
+
+	/**
+	 * Sets extra block (for example, water inside another blocks) on given coords by given id and data.
+	 * Doesn't support Legacy version.
 	 */
 	setExtraBlock(coords: Vector, state: BlockState): void;
 	setExtraBlock(coords: Vector, id: number, data: number): void;
 	setExtraBlock(x: number, y: number, z: number, id: number, data: number): void;
 	setExtraBlock(x: number, y: number, z: number, state: BlockState): void;
 	setExtraBlock(x: any, y: any, z?: any, id?: any, data?: any): void {
+		if (this.isDeprecated) return;
+
 		if (typeof x === "number") {
 			if (typeof id == "number") {
 				this.blockSource.setExtraBlock(x, y, z, id, data);
@@ -132,20 +154,6 @@ class WorldRegion {
 	}
 
 	/**
-	 * 1.16 only!
-	 * @returns [[BlockState]] object of the extra block on given coords
-	 */
-	getExtraBlock(coords: Vector): BlockState;
-	getExtraBlock(x: number, y: number, z: number): BlockState;
-	getExtraBlock(x: any, y?: number, z?: number): BlockState {
-		if (typeof x === "number") {
-			return this.blockSource.getExtraBlock(x, y, z);
-		}
-		const pos = x;
-		return this.blockSource.getExtraBlock(pos.x, pos.y, pos.z);
-	}
-
-	/**
 	 * Destroys block on coords producing appropriate drop and particles.
 	 * @param drop whether to provide drop for the block or not
 	 * @param player player entity if the block was destroyed by player
@@ -154,9 +162,8 @@ class WorldRegion {
 	destroyBlock(x: number, y: number, z: number, drop?: boolean, player?: number): void;
 	destroyBlock(x: any, y: any, z: any, drop?: any, player?: any): void {
 		if (typeof x === "object") {
-			const pos = x, drop = y, player = z;
-			this.destroyBlock(pos.x, pos.y, pos.z, drop, player);
-			return;
+			const pos = x;
+			return this.destroyBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2]);
 		}
 
 		if (drop) {
@@ -164,7 +171,7 @@ class WorldRegion {
 			const item = player ? Entity.getCarriedItem(player) : new ItemStack();
 			const result = Block.getBlockDropViaItem(block, item, new Vector3(x, y, z), this.blockSource);
 			if (result) {
-				for (const dropItem of result) {
+				for (let dropItem of result) {
 					this.dropItem(x + .5, y + .5, z + .5, dropItem[0], dropItem[1], dropItem[2], dropItem[3] || null);
 				}
 			}
@@ -176,7 +183,7 @@ class WorldRegion {
 
 	/**
 	 * Destroys block on coords by entity using specified item.
-	 * 1.16 only!
+	 * Reverse compatible with Legacy version (doesn't support `item` argument).
 	 * @param x X coord of the block
 	 * @param y Y coord of the block
 	 * @param z Z coord of the block
@@ -187,45 +194,49 @@ class WorldRegion {
 	breakBlock(coords: Vector, allowDrop: boolean, entity: number, item: ItemInstance): void;
 	breakBlock(x: number, y: number, z: number, allowDrop: boolean, entity: number, item: ItemInstance): void;
 	breakBlock(x: any, y: any, z: any, allowDrop: any, entity?: number, item?: ItemInstance): void {
-		if (typeof x === "number") {
+		if (this.isDeprecated) {
+			this.destroyBlock(x, y, z, allowDrop, entity);
+		}
+		else if (typeof x === "number") {
 			this.blockSource.breakBlock(x, y, z, allowDrop, entity, item);
-		} else {
-			const pos = x; item = allowDrop; entity = z; allowDrop = y;
-			this.blockSource.breakBlock(pos.x, pos.y, pos.z, allowDrop, entity, item);
+		}
+		else {
+			const pos = x;
+			this.blockSource.breakBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2], arguments[3]);
 		}
 	}
 
 	/**
 	 * Same as breakBlock, but returns object containing drop and experince.
-	 * Has reverse compatibility with 1.11 but it doesn't suppot experience and
-	 * based on BlockRegistry.getBlockDrop.
+	 * Reverse compatible with Legacy version (doesn't return experience).
 	 * @param x X coord of the block
 	 * @param y Y coord of the block
 	 * @param z Z coord of the block
 	 * @param entity Entity id or -1 id if entity is not specified
 	 * @param item Tool which broke block
 	 */
-	breakBlockForResult(coords: Vector, player: number, item: ItemInstance): {items: ItemInstance[], experience: number};
-	breakBlockForResult(x: number, y: number, z: number, player: number, item: ItemInstance): {items: ItemInstance[], experience: number};
-	breakBlockForResult(x: any, y: any, z: any, player?: number, item?: ItemInstance): {items: ItemInstance[], experience: number} {
+	breakBlockForResult(coords: Vector, entity: number, item: ItemInstance): {items: ItemInstance[], experience: number};
+	breakBlockForResult(x: number, y: number, z: number, entity: number, item: ItemInstance): {items: ItemInstance[], experience: number};
+	breakBlockForResult(x: any, y: any, z: any, entity?: number, item?: ItemInstance): {items: ItemInstance[], experience: number} {
 		if (typeof x === "object") {
-			const pos = x; player = y; item = z;
-			return this.breakBlockForResult(pos.x, pos.y, pos.z, player, item);
+			const pos = x;
+			return this.breakBlockForResult(pos.x, pos.y, pos.z, arguments[1], arguments[2]);
 		}
-		if (BlockEngine.getMainGameVersion() >= 16) {
-			return this.blockSource.breakBlockForJsResult(x, y, z, player, item);
-		}
-		const block = this.blockSource.getBlock(x, y, z);
-		this.blockSource.setBlock(x, y, z, 0, 0);
-		const level = ToolAPI.getToolLevelViaBlock(item.id, block.id);
-		const drop = BlockRegistry.getBlockDrop(x, y, z, block, level, item, this.blockSource);
-		const items: ItemInstance[] = [];
-		if (drop) {
-			for (let item of drop) {
-				items.push(new ItemStack(item[0], item[1], item[2], item[3]));
+
+		if (this.isDeprecated) {
+			const block = this.blockSource.getBlock(x, y, z);
+			this.blockSource.setBlock(x, y, z, 0, 0);
+			const level = ToolAPI.getToolLevelViaBlock(item.id, block.id);
+			const drop = BlockRegistry.getBlockDrop(x, y, z, block, level, item, this.blockSource);
+			const items: ItemInstance[] = [];
+			if (drop) {
+				for (let item of drop) {
+					items.push(new ItemStack(item[0], item[1], item[2], item[3]));
+				}
 			}
+			return {items: items, experience: 0};
 		}
-		return {items: items, experience: 0};
+		return this.blockSource.breakBlockForJsResult(x, y, z, entity, item);
 	}
 
 	/**
@@ -313,9 +324,7 @@ class WorldRegion {
 			this.blockSource.explode(x, y, z, power, fire || false);
 		} else {
 			const pos = x;
-			power = y;
-			fire = z || false;
-			this.blockSource.explode(pos.x, pos.y, pos.z, power, fire);
+			this.blockSource.explode(pos.x, pos.y, pos.z, arguments[1], arguments[2] || false);
 		}
 	}
 
@@ -484,7 +493,7 @@ class WorldRegion {
 			return this.listEntitiesInAABB(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, z1, x2);
 		}
 		const entities = this.blockSource.listEntitiesInAABB(x1, y1, z1, x2, y2, z2, type, blacklist);
-		if (BlockEngine.getMainGameVersion() == 11 && (type == Native.EntityType.PLAYER) != blacklist) {
+		if (this.isDeprecated && (type == Native.EntityType.PLAYER) != blacklist) {
 			const players = Network.getConnectedPlayers();
 			const dimension = this.getDimension();
 			for (const ent of players) {
