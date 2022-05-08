@@ -4,7 +4,7 @@ class ItemTool extends ItemCommon
 implements ToolParams {
 	handEquipped: boolean = false;
 	brokenId: number = 0;
-	damage: number = 0;
+	damage: number = 1;
 	isWeapon: boolean = false;
 	blockTypes: string[] = [];
 	toolMaterial: ToolMaterial;
