@@ -342,7 +342,7 @@ var WorldRegion = /** @class */ (function () {
         else {
             var pos = x;
             id = y;
-            data = z;
+            data = z || 0;
             if (typeof id == "number") {
                 this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
             }
@@ -375,7 +375,7 @@ var WorldRegion = /** @class */ (function () {
         else {
             var pos = x;
             id = y;
-            data = z;
+            data = z || 0;
             if (typeof id == "number") {
                 this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
             }
@@ -556,14 +556,36 @@ var WorldRegion = /** @class */ (function () {
         var pos = x;
         return this.blockSource.getGrassColor(pos.x, pos.y, pos.z);
     };
-    WorldRegion.prototype.dropItem = function (x, y, z, item, count, data, extra) {
-        if (typeof item == "object") {
-            return this.blockSource.spawnDroppedItem(x, y, z, item.id, item.count, item.data, item.extra || null);
-        }
-        return this.blockSource.spawnDroppedItem(x, y, z, item, count, data, extra || null);
+    WorldRegion.prototype.dropItem = function (x, y, z, id, count, data, extra) {
+    	if (typeof x == "object") {
+			var _pos = x;
+			if (typeof y == "object") {
+				var _item = y;
+				return this.dropItem(_pos.x, _pos.y, _pos.z, _item);
+			} else {
+				extra = count;
+				data = id;
+				count = z;
+				id = y;
+				return this.dropItem(_pos.x, _pos.y, _pos.z, id, count, data, extra);
+			}
+		} else if (typeof id == "object") {
+			var _item = id;
+			return this.dropItem(x, y, z, _item.id, _item.count, _item.data, _item.extra);
+		} else {
+			return this.blockSource.spawnDroppedItem(x, y, z, id, count || 1, data || 0, extra || null);
+		}
     };
-    WorldRegion.prototype.dropAtBlock = function (x, y, z, item, count, data, extra) {
-        return this.dropItem(x + .5, y + .5, z + .5, item, count, data, extra);
+    WorldRegion.prototype.dropAtBlock = function (x, y, z, id, count, data, extra) {
+        if(typeof x == "object"){
+			var _pos = x.add(.5, .5, .5);
+			extra = count;
+			data = id;
+			count = z;
+			id = y;
+			return this.dropItem(_pos, id, count, data, extra);
+		}
+		return this.dropItem(x + .5, y + .5, z + .5, id, count, data, extra);
     };
     WorldRegion.prototype.spawnEntity = function (x, y, z, namespace, type, init_data) {
         if (type === void 0) {
@@ -576,7 +598,12 @@ var WorldRegion = /** @class */ (function () {
      * @param amount experience amount
      */
     WorldRegion.prototype.spawnExpOrbs = function (x, y, z, amount) {
-        this.blockSource.spawnExpOrbs(x, y, z, amount);
+        if(typeof x == "object"){
+			var _pos = x;
+			amount = y;
+			this.spawnExpOrbs(_pos.x, _pos.y, _pos.z, amount);
+		}
+		this.blockSource.spawnExpOrbs(x, y, z, amount);
     };
     WorldRegion.prototype.listEntitiesInAABB = function (x1, y1, z1, x2, y2, z2, type, blacklist) {
         if (type === void 0) { type = -1; }

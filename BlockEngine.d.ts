@@ -271,6 +271,8 @@ declare class WorldRegion {
      * @param z Z coord of the place where item will be dropped
      * @returns drop entity id
      */
+    dropItem(coords: Vector, item: ItemInstance): number;
+    dropItem(coords: Vector, id: number, count: number, data: number, extra?: ItemExtraData): number;
     dropItem(x: number, y: number, z: number, item: ItemInstance): number;
     dropItem(x: number, y: number, z: number, id: number, count: number, data: number, extra?: ItemExtraData): number;
     /**
@@ -280,6 +282,8 @@ declare class WorldRegion {
      * @param z Z coord of the block where item will be dropped
      * @returns drop entity id
      */
+    dropAtBlock(coords: Vector, item: ItemInstance): number;
+    dropAtBlock(coords: Vector, id: number, count: number, data: number, extra?: ItemExtraData): number;
     dropAtBlock(x: number, y: number, z: number, item: ItemInstance): number;
     dropAtBlock(x: number, y: number, z: number, id: number, count: number, data: number, extra?: ItemExtraData): number;
     /**
@@ -291,6 +295,7 @@ declare class WorldRegion {
      * Spawns experience orbs on coords
      * @param amount experience amount
      */
+    spawnExpOrbs(coords: Vector, amount: number): void;
     spawnExpOrbs(x: number, y: number, z: number, amount: number): void;
     /**
      * @returns the list of entity IDs in given box,

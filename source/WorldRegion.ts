@@ -99,7 +99,7 @@ class WorldRegion {
 				this.blockSource.setBlock(x, y, z, id);
 			}
 		} else {
-			const pos = x; id = y; data = z;
+			const pos = x; id = y; data = z || 0;
 			if (typeof id == "number") {
 				this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
 			} else {
@@ -144,7 +144,7 @@ class WorldRegion {
 				this.blockSource.setExtraBlock(x, y, z, id);
 			}
 		} else {
-			const pos = x; id = y; data = z;
+			const pos = x; id = y; data = z || 0;
 			if (typeof id == "number") {
 				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
 			} else {
@@ -438,15 +438,27 @@ class WorldRegion {
 	 * @param z Z coord of the place where item will be dropped
 	 * @returns drop entity id
 	 */
+	dropItem(coords: Vector, item: ItemInstance): number;
+	dropItem(coords: Vector, id: number, count?: number, data?: number, extra?: ItemExtraData): number;
 	dropItem(x: number, y: number, z: number, item: ItemInstance): number;
-	dropItem(x: number, y: number, z: number, id: number, count: number, data: number, extra?: ItemExtraData): number;
-	dropItem(x: number, y: number, z: number, item: number | ItemInstance, count?: number, data?: number, extra?: ItemExtraData): number {
-        if (typeof item == "object") {
-			return this.blockSource.spawnDroppedItem(x, y, z, item.id, item.count, item.data, item.extra || null);
-        }
-		return this.blockSource.spawnDroppedItem(x, y, z, item, count, data, extra || null);
+	dropItem(x: number, y: number, z: number, id: number, count?: number, data?: number, extra?: ItemExtraData): number;
+	dropItem(x: any, y: any, z?: any, id?: any, count?: number, data?: number, extra?: ItemExtraData): number {
+		if (typeof x == "object") {
+			const pos = x;
+			if (typeof y == "object") {
+				const item = y;
+				return this.dropItem(pos.x, pos.y, pos.z, item);
+			} else {
+				extra = count, data = id, count = z, id = y;
+				return this.dropItem(pos.x, pos.y, pos.z, id, count, data, extra);
+			}
+		} else if (typeof id == "object") {
+			const item = id;
+			return this.dropItem(x, y, z, item.id, item.count, item.data, item.extra);
+		} else {
+			return this.blockSource.spawnDroppedItem(x, y, z, id, count || 1, data || 0, extra || null);
+		}
 	}
-
 	/**
 	 * Creates dropped item at the block center and returns entity id
 	 * @param x X coord of the block where item will be dropped
@@ -454,10 +466,17 @@ class WorldRegion {
 	 * @param z Z coord of the block where item will be dropped
 	 * @returns drop entity id
 	 */
+	dropAtBlock(coords: Vector, item: ItemInstance): number;
+	dropAtBlock(coords: Vector, id: number, count: number, data: number, extra?: ItemExtraData): number;
 	dropAtBlock(x: number, y: number, z: number, item: ItemInstance): number;
 	dropAtBlock(x: number, y: number, z: number, id: number, count: number, data: number, extra?: ItemExtraData): number;
-	dropAtBlock(x: number, y: number, z: number, item: any, count?: any, data?: any, extra?: any): number {
-		return this.dropItem(x + .5, y + .5, z + .5, item, count, data, extra);
+	dropAtBlock(x: any, y: any, z?: number, id?: any, count?: any, data?: any, extra?: any): number {
+		if(typeof x == "object"){
+			const pos = x.add(.5, .5, .5);
+			extra = count, data = id, count = z, id = y;
+			return this.dropItem(pos, id, count, data, extra);
+		}
+		return this.dropItem(x + .5, y + .5, z + .5, id, count, data, extra);
 	}
 
 	/**
@@ -476,7 +495,12 @@ class WorldRegion {
 	 * Spawns experience orbs on coords
 	 * @param amount experience amount
 	 */
-	spawnExpOrbs(x: number, y: number, z: number, amount: number): void {
+	spawnExpOrbs(coords: Vector, amount: number): void;
+	spawnExpOrbs(x: any, y: number, z?: number, amount?: number): void {
+		if(typeof x == "object"){
+			const pos = x, amount = y;
+			this.spawnExpOrbs(pos.x, pos.y, pos.z, amount);
+		}
 		this.blockSource.spawnExpOrbs(x, y, z, amount);
 	}
 
