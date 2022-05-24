@@ -1826,6 +1826,9 @@ var ItemStack = /** @class */ (function () {
     ItemStack.prototype.equals = function (stack){
     	return this.id == stack.id && this.count == stack.count && this.data == stack.data && (!this.extra && !this.extra) || (this.extra && stack.extra && this.extra.equals(stack.extra));
     };
+    ItemStack.prototype.isEmpty = function (){
+    	return this.id == 0 && this.count == 0 && this.data == 0 && this.extra == null;
+    };
     ItemStack.prototype.getMaxStack = function () {
         return Item.getMaxStack(this.id);
     };
