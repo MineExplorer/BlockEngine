@@ -1820,6 +1820,12 @@ var ItemStack = /** @class */ (function () {
     ItemStack.prototype.getItemInstance = function () {
         return ItemRegistry.getInstanceOf(this.id);
     };
+    ItemStack.prototype.clone = function (){
+    	return new ItemStack(this);
+    };
+    ItemStack.prototype.equals = function (stack){
+    	return this.id == stack.id && this.count == stack.count && this.data == stack.data && (!this.extra && !this.extra) || (this.extra && stack.extra && this.extra.equals(stack.extra));
+    };
     ItemStack.prototype.getMaxStack = function () {
         return Item.getMaxStack(this.id);
     };

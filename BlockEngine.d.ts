@@ -791,6 +791,9 @@ declare class ItemStack implements ItemInstance {
     constructor(item: ItemInstance);
     constructor(id: number, count: number, data?: number, extra?: ItemExtraData);
     getItemInstance(): Nullable<ItemBase>;
+    clone(): ItemStack;
+    equals(stack: ItemStack): boolean;
+    isEmpty(): boolean;
     getMaxStack(): number;
     getMaxDamage(): number;
     /**

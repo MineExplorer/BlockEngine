@@ -25,6 +25,27 @@ class ItemStack implements ItemInstance {
 		return ItemRegistry.getInstanceOf(this.id);
 	}
 
+	clone(): ItemStack {
+		return new ItemStack(this);
+	}
+
+	equals(stack: ItemStack): boolean {
+		return 
+			this.id == stack.id &&
+			this.count == stack.count &&
+			this.data == stack.data &&
+			(!this.extra && !this.extra) ||
+			(this.extra && stack.extra && this.extra.equals(stack.extra));
+	}
+
+	isEmpty(): boolean {
+		return
+			this.count == 0 &&
+			this.id == 0 &&
+			this.data == 0 &&
+			this.extra == null
+	}
+
 	getMaxStack(): number {
 		return Item.getMaxStack(this.id);
 	}
