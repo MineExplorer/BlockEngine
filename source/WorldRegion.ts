@@ -88,22 +88,22 @@ class WorldRegion {
 	 * @param data - data of the block to set
 	 */
 	setBlock(coords: Vector, state: BlockState): void;
-	setBlock(coords: Vector, id: number, data: number): void;
+	setBlock(coords: Vector, id: number, data?: number): void;
 	setBlock(x: number, y: number, z: number, state: BlockState): void;
-	setBlock(x: number, y: number, z: number, id: number, data: number): void;
+	setBlock(x: number, y: number, z: number, id: number, data?: number): void;
 	setBlock(x: any, y: any, z?: any, id?: any, data?: any): void {
 		if (typeof x === "number") {
 			if (typeof id == "number") {
-				this.blockSource.setBlock(x, y, z, id, data);
+				this.blockSource.setBlock(x, y, z, id, data || 0);
 			} else {
 				this.blockSource.setBlock(x, y, z, id);
 			}
 		} else {
-			const pos = x; id = y; data = z || 0;
+			const pos = x;
 			if (typeof id == "number") {
-				this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
+				this.blockSource.setBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2] || 0);
 			} else {
-				this.blockSource.setBlock(pos.x, pos.y, pos.z, id);
+				this.blockSource.setBlock(pos.x, pos.y, pos.z, arguments[1]);
 			}
 		}
 	}
@@ -131,24 +131,24 @@ class WorldRegion {
 	 * Doesn't support Legacy version.
 	 */
 	setExtraBlock(coords: Vector, state: BlockState): void;
-	setExtraBlock(coords: Vector, id: number, data: number): void;
-	setExtraBlock(x: number, y: number, z: number, id: number, data: number): void;
+	setExtraBlock(coords: Vector, id: number, data?: number): void;
+	setExtraBlock(x: number, y: number, z: number, id: number, data?: number): void;
 	setExtraBlock(x: number, y: number, z: number, state: BlockState): void;
 	setExtraBlock(x: any, y: any, z?: any, id?: any, data?: any): void {
 		if (this.isDeprecated) return;
 
 		if (typeof x === "number") {
 			if (typeof id == "number") {
-				this.blockSource.setExtraBlock(x, y, z, id, data);
+				this.blockSource.setExtraBlock(x, y, z, id, data || 0);
 			} else {
 				this.blockSource.setExtraBlock(x, y, z, id);
 			}
 		} else {
-			const pos = x; id = y; data = z || 0;
+			const pos = x;
 			if (typeof id == "number") {
-				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
+				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2] || 0);
 			} else {
-				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id);
+				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, arguments[1]);
 			}
 		}
 	}

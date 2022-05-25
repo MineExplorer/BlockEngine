@@ -119,9 +119,9 @@ declare class WorldRegion {
      * @param data - data of the block to set
      */
     setBlock(coords: Vector, state: BlockState): void;
-    setBlock(coords: Vector, id: number, data: number): void;
+    setBlock(coords: Vector, id: number, data?: number): void;
     setBlock(x: number, y: number, z: number, state: BlockState): void;
-    setBlock(x: number, y: number, z: number, id: number, data: number): void;
+    setBlock(x: number, y: number, z: number, id: number, data?: number): void;
     /**
      * Doesn't support Legacy version.
      * @returns [[BlockState]] object of the extra block on given coords
@@ -133,8 +133,8 @@ declare class WorldRegion {
      * Doesn't support Legacy version.
      */
     setExtraBlock(coords: Vector, state: BlockState): void;
-    setExtraBlock(coords: Vector, id: number, data: number): void;
-    setExtraBlock(x: number, y: number, z: number, id: number, data: number): void;
+    setExtraBlock(coords: Vector, id: number, data?: number): void;
+    setExtraBlock(x: number, y: number, z: number, id: number, data?: number): void;
     setExtraBlock(x: number, y: number, z: number, state: BlockState): void;
     /**
      * Destroys block on coords producing appropriate drop and particles.

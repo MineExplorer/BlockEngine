@@ -333,7 +333,7 @@ var WorldRegion = /** @class */ (function () {
     WorldRegion.prototype.setBlock = function (x, y, z, id, data) {
         if (typeof x === "number") {
             if (typeof id == "number") {
-                this.blockSource.setBlock(x, y, z, id, data);
+                this.blockSource.setBlock(x, y, z, id, data || 0);
             }
             else {
                 this.blockSource.setBlock(x, y, z, id);
@@ -341,13 +341,11 @@ var WorldRegion = /** @class */ (function () {
         }
         else {
             var pos = x;
-            id = y;
-            data = z || 0;
             if (typeof id == "number") {
-                this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
+                this.blockSource.setBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2] || 0);
             }
             else {
-                this.blockSource.setBlock(pos.x, pos.y, pos.z, id);
+                this.blockSource.setBlock(pos.x, pos.y, pos.z, arguments[1]);
             }
         }
     };
@@ -366,7 +364,7 @@ var WorldRegion = /** @class */ (function () {
             return;
         if (typeof x === "number") {
             if (typeof id == "number") {
-                this.blockSource.setExtraBlock(x, y, z, id, data);
+                this.blockSource.setExtraBlock(x, y, z, id, data || 0);
             }
             else {
                 this.blockSource.setExtraBlock(x, y, z, id);
@@ -374,13 +372,11 @@ var WorldRegion = /** @class */ (function () {
         }
         else {
             var pos = x;
-            id = y;
-            data = z || 0;
             if (typeof id == "number") {
-                this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
+                this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2] || 0);
             }
             else {
-                this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id);
+                this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, arguments[1]);
             }
         }
     };
