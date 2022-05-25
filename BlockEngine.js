@@ -557,53 +557,39 @@ var WorldRegion = /** @class */ (function () {
         return this.blockSource.getGrassColor(pos.x, pos.y, pos.z);
     };
     WorldRegion.prototype.dropItem = function (x, y, z, id, count, data, extra) {
-    	if (typeof x == "object") {
-			var _pos = x;
-			if (typeof y == "object") {
-				var _item = y;
-				return this.dropItem(_pos.x, _pos.y, _pos.z, _item);
-			} else {
-				extra = count;
-				data = id;
-				count = z;
-				id = y;
-				return this.dropItem(_pos.x, _pos.y, _pos.z, id, count, data, extra);
-			}
-		} else if (typeof id == "object") {
-			var _item = id;
-			return this.dropItem(x, y, z, _item.id, _item.count, _item.data, _item.extra);
-		} else {
-			return this.blockSource.spawnDroppedItem(x, y, z, id, count || 1, data || 0, extra || null);
-		}
+        if (typeof x == "object") {
+            var pos = x;
+            if (typeof y == "object") {
+                var item = y;
+                return this.dropItem(pos.x, pos.y, pos.z, item);
+            }
+            return this.dropItem(pos.x, pos.y, pos.z, arguments[1], arguments[2], arguments[3], arguments[4]);
+        }
+        if (typeof id == "object") {
+            var item = id;
+            return this.dropItem(x, y, z, item.id, item.count, item.data, item.extra);
+        }
+        return this.blockSource.spawnDroppedItem(x, y, z, id, count || 1, data || 0, extra || null);
     };
     WorldRegion.prototype.dropAtBlock = function (x, y, z, id, count, data, extra) {
-        if(typeof x == "object"){
-			var _pos = x.add(.5, .5, .5);
-			extra = count;
-			data = id;
-			count = z;
-			id = y;
-			return this.dropItem(_pos, id, count, data, extra);
-		}
-		return this.dropItem(x + .5, y + .5, z + .5, id, count, data, extra);
+        if (typeof x == "object") {
+            var pos = x;
+            return this.dropItem(pos.x + .5, pos.y + .5, pos.z + .5, arguments[1], arguments[2], arguments[3], arguments[4]);
+        }
+        return this.dropItem(x + .5, y + .5, z + .5, id, count, data, extra);
     };
     WorldRegion.prototype.spawnEntity = function (x, y, z, namespace, type, init_data) {
-        if (type === void 0) {
+        if (type === undefined) {
             return this.blockSource.spawnEntity(x, y, z, namespace);
         }
         return this.blockSource.spawnEntity(x, y, z, namespace, type, init_data);
     };
-    /**
-     * Spawns experience orbs on coords
-     * @param amount experience amount
-     */
     WorldRegion.prototype.spawnExpOrbs = function (x, y, z, amount) {
-        if(typeof x == "object"){
-			var _pos = x;
-			amount = y;
-			this.spawnExpOrbs(_pos.x, _pos.y, _pos.z, amount);
-		}
-		this.blockSource.spawnExpOrbs(x, y, z, amount);
+        if (typeof x == "object") {
+            var pos = x;
+            this.spawnExpOrbs(pos.x, pos.y, pos.z, arguments[1]);
+        }
+        this.blockSource.spawnExpOrbs(x, y, z, amount);
     };
     WorldRegion.prototype.listEntitiesInAABB = function (x1, y1, z1, x2, y2, z2, type, blacklist) {
         if (type === void 0) { type = -1; }
@@ -1820,20 +1806,34 @@ var ItemStack = /** @class */ (function () {
     ItemStack.prototype.getItemInstance = function () {
         return ItemRegistry.getInstanceOf(this.id);
     };
-    ItemStack.prototype.clone = function (){
-    	return new ItemStack(this);
+    /**
+     * Creates a copy of current ItemStack object
+     * @returns a created copy of the ItemStack
+     */
+    ItemStack.prototype.copy = function () {
+        var _a;
+        return new ItemStack(this.id, this.count, this.data, (_a = this.extra) === null || _a === void 0 ? void 0 : _a.copy());
     };
-    ItemStack.prototype.equals = function (stack){
-    	return this.id == stack.id && this.count == stack.count && this.data == stack.data && (!this.extra && !this.extra) || (this.extra && stack.extra && this.extra.equals(stack.extra));
-    };
-    ItemStack.prototype.isEmpty = function (){
-    	return this.id == 0 && this.count == 0 && this.data == 0 && this.extra == null;
-    };
+    /**
+     * @returns maximum stack size for the item
+     */
     ItemStack.prototype.getMaxStack = function () {
         return Item.getMaxStack(this.id);
     };
+    /**
+     * @returns maximum damage value for the item
+     */
     ItemStack.prototype.getMaxDamage = function () {
         return Item.getMaxDamage(this.id);
+    };
+    /**
+     * @returns true if all stack values are empty, false otherwise
+     */
+    ItemStack.prototype.isEmpty = function () {
+        return this.id == 0 &&
+            this.count == 0 &&
+            this.data == 0 &&
+            this.extra == null;
     };
     /**
      * Decreases stack count by specified value.

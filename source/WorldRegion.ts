@@ -442,22 +442,20 @@ class WorldRegion {
 	dropItem(coords: Vector, id: number, count?: number, data?: number, extra?: ItemExtraData): number;
 	dropItem(x: number, y: number, z: number, item: ItemInstance): number;
 	dropItem(x: number, y: number, z: number, id: number, count?: number, data?: number, extra?: ItemExtraData): number;
-	dropItem(x: any, y: any, z?: any, id?: any, count?: number, data?: number, extra?: ItemExtraData): number {
+	dropItem(x: any, y: any, z?: any, id?: any, count?: any, data?: any, extra?: ItemExtraData): number {
 		if (typeof x == "object") {
 			const pos = x;
 			if (typeof y == "object") {
 				const item = y;
 				return this.dropItem(pos.x, pos.y, pos.z, item);
-			} else {
-				extra = count, data = id, count = z, id = y;
-				return this.dropItem(pos.x, pos.y, pos.z, id, count, data, extra);
 			}
-		} else if (typeof id == "object") {
+			return this.dropItem(pos.x, pos.y, pos.z, arguments[1], arguments[2], arguments[3], arguments[4]);
+		}
+		if (typeof id == "object") {
 			const item = id;
 			return this.dropItem(x, y, z, item.id, item.count, item.data, item.extra);
-		} else {
-			return this.blockSource.spawnDroppedItem(x, y, z, id, count || 1, data || 0, extra || null);
 		}
+		return this.blockSource.spawnDroppedItem(x, y, z, id, count || 1, data || 0, extra || null);
 	}
 	/**
 	 * Creates dropped item at the block center and returns entity id
@@ -470,11 +468,10 @@ class WorldRegion {
 	dropAtBlock(coords: Vector, id: number, count: number, data: number, extra?: ItemExtraData): number;
 	dropAtBlock(x: number, y: number, z: number, item: ItemInstance): number;
 	dropAtBlock(x: number, y: number, z: number, id: number, count: number, data: number, extra?: ItemExtraData): number;
-	dropAtBlock(x: any, y: any, z?: number, id?: any, count?: any, data?: any, extra?: any): number {
-		if(typeof x == "object"){
-			const pos = x.add(.5, .5, .5);
-			extra = count, data = id, count = z, id = y;
-			return this.dropItem(pos, id, count, data, extra);
+	dropAtBlock(x: any, y: any, z?: any, id?: any, count?: any, data?: any, extra?: any): number {
+		if (typeof x == "object") {
+			const pos = x;
+			return this.dropItem(pos.x + .5, pos.y + .5, pos.z + .5, arguments[1], arguments[2], arguments[3], arguments[4]);
 		}
 		return this.dropItem(x + .5, y + .5, z + .5, id, count, data, extra);
 	}
@@ -485,7 +482,7 @@ class WorldRegion {
 	spawnEntity(x: number, y: number, z: number, type: number | string): number;
 	spawnEntity(x: number, y: number, z: number, namespace: string, type: string, init_data: string): number;
 	spawnEntity(x: number, y: number, z: number, namespace: string, type?: string, init_data?: string): number {
-		if (type === void 0) {
+		if (type === undefined) {
 			return this.blockSource.spawnEntity(x, y, z, namespace);
 		}
 		return this.blockSource.spawnEntity(x, y, z, namespace, type, init_data);
@@ -496,10 +493,11 @@ class WorldRegion {
 	 * @param amount experience amount
 	 */
 	spawnExpOrbs(coords: Vector, amount: number): void;
+	spawnExpOrbs(x: any, y: number, z: number, amount: number): void;
 	spawnExpOrbs(x: any, y: number, z?: number, amount?: number): void {
-		if(typeof x == "object"){
-			const pos = x, amount = y;
-			this.spawnExpOrbs(pos.x, pos.y, pos.z, amount);
+		if (typeof x == "object") {
+			const pos = x;
+			this.spawnExpOrbs(pos.x, pos.y, pos.z, arguments[1]);
 		}
 		this.blockSource.spawnExpOrbs(x, y, z, amount);
 	}

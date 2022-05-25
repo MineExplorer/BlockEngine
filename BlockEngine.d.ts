@@ -272,9 +272,9 @@ declare class WorldRegion {
      * @returns drop entity id
      */
     dropItem(coords: Vector, item: ItemInstance): number;
-    dropItem(coords: Vector, id: number, count: number, data: number, extra?: ItemExtraData): number;
+    dropItem(coords: Vector, id: number, count?: number, data?: number, extra?: ItemExtraData): number;
     dropItem(x: number, y: number, z: number, item: ItemInstance): number;
-    dropItem(x: number, y: number, z: number, id: number, count: number, data: number, extra?: ItemExtraData): number;
+    dropItem(x: number, y: number, z: number, id: number, count?: number, data?: number, extra?: ItemExtraData): number;
     /**
      * Creates dropped item at the block center and returns entity id
      * @param x X coord of the block where item will be dropped
@@ -296,7 +296,7 @@ declare class WorldRegion {
      * @param amount experience amount
      */
     spawnExpOrbs(coords: Vector, amount: number): void;
-    spawnExpOrbs(x: number, y: number, z: number, amount: number): void;
+    spawnExpOrbs(x: any, y: number, z: number, amount: number): void;
     /**
      * @returns the list of entity IDs in given box,
      * that are equal to the given type, if blacklist value is false,
@@ -791,11 +791,23 @@ declare class ItemStack implements ItemInstance {
     constructor(item: ItemInstance);
     constructor(id: number, count: number, data?: number, extra?: ItemExtraData);
     getItemInstance(): Nullable<ItemBase>;
-    clone(): ItemStack;
-    equals(stack: ItemStack): boolean;
-    isEmpty(): boolean;
+    /**
+     * Creates a copy of current ItemStack object
+     * @returns a created copy of the ItemStack
+     */
+    copy(): ItemStack;
+    /**
+     * @returns maximum stack size for the item
+     */
     getMaxStack(): number;
+    /**
+     * @returns maximum damage value for the item
+     */
     getMaxDamage(): number;
+    /**
+     * @returns true if all stack values are empty, false otherwise
+     */
+    isEmpty(): boolean;
     /**
      * Decreases stack count by specified value.
      * @param count amount to decrease
