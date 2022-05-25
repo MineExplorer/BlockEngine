@@ -88,22 +88,22 @@ class WorldRegion {
 	 * @param data - data of the block to set
 	 */
 	setBlock(coords: Vector, state: BlockState): void;
-	setBlock(coords: Vector, id: number, data: number): void;
+	setBlock(coords: Vector, id: number, data?: number): void;
 	setBlock(x: number, y: number, z: number, state: BlockState): void;
-	setBlock(x: number, y: number, z: number, id: number, data: number): void;
+	setBlock(x: number, y: number, z: number, id: number, data?: number): void;
 	setBlock(x: any, y: any, z?: any, id?: any, data?: any): void {
 		if (typeof x === "number") {
 			if (typeof id == "number") {
-				this.blockSource.setBlock(x, y, z, id, data);
+				this.blockSource.setBlock(x, y, z, id, data || 0);
 			} else {
 				this.blockSource.setBlock(x, y, z, id);
 			}
 		} else {
-			const pos = x; id = y; data = z;
+			const pos = x;
 			if (typeof id == "number") {
-				this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
+				this.blockSource.setBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2] || 0);
 			} else {
-				this.blockSource.setBlock(pos.x, pos.y, pos.z, id);
+				this.blockSource.setBlock(pos.x, pos.y, pos.z, arguments[1]);
 			}
 		}
 	}
@@ -131,24 +131,24 @@ class WorldRegion {
 	 * Doesn't support Legacy version.
 	 */
 	setExtraBlock(coords: Vector, state: BlockState): void;
-	setExtraBlock(coords: Vector, id: number, data: number): void;
-	setExtraBlock(x: number, y: number, z: number, id: number, data: number): void;
+	setExtraBlock(coords: Vector, id: number, data?: number): void;
+	setExtraBlock(x: number, y: number, z: number, id: number, data?: number): void;
 	setExtraBlock(x: number, y: number, z: number, state: BlockState): void;
 	setExtraBlock(x: any, y: any, z?: any, id?: any, data?: any): void {
 		if (this.isDeprecated) return;
 
 		if (typeof x === "number") {
 			if (typeof id == "number") {
-				this.blockSource.setExtraBlock(x, y, z, id, data);
+				this.blockSource.setExtraBlock(x, y, z, id, data || 0);
 			} else {
 				this.blockSource.setExtraBlock(x, y, z, id);
 			}
 		} else {
-			const pos = x; id = y; data = z;
+			const pos = x;
 			if (typeof id == "number") {
-				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
+				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2] || 0);
 			} else {
-				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id);
+				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, arguments[1]);
 			}
 		}
 	}
@@ -438,15 +438,25 @@ class WorldRegion {
 	 * @param z Z coord of the place where item will be dropped
 	 * @returns drop entity id
 	 */
+	dropItem(coords: Vector, item: ItemInstance): number;
+	dropItem(coords: Vector, id: number, count?: number, data?: number, extra?: ItemExtraData): number;
 	dropItem(x: number, y: number, z: number, item: ItemInstance): number;
-	dropItem(x: number, y: number, z: number, id: number, count: number, data: number, extra?: ItemExtraData): number;
-	dropItem(x: number, y: number, z: number, item: number | ItemInstance, count?: number, data?: number, extra?: ItemExtraData): number {
-        if (typeof item == "object") {
-			return this.blockSource.spawnDroppedItem(x, y, z, item.id, item.count, item.data, item.extra || null);
-        }
-		return this.blockSource.spawnDroppedItem(x, y, z, item, count, data, extra || null);
+	dropItem(x: number, y: number, z: number, id: number, count?: number, data?: number, extra?: ItemExtraData): number;
+	dropItem(x: any, y: any, z?: any, id?: any, count?: any, data?: any, extra?: ItemExtraData): number {
+		if (typeof x == "object") {
+			const pos = x;
+			if (typeof y == "object") {
+				const item = y;
+				return this.dropItem(pos.x, pos.y, pos.z, item);
+			}
+			return this.dropItem(pos.x, pos.y, pos.z, arguments[1], arguments[2], arguments[3], arguments[4]);
+		}
+		if (typeof id == "object") {
+			const item = id;
+			return this.dropItem(x, y, z, item.id, item.count, item.data, item.extra);
+		}
+		return this.blockSource.spawnDroppedItem(x, y, z, id, count || 1, data || 0, extra || null);
 	}
-
 	/**
 	 * Creates dropped item at the block center and returns entity id
 	 * @param x X coord of the block where item will be dropped
@@ -454,10 +464,16 @@ class WorldRegion {
 	 * @param z Z coord of the block where item will be dropped
 	 * @returns drop entity id
 	 */
+	dropAtBlock(coords: Vector, item: ItemInstance): number;
+	dropAtBlock(coords: Vector, id: number, count: number, data: number, extra?: ItemExtraData): number;
 	dropAtBlock(x: number, y: number, z: number, item: ItemInstance): number;
 	dropAtBlock(x: number, y: number, z: number, id: number, count: number, data: number, extra?: ItemExtraData): number;
-	dropAtBlock(x: number, y: number, z: number, item: any, count?: any, data?: any, extra?: any): number {
-		return this.dropItem(x + .5, y + .5, z + .5, item, count, data, extra);
+	dropAtBlock(x: any, y: any, z?: any, id?: any, count?: any, data?: any, extra?: any): number {
+		if (typeof x == "object") {
+			const pos = x;
+			return this.dropItem(pos.x + .5, pos.y + .5, pos.z + .5, arguments[1], arguments[2], arguments[3], arguments[4]);
+		}
+		return this.dropItem(x + .5, y + .5, z + .5, id, count, data, extra);
 	}
 
 	/**
@@ -466,7 +482,7 @@ class WorldRegion {
 	spawnEntity(x: number, y: number, z: number, type: number | string): number;
 	spawnEntity(x: number, y: number, z: number, namespace: string, type: string, init_data: string): number;
 	spawnEntity(x: number, y: number, z: number, namespace: string, type?: string, init_data?: string): number {
-		if (type === void 0) {
+		if (type === undefined) {
 			return this.blockSource.spawnEntity(x, y, z, namespace);
 		}
 		return this.blockSource.spawnEntity(x, y, z, namespace, type, init_data);
@@ -476,7 +492,13 @@ class WorldRegion {
 	 * Spawns experience orbs on coords
 	 * @param amount experience amount
 	 */
-	spawnExpOrbs(x: number, y: number, z: number, amount: number): void {
+	spawnExpOrbs(coords: Vector, amount: number): void;
+	spawnExpOrbs(x: any, y: number, z: number, amount: number): void;
+	spawnExpOrbs(x: any, y: number, z?: number, amount?: number): void {
+		if (typeof x == "object") {
+			const pos = x;
+			this.spawnExpOrbs(pos.x, pos.y, pos.z, arguments[1]);
+		}
 		this.blockSource.spawnExpOrbs(x, y, z, amount);
 	}
 

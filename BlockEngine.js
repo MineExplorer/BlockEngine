@@ -333,7 +333,7 @@ var WorldRegion = /** @class */ (function () {
     WorldRegion.prototype.setBlock = function (x, y, z, id, data) {
         if (typeof x === "number") {
             if (typeof id == "number") {
-                this.blockSource.setBlock(x, y, z, id, data);
+                this.blockSource.setBlock(x, y, z, id, data || 0);
             }
             else {
                 this.blockSource.setBlock(x, y, z, id);
@@ -341,13 +341,11 @@ var WorldRegion = /** @class */ (function () {
         }
         else {
             var pos = x;
-            id = y;
-            data = z;
             if (typeof id == "number") {
-                this.blockSource.setBlock(pos.x, pos.y, pos.z, id, data);
+                this.blockSource.setBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2] || 0);
             }
             else {
-                this.blockSource.setBlock(pos.x, pos.y, pos.z, id);
+                this.blockSource.setBlock(pos.x, pos.y, pos.z, arguments[1]);
             }
         }
     };
@@ -366,7 +364,7 @@ var WorldRegion = /** @class */ (function () {
             return;
         if (typeof x === "number") {
             if (typeof id == "number") {
-                this.blockSource.setExtraBlock(x, y, z, id, data);
+                this.blockSource.setExtraBlock(x, y, z, id, data || 0);
             }
             else {
                 this.blockSource.setExtraBlock(x, y, z, id);
@@ -374,13 +372,11 @@ var WorldRegion = /** @class */ (function () {
         }
         else {
             var pos = x;
-            id = y;
-            data = z;
             if (typeof id == "number") {
-                this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id, data);
+                this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2] || 0);
             }
             else {
-                this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, id);
+                this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, arguments[1]);
             }
         }
     };
@@ -556,26 +552,39 @@ var WorldRegion = /** @class */ (function () {
         var pos = x;
         return this.blockSource.getGrassColor(pos.x, pos.y, pos.z);
     };
-    WorldRegion.prototype.dropItem = function (x, y, z, item, count, data, extra) {
-        if (typeof item == "object") {
-            return this.blockSource.spawnDroppedItem(x, y, z, item.id, item.count, item.data, item.extra || null);
+    WorldRegion.prototype.dropItem = function (x, y, z, id, count, data, extra) {
+        if (typeof x == "object") {
+            var pos = x;
+            if (typeof y == "object") {
+                var item = y;
+                return this.dropItem(pos.x, pos.y, pos.z, item);
+            }
+            return this.dropItem(pos.x, pos.y, pos.z, arguments[1], arguments[2], arguments[3], arguments[4]);
         }
-        return this.blockSource.spawnDroppedItem(x, y, z, item, count, data, extra || null);
+        if (typeof id == "object") {
+            var item = id;
+            return this.dropItem(x, y, z, item.id, item.count, item.data, item.extra);
+        }
+        return this.blockSource.spawnDroppedItem(x, y, z, id, count || 1, data || 0, extra || null);
     };
-    WorldRegion.prototype.dropAtBlock = function (x, y, z, item, count, data, extra) {
-        return this.dropItem(x + .5, y + .5, z + .5, item, count, data, extra);
+    WorldRegion.prototype.dropAtBlock = function (x, y, z, id, count, data, extra) {
+        if (typeof x == "object") {
+            var pos = x;
+            return this.dropItem(pos.x + .5, pos.y + .5, pos.z + .5, arguments[1], arguments[2], arguments[3], arguments[4]);
+        }
+        return this.dropItem(x + .5, y + .5, z + .5, id, count, data, extra);
     };
     WorldRegion.prototype.spawnEntity = function (x, y, z, namespace, type, init_data) {
-        if (type === void 0) {
+        if (type === undefined) {
             return this.blockSource.spawnEntity(x, y, z, namespace);
         }
         return this.blockSource.spawnEntity(x, y, z, namespace, type, init_data);
     };
-    /**
-     * Spawns experience orbs on coords
-     * @param amount experience amount
-     */
     WorldRegion.prototype.spawnExpOrbs = function (x, y, z, amount) {
+        if (typeof x == "object") {
+            var pos = x;
+            this.spawnExpOrbs(pos.x, pos.y, pos.z, arguments[1]);
+        }
         this.blockSource.spawnExpOrbs(x, y, z, amount);
     };
     WorldRegion.prototype.listEntitiesInAABB = function (x1, y1, z1, x2, y2, z2, type, blacklist) {
@@ -1793,11 +1802,34 @@ var ItemStack = /** @class */ (function () {
     ItemStack.prototype.getItemInstance = function () {
         return ItemRegistry.getInstanceOf(this.id);
     };
+    /**
+     * Creates a copy of current ItemStack object
+     * @returns a created copy of the ItemStack
+     */
+    ItemStack.prototype.copy = function () {
+        var _a;
+        return new ItemStack(this.id, this.count, this.data, (_a = this.extra) === null || _a === void 0 ? void 0 : _a.copy());
+    };
+    /**
+     * @returns maximum stack size for the item
+     */
     ItemStack.prototype.getMaxStack = function () {
         return Item.getMaxStack(this.id);
     };
+    /**
+     * @returns maximum damage value for the item
+     */
     ItemStack.prototype.getMaxDamage = function () {
         return Item.getMaxDamage(this.id);
+    };
+    /**
+     * @returns true if all stack values are empty, false otherwise
+     */
+    ItemStack.prototype.isEmpty = function () {
+        return this.id == 0 &&
+            this.count == 0 &&
+            this.data == 0 &&
+            this.extra == null;
     };
     /**
      * Decreases stack count by specified value.

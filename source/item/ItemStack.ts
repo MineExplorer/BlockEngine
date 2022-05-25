@@ -25,12 +25,36 @@ class ItemStack implements ItemInstance {
 		return ItemRegistry.getInstanceOf(this.id);
 	}
 
+	/**
+	 * Creates a copy of current ItemStack object
+	 * @returns a created copy of the ItemStack
+	 */
+	copy(): ItemStack {
+		return new ItemStack(this.id, this.count, this.data, this.extra?.copy());
+	}
+
+	/**
+     * @returns maximum stack size for the item
+     */
 	getMaxStack(): number {
 		return Item.getMaxStack(this.id);
 	}
 
+	/**
+     * @returns maximum damage value for the item
+     */
 	getMaxDamage(): number {
 		return Item.getMaxDamage(this.id);
+	}
+
+	/**
+	 * @returns true if all stack values are empty, false otherwise
+	 */
+	isEmpty(): boolean {
+		return this.id == 0 &&
+			this.count == 0 &&
+			this.data == 0 &&
+			this.extra == null;
 	}
 
 	/**
