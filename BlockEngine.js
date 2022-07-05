@@ -66,44 +66,25 @@ var BlockEngine;
 (function (BlockEngine) {
     var Decorators;
     (function (Decorators) {
-        function createField(target, field) {
-            target[field] = __assign({}, target[field]);
-        }
         /** Client side method decorator for TileEntity */
         function ClientSide(target, propertyName) {
-            createField(target, "client");
-            target.client[propertyName] = target[propertyName];
+            target.__clientMethods = __assign({}, target.__clientMethods);
+            target.__clientMethods[propertyName] = true;
         }
         Decorators.ClientSide = ClientSide;
         /** Adds method as network event in TileEntity */
         function NetworkEvent(side) {
             return function (target, propertyName) {
-                if (side == Side.Client) {
-                    createField(target, "client");
-                    createField(target.client, "events");
-                    target.client.events[propertyName] = target[propertyName];
-                    delete target[propertyName];
-                }
-                else {
-                    createField(target, "events");
-                    target.events[propertyName] = target[propertyName];
-                }
+                target.__networkEvents = __assign({}, target.__networkEvents);
+                target.__networkEvents[propertyName] = side;
             };
         }
         Decorators.NetworkEvent = NetworkEvent;
         /** Adds method as container event in TileEntity */
         function ContainerEvent(side) {
             return function (target, propertyName) {
-                if (side == Side.Client) {
-                    createField(target, "client");
-                    createField(target.client, "containerEvents");
-                    target.client.containerEvents[propertyName] = target[propertyName];
-                    delete target[propertyName];
-                }
-                else {
-                    createField(target, "containerEvents");
-                    target.containerEvents[propertyName] = target[propertyName];
-                }
+                target.__containerEvents = __assign({}, target.__containerEvents);
+                target.__containerEvents[propertyName] = side;
             };
         }
         Decorators.ContainerEvent = ContainerEvent;
@@ -2741,13 +2722,33 @@ IDConverter.registerOld("music_disc_11", VanillaItemID.record_11, 0);
 IDConverter.registerOld("music_disc_wait", VanillaItemID.record_wait, 0);
 var TileEntityBase = /** @class */ (function () {
     function TileEntityBase() {
-        var _a;
         this.useNetworkItemContainer = true;
         this._clickPrevented = false;
-        (_a = this.client) !== null && _a !== void 0 ? _a : (this.client = {});
-        this.client.load = this.clientLoad;
-        this.client.unload = this.clientUnload;
-        this.client.tick = this.clientTick;
+        this.client = {
+            load: this.clientLoad,
+            unload: this.clientUnload,
+            tick: this.clientTick,
+            events: {},
+            containerEvents: {}
+        };
+        this.events = {};
+        this.containerEvents = {};
+        for (var propertyName in this.__clientMethods) {
+            this.client[propertyName] = this[propertyName];
+        }
+        for (var eventName in this.__networkEvents) {
+            var side = this.__networkEvents[eventName];
+            var target = (side == Side.Client) ? this.client.events : this.events;
+            target[eventName] = this[eventName];
+        }
+        for (var eventName in this.__containerEvents) {
+            var side = this.__containerEvents[eventName];
+            var target = (side == Side.Client) ? this.client.containerEvents : this.containerEvents;
+            target[eventName] = this[eventName];
+        }
+        delete this.__clientMethods;
+        delete this.__networkEvents;
+        delete this.__containerEvents;
     }
     TileEntityBase.prototype.created = function () {
         this.onCreate();

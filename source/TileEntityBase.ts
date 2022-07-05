@@ -1,11 +1,40 @@
 abstract class TileEntityBase
 implements TileEntity {
 	constructor() {
-		this.client ??= {};
-		this.client.load = this.clientLoad;
-		this.client.unload = this.clientUnload;
-		this.client.tick = this.clientTick;
+		this.client = {
+			load: this.clientLoad,
+			unload: this.clientUnload,
+			tick: this.clientTick,
+			events: {},
+			containerEvents: {}
+		}
+		this.events = {};
+		this.containerEvents = {};
+
+		for (let propertyName in this.__clientMethods) {
+			this.client[propertyName] = this[propertyName];
+		}
+
+		for (let eventName in this.__networkEvents) {
+			const side = this.__networkEvents[eventName];
+			const target = (side == Side.Client) ? this.client.events : this.events;
+			target[eventName] = this[eventName];
+		}
+
+		for (let eventName in this.__containerEvents) {
+			const side = this.__containerEvents[eventName];
+			const target = (side == Side.Client) ? this.client.containerEvents : this.containerEvents;
+			target[eventName] = this[eventName];
+		}
+
+		delete this.__clientMethods;
+		delete this.__networkEvents;
+		delete this.__containerEvents;
 	}
+
+	__clientMethods: {[key: string]: boolean};
+	__networkEvents: {[key: string]: Side};
+	__containerEvents: {[key: string]: Side};
 
 	x: number;
 	y: number;
@@ -21,18 +50,22 @@ implements TileEntity {
 	defaultValues: {};
 
 	client: {
-		load?: () => void,
-		unload?: () => void,
-		tick?: () => void,
-		events?: {
+		load: () => void,
+		unload: () => void,
+		tick: () => void,
+		events: {
 			[packetName: string]: (packetData: any, packetExtra: any) => void;
 		},
-		containerEvents?: {
-			[eventName: string]: (container: ItemContainer, window: UI.Window | UI.StandartWindow | UI.TabbedWindow | null, windowContent: UI.WindowContent | null, eventData: any) => void;
+		containerEvents: {
+			[eventName: string]: (container: ItemContainer, window: UI.IWindow | null, windowContent: UI.WindowContent | null, eventData: any) => void;
 		}
 	}
-	events: {};
-	containerEvents: {};
+	events: {
+		[packetName: string]: (packetData: any, packetExtra: any, connectedClient: NetworkClient) => void;
+	};
+	containerEvents: {
+		[eventName: string]: (container: ItemContainer, window: UI.IWindow | null, windowContent: UI.WindowContent | null, eventData: any) => void;
+	};
 
 	container: ItemContainer;
 	liquidStorage: LiquidRegistry.Storage;
