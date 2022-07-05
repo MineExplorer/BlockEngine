@@ -100,7 +100,7 @@ class WorldRegion {
 			}
 		} else {
 			const pos = x;
-			if (typeof id == "number") {
+			if (typeof arguments[1] == "number") {
 				this.blockSource.setBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2] || 0);
 			} else {
 				this.blockSource.setBlock(pos.x, pos.y, pos.z, arguments[1]);
@@ -145,7 +145,7 @@ class WorldRegion {
 			}
 		} else {
 			const pos = x;
-			if (typeof id == "number") {
+			if (typeof arguments[1] == "number") {
 				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2] || 0);
 			} else {
 				this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, arguments[1]);

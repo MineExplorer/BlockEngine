@@ -322,7 +322,7 @@ var WorldRegion = /** @class */ (function () {
         }
         else {
             var pos = x;
-            if (typeof id == "number") {
+            if (typeof arguments[1] == "number") {
                 this.blockSource.setBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2] || 0);
             }
             else {
@@ -353,7 +353,7 @@ var WorldRegion = /** @class */ (function () {
         }
         else {
             var pos = x;
-            if (typeof id == "number") {
+            if (typeof arguments[1] == "number") {
                 this.blockSource.setExtraBlock(pos.x, pos.y, pos.z, arguments[1], arguments[2] || 0);
             }
             else {
