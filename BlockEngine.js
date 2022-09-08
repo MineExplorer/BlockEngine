@@ -2944,7 +2944,17 @@ var LiquidItemRegistry;
 })(LiquidItemRegistry || (LiquidItemRegistry = {}));
 var BlockEngine;
 (function (BlockEngine) {
+    /**
+     * Class to store and manipulate liquids in TileEntity.
+     */
     var LiquidTank = /** @class */ (function () {
+        /**
+         * Creates new instance of LiquidTank and binds it to TileEntity.
+         * @param tileEntity TileEntity instance
+         * @param name liquid tank name
+         * @param limit max liquid amount
+         * @param liquids types of valid liquids
+         */
         function LiquidTank(tileEntity, name, limit, liquids) {
             this.name = name;
             this.limit = limit;
@@ -2952,6 +2962,10 @@ var BlockEngine;
                 this.setValidLiquids(liquids);
             this.setParent(tileEntity);
         }
+        /**
+         * Binds liquid tank to TileEntity.
+         * @param tileEntity TileEntity instance
+         */
         LiquidTank.prototype.setParent = function (tileEntity) {
             this.tileEntity = tileEntity;
             var liquidData = tileEntity.data[this.name] || {
@@ -2960,18 +2974,34 @@ var BlockEngine;
             };
             tileEntity.data[this.name] = this.data = liquidData;
         };
+        /**
+         * Gets type of liquid stored in tank.
+         * @returns liquid type
+         */
         LiquidTank.prototype.getLiquidStored = function () {
             return this.data.liquid;
         };
+        /**
+         * Gets max amount of liquid in tank.
+         * @returns amount of liquid
+         */
         LiquidTank.prototype.getLimit = function () {
             return this.limit;
         };
+        /**
+         * @param liquid liquid type
+         * @returns true if liquid can be stored in tank, false otherwise.
+         */
         LiquidTank.prototype.isValidLiquid = function (liquid) {
             if (!this.liquids) {
                 return true;
             }
             return this.liquids[liquid] || false;
         };
+        /**
+         * Sets liquids that can be stored in tank.
+         * @param liquids arrays of liquid types
+         */
         LiquidTank.prototype.setValidLiquids = function (liquids) {
             this.liquids = {};
             for (var _i = 0, liquids_1 = liquids; _i < liquids_1.length; _i++) {
@@ -2979,19 +3009,40 @@ var BlockEngine;
                 this.liquids[name] = true;
             }
         };
+        /**
+         * Gets amount of liquid in tank. If `liquid` parameter is set,
+         * returns amount of the specified liquid.
+         * @param liquid liquid type
+         * @returns amount of liquid
+         */
         LiquidTank.prototype.getAmount = function (liquid) {
             if (!liquid || this.data.liquid == liquid) {
                 return this.data.amount;
             }
             return 0;
         };
+        /**
+         * Sets liquid to tank.
+         * @param liquid liquid type
+         * @param amount amount of liquid
+         */
         LiquidTank.prototype.setAmount = function (liquid, amount) {
             this.data.liquid = liquid;
             this.data.amount = amount;
         };
+        /**
+         * Gets amount of liquid divided by max amount.
+         * @returns scalar value from 0 to 1
+         */
         LiquidTank.prototype.getRelativeAmount = function () {
             return this.data.amount / this.limit;
         };
+        /**
+         * Adds liquid to tank.
+         * @param liquid liquid type
+         * @param amount amount of liquid to add
+         * @returns amount of liquid that wasn't added
+         */
         LiquidTank.prototype.addLiquid = function (liquid, amount) {
             if (!this.data.liquid || this.data.liquid == liquid) {
                 this.data.liquid = liquid;
@@ -3016,12 +3067,24 @@ var BlockEngine;
             }
             return 0;
         };
+        /**
+         * @returns true if tank is full, false otherwise
+         */
         LiquidTank.prototype.isFull = function () {
             return this.data.amount >= this.limit;
         };
+        /**
+         * @returns true if tank is empty, false otherwise
+         */
         LiquidTank.prototype.isEmpty = function () {
             return this.data.amount <= 0;
         };
+        /**
+         * Tries to fill item with liquid from tank.
+         * @param inputSlot slot for empty item
+         * @param outputSlot slot for full item
+         * @returns true if liquid was added, false otherwise.
+         */
         LiquidTank.prototype.addLiquidToItem = function (inputSlot, outputSlot) {
             var liquid = this.getLiquidStored();
             if (!liquid)
@@ -3052,6 +3115,12 @@ var BlockEngine;
             }
             return false;
         };
+        /**
+         * Tries to fill tank with liquid from item.
+         * @param inputSlot slot for full item
+         * @param outputSlot slot for empty item
+         * @returns true if liquid was extracted, false otherwise.
+         */
         LiquidTank.prototype.getLiquidFromItem = function (inputSlot, outputSlot) {
             var liquid = this.getLiquidStored();
             var empty = LiquidItemRegistry.getEmptyItem(inputSlot.id, inputSlot.data);
@@ -3075,6 +3144,11 @@ var BlockEngine;
             }
             return false;
         };
+        /**
+         * Updates UI bar of liquid. Uses LiquidStorage method for legacy container
+         * and container event from TileEntityBase for multiplayer container.
+         * @param scale name of liquid bar
+         */
         LiquidTank.prototype.updateUiScale = function (scale) {
             var container = this.tileEntity.container;
             if (container.isLegacyContainer()) {

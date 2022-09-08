@@ -1365,31 +1365,121 @@ declare namespace LiquidItemRegistry {
     export {};
 }
 declare namespace BlockEngine {
+    /**
+     * Class to store and manipulate liquids in TileEntity.
+     */
     class LiquidTank {
+        /** Parent TileEntity instance */
         tileEntity: TileEntity;
+        /** Liquid tank name */
         readonly name: string;
+        /** Max liquid amount. */
         limit: number;
+        /** Set of valid liquids */
         liquids: object;
+        /** Liquid data stored in TileEntity data object. */
         data: {
             liquid: string;
             amount: number;
         };
+        /**
+         * Creates new instance of LiquidTank and binds it to TileEntity.
+         * @param tileEntity TileEntity instance
+         * @param name liquid tank name
+         * @param limit max liquid amount
+         * @param liquids types of valid liquids
+         */
         constructor(tileEntity: TileEntity, name: string, limit: number, liquids?: string[]);
+        /**
+         * Binds liquid tank to TileEntity.
+         * @param tileEntity TileEntity instance
+         */
         setParent(tileEntity: TileEntity): void;
+        /**
+         * Gets type of liquid stored in tank.
+         * @returns liquid type
+         */
         getLiquidStored(): string;
+        /**
+         * Gets max amount of liquid in tank.
+         * @returns amount of liquid
+         */
         getLimit(): number;
+        /**
+         * @param liquid liquid type
+         * @returns true if liquid can be stored in tank, false otherwise.
+         */
         isValidLiquid(liquid: string): boolean;
+        /**
+         * Sets liquids that can be stored in tank.
+         * @param liquids arrays of liquid types
+         */
         setValidLiquids(liquids: string[]): void;
+        /**
+         * Gets amount of liquid in tank. If `liquid` parameter is set,
+         * returns amount of the specified liquid.
+         * @param liquid liquid type
+         * @returns amount of liquid
+         */
         getAmount(liquid?: string): number;
+        /**
+         * Sets liquid to tank.
+         * @param liquid liquid type
+         * @param amount amount of liquid
+         */
         setAmount(liquid: string, amount: number): void;
+        /**
+         * Gets amount of liquid divided by max amount.
+         * @returns scalar value from 0 to 1
+         */
         getRelativeAmount(): number;
+        /**
+         * Adds liquid to tank.
+         * @param liquid liquid type
+         * @param amount amount of liquid to add
+         * @returns amount of liquid that wasn't added
+         */
         addLiquid(liquid: string, amount: number): number;
+        /**
+         * Gets liquid from tank.
+         * @param amount max amount of liquid to get
+         * @returns amount of got liquid
+         */
         getLiquid(amount: number): number;
+        /**
+         * Gets liquid from tank.
+         * @param liquid liquid type
+         * @param amount max amount of liquid to get
+         * @returns amount of got liquid
+         */
         getLiquid(liquid: string, amount: number): number;
+        /**
+         * @returns true if tank is full, false otherwise
+         */
         isFull(): boolean;
+        /**
+         * @returns true if tank is empty, false otherwise
+         */
         isEmpty(): boolean;
+        /**
+         * Tries to fill item with liquid from tank.
+         * @param inputSlot slot for empty item
+         * @param outputSlot slot for full item
+         * @returns true if liquid was added, false otherwise.
+         */
         addLiquidToItem(inputSlot: ItemContainerSlot, outputSlot: ItemContainerSlot): boolean;
+        /**
+         * Tries to fill tank with liquid from item.
+         * @param inputSlot slot for full item
+         * @param outputSlot slot for empty item
+         * @returns true if liquid was extracted, false otherwise.
+         */
         getLiquidFromItem(inputSlot: ItemContainerSlot, outputSlot: ItemContainerSlot): boolean;
+        /**
+         * Updates UI bar of liquid. Uses LiquidStorage method for legacy container
+         * and container event from TileEntityBase for multiplayer container.
+         * @param scale name of liquid bar
+         */
         updateUiScale(scale: string): void;
     }
 }
