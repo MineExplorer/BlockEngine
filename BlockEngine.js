@@ -32,7 +32,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 LIBRARY({
     name: "BlockEngine",
-    version: 9,
+    version: 10,
     shared: true,
     api: "CoreEngine"
 });
@@ -973,8 +973,8 @@ var BlockModeler;
     }
     BlockModeler.setInventoryModel = setInventoryModel;
 })(BlockModeler || (BlockModeler = {}));
-/// <reference path="BlockType.ts" />
-/// <reference path="BlockBehavior.ts" />
+/// <reference path="../BlockType.ts" />
+/// <reference path="../BlockBehavior.ts" />
 var BlockBase = /** @class */ (function () {
     function BlockBase(stringID, blockType) {
         if (blockType === void 0) { blockType = {}; }
@@ -1170,7 +1170,7 @@ var BlockBase = /** @class */ (function () {
     };
     return BlockBase;
 }());
-/// <reference path="BlockBase.ts" />
+/// <reference path="./BlockBase.ts" />
 var BlockRotative = /** @class */ (function (_super) {
     __extends(BlockRotative, _super);
     function BlockRotative(stringID, blockType, hasVerticalFacings) {
@@ -1214,7 +1214,7 @@ var BlockRotative = /** @class */ (function (_super) {
     };
     return BlockRotative;
 }(BlockBase));
-/// <reference path="BlockBase.ts" />
+/// <reference path="./BlockBase.ts" />
 var BlockStairs = /** @class */ (function (_super) {
     __extends(BlockStairs, _super);
     function BlockStairs(stringID, defineData, blockType) {
@@ -1243,9 +1243,89 @@ var BlockStairs = /** @class */ (function (_super) {
     };
     return BlockStairs;
 }(BlockBase));
-/// <reference path="BlockBase.ts" />
-/// <reference path="BlockRotative.ts" />
-/// <reference path="BlockStairs.ts" />
+/// <reference path="./BlockBase.ts" />
+var BlockSlab = /** @class */ (function (_super) {
+    __extends(BlockSlab, _super);
+    function BlockSlab() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    BlockSlab.prototype.setDoubleSlab = function (blockID) {
+        this.doubleSlabID = blockID;
+    };
+    BlockSlab.prototype.createBlock = function () {
+        var defineData = this.variations;
+        this.variations = [];
+        for (var i = 0; i < 8; i++) {
+            if (i < defineData.length) {
+                this.variations.push(defineData[i]);
+            }
+            else {
+                this.addVariation(defineData[0].name, defineData[0].texture);
+            }
+        }
+        for (var i = 0; i < defineData.length; i++) {
+            this.addVariation(defineData[i].name, defineData[i].texture, false);
+        }
+        for (var i = 0; i < 8; i++) {
+            this.setShape(0, 0, 0, 1, 0.5, 1, i);
+        }
+        for (var i = 8; i < 16; i++) {
+            this.setShape(0, 0.5, 0, 1, 1, 1, i);
+        }
+        _super.prototype.createBlock.call(this);
+    };
+    BlockSlab.prototype.getDrop = function (coords, block, level) {
+        return [[this.id, 1, block.data % 8]];
+    };
+    BlockSlab.prototype.onPlace = function (coords, item, block, player, blockSource) {
+        var region = new WorldRegion(blockSource);
+        // make double slab
+        if (block.id == item.id && block.data % 8 == item.data && Math.floor(block.data / 8) == (coords.side ^ 1)) {
+            region.setBlock(coords, this.doubleSlabID, item.data);
+            return;
+        }
+        var place = coords;
+        if (!World.canTileBeReplaced(block.id, block.data)) {
+            place = coords.relative;
+            var tile = region.getBlock(place);
+            if (!World.canTileBeReplaced(tile.id, tile.data)) {
+                if (tile.id == item.id && tile.data % 8 == item.data) {
+                    region.setBlock(place, this.doubleSlabID, item.data);
+                }
+                return;
+            }
+            ;
+        }
+        if (coords.vec.y - place.y < 0.5) {
+            region.setBlock(place, item.id, item.data);
+        }
+        else {
+            region.setBlock(place, item.id, item.data + 8);
+        }
+    };
+    return BlockSlab;
+}(BlockBase));
+/// <reference path="./BlockBase.ts" />
+var BlockDoubleSlab = /** @class */ (function (_super) {
+    __extends(BlockDoubleSlab, _super);
+    function BlockDoubleSlab() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    BlockDoubleSlab.prototype.setSlab = function (blockID) {
+        this.slabID = blockID;
+    };
+    BlockDoubleSlab.prototype.getDrop = function (coords, block, level) {
+        return [[this.slabID, 1, block.data], [this.slabID, 1, block.data]];
+    };
+    return BlockDoubleSlab;
+}(BlockBase));
+/// <reference path="./BlockType.ts" />
+/// <reference path="./BlockBehavior.ts" />
+/// <reference path="./type/BlockBase.ts" />
+/// <reference path="./type/BlockRotative.ts" />
+/// <reference path="./type/BlockStairs.ts" />
+/// <reference path="./type/BlockSlab.ts" />
+/// <reference path="./type/BlockDoubleSlab.ts" />
 //@ts-ignore
 var NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
 var BlockRegistry;
@@ -1274,6 +1354,20 @@ var BlockRegistry;
         registerBlock(new BlockStairs(stringID, defineData[0], blockType));
     }
     BlockRegistry.createStairs = createStairs;
+    function createSlabs(slabID, doubleSlabID, defineData, blockType) {
+        var slab = new BlockSlab(slabID, blockType);
+        slab.variations = defineData;
+        var doubleSlab = new BlockDoubleSlab(doubleSlabID, blockType);
+        for (var _i = 0, defineData_3 = defineData; _i < defineData_3.length; _i++) {
+            var variation = defineData_3[_i];
+            doubleSlab.addVariation(variation.name, variation.texture);
+        }
+        slab.setDoubleSlab(doubleSlab.id);
+        doubleSlab.setSlab(slab.id);
+        registerBlock(slab);
+        registerBlock(doubleSlab);
+    }
+    BlockRegistry.createSlabs = createSlabs;
     function getBlockType(name) {
         return blockTypes[name] || null;
     }

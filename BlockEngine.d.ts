@@ -676,11 +676,24 @@ declare class BlockStairs extends BlockBase {
     createItemModel(): void;
     onPlace(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number, region: BlockSource): Vector;
 }
+declare class BlockSlab extends BlockBase {
+    doubleSlabID: number;
+    setDoubleSlab(blockID: number): void;
+    createBlock(): void;
+    getDrop(coords: Vector, block: Tile, level: number): ItemInstanceArray[];
+    onPlace(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number, blockSource: BlockSource): Vector | void;
+}
+declare class BlockDoubleSlab extends BlockBase {
+    slabID: number;
+    setSlab(blockID: number): void;
+    getDrop(coords: Vector, block: Tile, level: number): ItemInstanceArray[];
+}
 declare const NativeBlock: any;
 declare namespace BlockRegistry {
     function createBlock(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void;
     function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType, hasVerticalFacings?: boolean): void;
     function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): void;
+    function createSlabs(slabID: string, doubleSlabID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void;
     function getBlockType(name: string): Nullable<BlockType>;
     function extendBlockType(type: BlockType): void;
     function createBlockType(name: string, type: BlockType, isNative?: boolean): void;

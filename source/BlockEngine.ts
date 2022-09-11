@@ -1,6 +1,6 @@
 LIBRARY({
 	name: "BlockEngine",
-	version: 9,
+	version: 10,
 	shared: true,
 	api: "CoreEngine"
 });

@@ -1,6 +1,10 @@
-/// <reference path="BlockBase.ts" />
-/// <reference path="BlockRotative.ts" />
-/// <reference path="BlockStairs.ts" />
+/// <reference path="./BlockType.ts" />
+/// <reference path="./BlockBehavior.ts" />
+/// <reference path="./type/BlockBase.ts" />
+/// <reference path="./type/BlockRotative.ts" />
+/// <reference path="./type/BlockStairs.ts" />
+/// <reference path="./type/BlockSlab.ts" />
+/// <reference path="./type/BlockDoubleSlab.ts" />
 
 //@ts-ignore
 const NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
@@ -27,6 +31,22 @@ namespace BlockRegistry {
 
 	export function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): void {
 		registerBlock(new BlockStairs(stringID, defineData[0], blockType));
+	}
+
+	export function createSlabs(slabID: string, doubleSlabID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType) {
+		const slab = new BlockSlab(slabID, blockType);
+		slab.variations = defineData;
+
+		const doubleSlab = new BlockDoubleSlab(doubleSlabID, blockType);
+		for (let variation of defineData) {
+			doubleSlab.addVariation(variation.name, variation.texture);
+		}
+
+		slab.setDoubleSlab(doubleSlab.id);
+		doubleSlab.setSlab(slab.id);
+
+		registerBlock(slab);
+		registerBlock(doubleSlab);
 	}
 
 	export function getBlockType(name: string): Nullable<BlockType> {

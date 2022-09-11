@@ -1,5 +1,5 @@
-/// <reference path="BlockType.ts" />
-/// <reference path="BlockBehavior.ts" />
+/// <reference path="../BlockType.ts" />
+/// <reference path="../BlockBehavior.ts" />
 
 class BlockBase
 implements BlockBehavior {

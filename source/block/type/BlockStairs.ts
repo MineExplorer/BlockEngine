@@ -1,4 +1,4 @@
-/// <reference path="BlockBase.ts" />
+/// <reference path="./BlockBase.ts" />
 
 class BlockStairs extends BlockBase {
 	constructor(stringID: string, defineData: Block.BlockVariation, blockType?: string | Block.SpecialType) {

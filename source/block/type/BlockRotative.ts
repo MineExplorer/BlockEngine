@@ -1,4 +1,4 @@
-/// <reference path="BlockBase.ts" />
+/// <reference path="./BlockBase.ts" />
 
 class BlockRotative extends BlockBase {
 	hasVerticalFacings: boolean;
