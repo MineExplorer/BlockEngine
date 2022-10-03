@@ -325,12 +325,21 @@ declare class WorldRegion {
      */
     sendPacketInRadius(coords: Vector, radius: number, packetName: string, data: object): void;
 }
+/**
+ * Class to manipulate player based on `PlayerActor`.
+ * Due to limitations of underlying PlayerActor class this class
+ * can be used only during 1 server tick!
+ */
 declare class PlayerEntity {
-    actor: PlayerActor;
-    playerUid: number;
+    readonly actor: PlayerActor;
+    private readonly playerUid;
+    /**
+     * Creates new instance of `PlayerEntity`.
+     * @param playerUid player's numeric entity id
+     */
     constructor(playerUid: number);
     /**
-     * @returns player's unique numeric entity id
+     * @returns player's unique numeric entity id.
      */
     getUid(): number;
     /**
@@ -342,8 +351,7 @@ declare class PlayerEntity {
      */
     getGameMode(): number;
     /**
-     * Adds item to player's inventory
-     * @param dropRemainings if true, surplus will be dropped near player
+     * Adds item to player's inventory. Drops surplus items near player.
      */
     addItemToInventory(item: ItemInstance): void;
     addItemToInventory(id: number, count: number, data: number, extra?: ItemExtraData): void;
@@ -361,16 +369,12 @@ declare class PlayerEntity {
     */
     getCarriedItem(): ItemStack;
     /**
-     * Sets item in player's hand
-     * @param id item id
-     * @param count item count
-     * @param data item data
-     * @param extra item extra
+     * Sets item in player's hand.
      */
     setCarriedItem(item: ItemInstance): void;
     setCarriedItem(id: number, count: number, data: number, extra?: ItemExtraData): void;
     /**
-     * Decreases carried item count by specified number
+     * Decreases carried item count by specified number.
      * @param amount amount of items to decrease, default is 1
      */
     decreaseCarriedItem(amount?: number): void;
@@ -456,6 +460,9 @@ declare class PlayerEntity {
      * Sets player's score.
      */
     setScore(value: number): void;
+    getItemUseDuration(): number;
+    getItemUseIntervalProgress(): number;
+    getItemUseStartupProgress(): number;
 }
 declare namespace EntityCustomData {
     function getAll(): {
@@ -1428,7 +1435,7 @@ declare namespace BlockEngine {
             amount: number;
         };
         /**
-         * Creates new instance of LiquidTank and binds it to TileEntity.
+         * Creates new instance of `LiquidTank` and binds it to TileEntity.
          * @param tileEntity TileEntity instance
          * @param name liquid tank name
          * @param limit max liquid amount

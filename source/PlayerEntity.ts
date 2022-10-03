@@ -1,14 +1,23 @@
+/**
+ * Class to manipulate player based on `PlayerActor`.
+ * Due to limitations of underlying PlayerActor class this class
+ * can be used only during 1 server tick!
+ */
 class PlayerEntity {
-    actor: PlayerActor;
-    playerUid: number;
+    readonly actor: PlayerActor;
+    private readonly playerUid: number;
 
+    /**
+     * Creates new instance of `PlayerEntity`.
+     * @param playerUid player's numeric entity id
+     */
 	constructor(playerUid: number) {
         this.actor = new PlayerActor(playerUid);
         this.playerUid = playerUid;
 	}
 
     /**
-     * @returns player's unique numeric entity id
+     * @returns player's unique numeric entity id.
      */
     getUid(): number {
 		return this.playerUid;
@@ -29,8 +38,7 @@ class PlayerEntity {
     }
 
     /**
-     * Adds item to player's inventory
-     * @param dropRemainings if true, surplus will be dropped near player
+     * Adds item to player's inventory. Drops surplus items near player. 
      */
     addItemToInventory(item: ItemInstance): void;
     addItemToInventory(id: number, count: number, data: number, extra?: ItemExtraData): void;
@@ -73,11 +81,7 @@ class PlayerEntity {
     }
 
     /**
-     * Sets item in player's hand
-     * @param id item id
-     * @param count item count
-     * @param data item data
-     * @param extra item extra
+     * Sets item in player's hand.
      */
     setCarriedItem(item: ItemInstance): void;
     setCarriedItem(id: number, count: number, data: number, extra?: ItemExtraData): void;
@@ -90,7 +94,7 @@ class PlayerEntity {
     }
 
     /**
-     * Decreases carried item count by specified number
+     * Decreases carried item count by specified number.
      * @param amount amount of items to decrease, default is 1
      */
     decreaseCarriedItem(amount: number = 1) {
@@ -244,5 +248,17 @@ class PlayerEntity {
      */
     setScore(value: number): void {
         this.actor.setScore(value);
+    }
+
+    getItemUseDuration(): number {
+        return this.actor.getItemUseDuration();
+    }
+
+    getItemUseIntervalProgress(): number {
+        return this.actor.getItemUseIntervalProgress();
+    }
+
+    getItemUseStartupProgress(): number {
+        return this.actor.getItemUseStartupProgress();
     }
 }

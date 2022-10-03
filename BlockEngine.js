@@ -640,13 +640,22 @@ Network.addClientPacket("WorldRegion.play_sound", function (data) {
 Network.addClientPacket("WorldRegion.play_sound_at", function (data) {
     World.playSoundAtEntity(data.ent, data.name, data.volume, data.pitch);
 });
+/**
+ * Class to manipulate player based on `PlayerActor`.
+ * Due to limitations of underlying PlayerActor class this class
+ * can be used only during 1 server tick!
+ */
 var PlayerEntity = /** @class */ (function () {
+    /**
+     * Creates new instance of `PlayerEntity`.
+     * @param playerUid player's numeric entity id
+     */
     function PlayerEntity(playerUid) {
         this.actor = new PlayerActor(playerUid);
         this.playerUid = playerUid;
     }
     /**
-     * @returns player's unique numeric entity id
+     * @returns player's unique numeric entity id.
      */
     PlayerEntity.prototype.getUid = function () {
         return this.playerUid;
@@ -705,7 +714,7 @@ var PlayerEntity = /** @class */ (function () {
         }
     };
     /**
-     * Decreases carried item count by specified number
+     * Decreases carried item count by specified number.
      * @param amount amount of items to decrease, default is 1
      */
     PlayerEntity.prototype.decreaseCarriedItem = function (amount) {
@@ -837,6 +846,15 @@ var PlayerEntity = /** @class */ (function () {
      */
     PlayerEntity.prototype.setScore = function (value) {
         this.actor.setScore(value);
+    };
+    PlayerEntity.prototype.getItemUseDuration = function () {
+        return this.actor.getItemUseDuration();
+    };
+    PlayerEntity.prototype.getItemUseIntervalProgress = function () {
+        return this.actor.getItemUseIntervalProgress();
+    };
+    PlayerEntity.prototype.getItemUseStartupProgress = function () {
+        return this.actor.getItemUseStartupProgress();
     };
     return PlayerEntity;
 }());
@@ -3065,7 +3083,7 @@ var BlockEngine;
      */
     var LiquidTank = /** @class */ (function () {
         /**
-         * Creates new instance of LiquidTank and binds it to TileEntity.
+         * Creates new instance of `LiquidTank` and binds it to TileEntity.
          * @param tileEntity TileEntity instance
          * @param name liquid tank name
          * @param limit max liquid amount

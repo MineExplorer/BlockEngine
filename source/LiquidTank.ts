@@ -22,7 +22,7 @@ namespace BlockEngine {
 		}
 
 		/**
-		 * Creates new instance of LiquidTank and binds it to TileEntity.
+		 * Creates new instance of `LiquidTank` and binds it to TileEntity.
 		 * @param tileEntity TileEntity instance
 		 * @param name liquid tank name
 		 * @param limit max liquid amount
