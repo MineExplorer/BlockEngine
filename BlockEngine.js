@@ -2977,14 +2977,15 @@ var TileEntityBase = /** @class */ (function () {
     return TileEntityBase;
 }());
 /**
- * Registry for liquid storage items. Compatible with LiquidRegistry.
+ * Registry for liquid storage items. Compatible with LiquidRegistry and extends it
+ * by adding items that can contain partial amounts of liquid.
  */
 var LiquidItemRegistry;
 (function (LiquidItemRegistry) {
     LiquidItemRegistry.EmptyByFull = {};
     LiquidItemRegistry.FullByEmpty = {};
     /**
-     * Registers liquid storage item
+     * Registers liquid storage item.
      * @param liquid liquid name
      * @param emptyId empty item id
      * @param fullId id of item with luquid
@@ -2998,6 +2999,12 @@ var LiquidItemRegistry;
             LiquidRegistry.registerItem(liquid, { id: emptyId, data: 0 }, { id: fullId, data: 0 });
     }
     LiquidItemRegistry.registerItem = registerItem;
+    /**
+     * Return liquid type stored in item
+     * @param id item id
+     * @param data item data
+     * @returns liquid type
+     */
     function getItemLiquid(id, data) {
         var empty = LiquidItemRegistry.EmptyByFull[id];
         if (empty) {
@@ -3006,6 +3013,13 @@ var LiquidItemRegistry;
         return LiquidRegistry.getItemLiquid(id, data);
     }
     LiquidItemRegistry.getItemLiquid = getItemLiquid;
+    /**
+     * Returns empty item and stored liquid data for item that contains liquid,
+     * null otherwise.
+     * @param id item id
+     * @param data item data
+     * @returns object that contains empty item and stored liquid.
+     */
     function getEmptyItem(id, data) {
         var emptyData = LiquidItemRegistry.EmptyByFull[id];
         if (emptyData) {
@@ -3019,9 +3033,17 @@ var LiquidItemRegistry;
         return null;
     }
     LiquidItemRegistry.getEmptyItem = getEmptyItem;
+    /**
+     * Returns full item and free liquid capacity for item that can be filled with liquid,
+     * null otherwise.
+     * @param id item id
+     * @param data item data
+     * @param liquid liquid type
+     * @returns object that contains full item and free liquid capacity
+     */
     function getFullItem(id, data, liquid) {
         var emptyData = LiquidItemRegistry.EmptyByFull[id];
-        if (emptyData && data > 0) {
+        if (emptyData && emptyData.liquid == liquid && data > 0) {
             return { id: id, data: 0, amount: data, storage: emptyData.storage };
         }
         var fullData = LiquidItemRegistry.FullByEmpty[id + ":" + liquid];

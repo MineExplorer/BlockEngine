@@ -1340,11 +1340,17 @@ declare abstract class TileEntityBase implements TileEntity {
     }): void;
 }
 /**
- * Registry for liquid storage items. Compatible with LiquidRegistry.
+ * Registry for liquid storage items. Compatible with LiquidRegistry and extends it
+ * by adding items that can contain partial amounts of liquid.
  */
 declare namespace LiquidItemRegistry {
     /**
-     * @amount liquid amount able to extract
+     * Object that contains empty liquid storage item and stored liquid data.
+     * @id item id
+     * @data item data
+     * @liquid liquid type
+     * @amount liquid amount able to be extracted
+     * @storage liquid storage of items registered by BlockEngine.
      */
     type EmptyData = {
         id: number;
@@ -1354,7 +1360,12 @@ declare namespace LiquidItemRegistry {
         storage?: number;
     };
     /**
-     * @amount free liquid amount
+     * Object that contains full item and free liquid capacity.
+     * @id item id
+     * @data item data
+     * @liquid liquid type
+     * @amount free liquid capacity
+     * @storage liquid storage of items registered by BlockEngine.
      */
     type FullData = {
         id: number;
@@ -1365,15 +1376,36 @@ declare namespace LiquidItemRegistry {
     export const EmptyByFull: {};
     export const FullByEmpty: {};
     /**
-     * Registers liquid storage item
+     * Registers liquid storage item.
      * @param liquid liquid name
      * @param emptyId empty item id
      * @param fullId id of item with luquid
      * @param storage capacity of liquid in mB
      */
     export function registerItem(liquid: string, emptyId: number, fullId: number, storage: number): void;
+    /**
+     * Return liquid type stored in item
+     * @param id item id
+     * @param data item data
+     * @returns liquid type
+     */
     export function getItemLiquid(id: number, data: number): string;
+    /**
+     * Returns empty item and stored liquid data for item that contains liquid,
+     * null otherwise.
+     * @param id item id
+     * @param data item data
+     * @returns object that contains empty item and stored liquid.
+     */
     export function getEmptyItem(id: number, data: number): EmptyData;
+    /**
+     * Returns full item and free liquid capacity for item that can be filled with liquid,
+     * null otherwise.
+     * @param id item id
+     * @param data item data
+     * @param liquid liquid type
+     * @returns object that contains full item and free liquid capacity
+     */
     export function getFullItem(id: number, data: number, liquid: string): FullData;
     export {};
 }
