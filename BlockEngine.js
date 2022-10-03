@@ -253,18 +253,17 @@ var Vector3 = /** @class */ (function () {
 }());
 EXPORT("Vector3", Vector3);
 /**
- * Class to work with world based on BlockSource
+ * Class to work with world based on `BlockSource`
  */
 var WorldRegion = /** @class */ (function () {
     function WorldRegion(blockSource) {
-        this.isDeprecated = false;
         this.blockSource = blockSource;
         this.isDeprecated = BlockEngine.getMainGameVersion() < 16;
     }
     /**
      * @returns interface to given dimension
      * (null if given dimension is not loaded and this interface
-     * was not created yet)
+     * was not created yet).
      */
     WorldRegion.getForDimension = function (dimension) {
         var blockSource = BlockSource.getDefaultForDimension(dimension);
@@ -276,7 +275,7 @@ var WorldRegion = /** @class */ (function () {
     /**
      * @returns interface to the dimension where the given entity is
      * (null if given entity does not exist or the dimension is not loaded
-     * and interface was not created)
+     * and interface was not created).
      */
     WorldRegion.getForActor = function (entityUid) {
         var blockSource = BlockSource.getDefaultForActor(entityUid);
@@ -285,6 +284,9 @@ var WorldRegion = /** @class */ (function () {
         }
         return null;
     };
+    /**
+     * @returns `WorldRegion` for world generation callback.
+     */
     WorldRegion.getCurrentWorldGenRegion = function () {
         var blockSource = BlockSource.getCurrentWorldGenRegion();
         if (blockSource) {
@@ -293,7 +295,7 @@ var WorldRegion = /** @class */ (function () {
         return null;
     };
     /**
-     * @returns the dimension id to which the following object belongs
+     * @returns the dimension id to which the following object belongs.
      */
     WorldRegion.prototype.getDimension = function () {
         return this.blockSource.getDimension();
@@ -461,14 +463,14 @@ var WorldRegion = /** @class */ (function () {
         }
     };
     /**
-     * @returns biome id at X and Z coord
+     * @returns biome id at X and Z coord.
      */
     WorldRegion.prototype.getBiome = function (x, z) {
         return this.blockSource.getBiome(x, z);
     };
     /**
-     * Sets biome id by coords
-     * @param id - id of the biome to set
+     * Sets biome id by coords.
+     * @param biomeID - id of the biome to set
      */
     WorldRegion.prototype.setBiome = function (x, z, biomeID) {
         this.blockSource.setBiome(x, z, biomeID);
@@ -483,7 +485,7 @@ var WorldRegion = /** @class */ (function () {
     /**
      * @param chunkX X coord of the chunk
      * @param chunkZ Z coord of the chunk
-     * @returns true if chunk is loaded, false otherwise
+     * @returns true if chunk is loaded, false otherwise.
      */
     WorldRegion.prototype.isChunkLoaded = function (chunkX, chunkZ) {
         return this.blockSource.isChunkLoaded(chunkX, chunkZ);
@@ -491,7 +493,7 @@ var WorldRegion = /** @class */ (function () {
     /**
      * @param x X coord of the position
      * @param z Z coord of the position
-     * @returns true if chunk on the position is loaded, false otherwise
+     * @returns true if chunk on the position is loaded, false otherwise.
      */
     WorldRegion.prototype.isChunkLoadedAt = function (x, z) {
         return this.blockSource.isChunkLoadedAt(x, z);
@@ -499,7 +501,7 @@ var WorldRegion = /** @class */ (function () {
     /**
      * @param chunkX X coord of the chunk
      * @param chunkZ Z coord of the chunk
-     * @returns the loading state of the chunk by chunk coords
+     * @returns the loading state of the chunk by chunk coords.
      */
     WorldRegion.prototype.getChunkState = function (chunkX, chunkZ) {
         return this.blockSource.getChunkState(chunkX, chunkZ);
@@ -507,7 +509,7 @@ var WorldRegion = /** @class */ (function () {
     /**
      * @param x X coord of the position
      * @param z Z coord of the position
-     * @returns the loading state of the chunk by coords
+     * @returns the loading state of the chunk by coords.
      */
     WorldRegion.prototype.getChunkStateAt = function (x, z) {
         return this.blockSource.getChunkStateAt(x, z);
@@ -591,20 +593,20 @@ var WorldRegion = /** @class */ (function () {
         }
         return entities;
     };
-    /**
-     * Plays standart Minecraft sound on the specified coordinates
-     * @param name sound name
-     * @param volume sound volume from 0 to 1. Default is 1.
-     * @param pitch sound pitch, from 0 to 1. Default is 1.
-     */
     WorldRegion.prototype.playSound = function (x, y, z, name, volume, pitch) {
-        if (volume === void 0) { volume = 1; }
-        if (pitch === void 0) { pitch = 1; }
-        var soundPos = new Vector3(x, y, z);
-        this.sendPacketInRadius(soundPos, 100, "WorldRegion.play_sound", __assign(__assign({}, soundPos), { name: name, volume: volume, pitch: pitch }));
+        var _a, _b;
+        if (typeof (x) == "number") {
+            var soundPos = new Vector3(x, y, z);
+            this.playSound(soundPos, name, volume, pitch);
+        }
+        else {
+            var coords = arguments[0];
+            this.sendPacketInRadius(coords, 100, "WorldRegion.play_sound", __assign(__assign({}, coords), { name: arguments[1], volume: (_a = arguments[2]) !== null && _a !== void 0 ? _a : 1, pitch: (_b = arguments[3]) !== null && _b !== void 0 ? _b : 1 }));
+        }
     };
     /**
-     * Plays standart Minecraft sound from the specified entity
+     * Plays standard Minecraft sound from the specified entity.
+     * @param ent entity id
      * @param name sound name
      * @param volume sound volume from 0 to 1. Default is 1.
      * @param pitch sound pitch, from 0 to 1. Default is 1.
@@ -616,7 +618,9 @@ var WorldRegion = /** @class */ (function () {
         this.sendPacketInRadius(soundPos, 100, "WorldRegion.play_sound_at", { ent: ent, name: name, volume: volume, pitch: pitch });
     };
     /**
-     * Sends network packet for players in a radius from specified coords
+     * Sends network packet for players in a radius from specified coords.
+     * @param coords coordinates from which players will be searched
+     * @param radius radius in which players will receive packet
      * @param packetName name of the packet to send
      * @param data packet data object
      */
