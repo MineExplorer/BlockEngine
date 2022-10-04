@@ -37,6 +37,10 @@ declare enum MiningLevel {
     DIAMOND = 3,
     OBSIDIAN = 4
 }
+/**
+ * Class which represents three-dimensional vector
+ * and basic operations with it.
+ */
 declare class Vector3 implements Vector {
     static readonly DOWN: Vector3;
     static readonly UP: Vector3;
@@ -44,33 +48,122 @@ declare class Vector3 implements Vector {
     static readonly SOUTH: Vector3;
     static readonly EAST: Vector3;
     static readonly WEST: Vector3;
+    /**
+     * @param side block side
+     * @returns direction vector for specified side
+     */
     static getDirection(side: number): Vector3;
+    /** X coord of the vector */
     x: number;
+    /** Y coord of the vector */
     y: number;
+    /** Z coord of the vector */
     z: number;
     constructor(vx: number, vy: number, vz: number);
-    constructor(vx: Vector);
-    copy(dst?: Vector3): Vector3;
+    constructor(vector: Vector);
+    /**
+     * Copies coords to a new vector.
+     * @returns vector copy.
+     */
+    copy(): Vector3;
+    /**
+     * Copies coords to specified vector.
+     * @param dst destination vector to set values.
+     * @returns destination vector.
+     */
+    copy(dst: Vector3): Vector3;
+    /**
+     * Sets vector coords.
+     */
     set(vx: number, vy: number, vz: number): Vector3;
-    set(vx: Vector): Vector3;
+    set(vector: Vector): Vector3;
+    /**
+     * Adds vector.
+     * @returns result vector.
+     */
     add(vx: number, vy: number, vz: number): Vector3;
-    add(vx: Vector): Vector3;
-    addScaled(v: Vector, scale: number): Vector3;
+    add(vector: Vector): Vector3;
+    /**
+     * Adds vector scaled by factor.
+     * @param vector vector to add.
+     * @param scale scale factor
+     * @returns result vector.
+     */
+    addScaled(vector: Vector, scale: number): Vector3;
+    /**
+     * Substracts vector.
+     * @returns result vector.
+     */
     sub(vx: number, vy: number, vz: number): Vector3;
-    sub(vx: Vector): Vector3;
+    sub(vector: Vector): Vector3;
+    /**
+     * Calculates cross product of vectors.
+     * @returns result vector.
+     */
     cross(vx: number, vy: number, vz: number): Vector3;
-    cross(vx: Vector): Vector3;
-    dot(vx: number, vy: number, vz: number): Vector3;
-    dot(vx: any): Vector3;
+    cross(vector: Vector): Vector3;
+    /**
+     * @returns dot product of vectors.
+     */
+    dot(vx: number, vy: number, vz: number): number;
+    dot(vector: any): number;
+    /**
+     * Normalizes vector.
+     * @returns normalized vector.
+     */
     normalize(): Vector3;
+    /**
+     * @returns vector length squared
+     */
     lengthSquared(): number;
+    /**
+     * @returns vector length.
+     */
     length(): number;
+    /**
+     * Multiplies vector coords by -1.
+     * @returns opposite vector.
+     */
     negate(): Vector3;
+    /**
+     * Calculates squared distance to another point.
+     * @param vx x coord
+     * @param vy y coord
+     * @param vz z coord
+     * @returns squared distance
+     */
     distanceSquared(vx: number, vy: number, vz: number): number;
-    distanceSquared(vx: Vector): number;
+    /**
+     * Calculates squared distance to another point.
+     * @param coords coords of second point
+     * @returns squared distance
+     */
+    distanceSquared(coords: Vector): number;
+    /**
+     * Calculates distance to another point.
+     * @param vx x coord
+     * @param vy y coord
+     * @param vz z coord
+     * @returns distance
+     */
     distance(vx: number, vy: number, vz: number): number;
-    distance(vx: Vector): number;
+    /**
+     * Calculates distance to another point.
+     * @param coords coords of second point
+     * @returns distance
+     */
+    distance(coords: Vector): number;
+    /**
+     * Scales vector coords by factor.
+     * @param factor scaling factor
+     * @returns scaled vector
+     */
     scale(factor: number): Vector3;
+    /**
+     * Scales vector length to specified value.
+     * @param len target length
+     * @returns scaled vector
+     */
     scaleTo(len: number): Vector3;
     toString(): string;
 }

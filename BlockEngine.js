@@ -116,6 +116,10 @@ var MiningLevel;
     MiningLevel[MiningLevel["DIAMOND"] = 3] = "DIAMOND";
     MiningLevel[MiningLevel["OBSIDIAN"] = 4] = "OBSIDIAN";
 })(MiningLevel || (MiningLevel = {}));
+/**
+ * Class which represents three-dimensional vector
+ * and basic operations with it.
+ */
 var Vector3 = /** @class */ (function () {
     function Vector3(vx, vy, vz) {
         if (typeof (vx) == "number") {
@@ -130,6 +134,10 @@ var Vector3 = /** @class */ (function () {
             this.z = v.z;
         }
     }
+    /**
+     * @param side block side
+     * @returns direction vector for specified side
+     */
     Vector3.getDirection = function (side) {
         switch (side) {
             case 0: return this.DOWN;
@@ -167,8 +175,14 @@ var Vector3 = /** @class */ (function () {
         var v = vx;
         return this.add(v.x, v.y, v.z);
     };
-    Vector3.prototype.addScaled = function (v, scale) {
-        return this.add(v.x * scale, v.y * scale, v.z * scale);
+    /**
+     * Adds vector scaled by factor.
+     * @param vector vector to add.
+     * @param scale scale factor
+     * @returns result vector.
+     */
+    Vector3.prototype.addScaled = function (vector, scale) {
+        return this.add(vector.x * scale, vector.y * scale, vector.z * scale);
     };
     Vector3.prototype.sub = function (vx, vy, vz) {
         if (typeof (vx) == "number") {
@@ -194,6 +208,10 @@ var Vector3 = /** @class */ (function () {
         var v = vx;
         return this.dot(v.x, v.y, v.z);
     };
+    /**
+     * Normalizes vector.
+     * @returns normalized vector.
+     */
     Vector3.prototype.normalize = function () {
         var len = this.length();
         this.x /= len;
@@ -201,12 +219,22 @@ var Vector3 = /** @class */ (function () {
         this.z /= len;
         return this;
     };
+    /**
+     * @returns vector length squared
+     */
     Vector3.prototype.lengthSquared = function () {
         return this.x * this.x + this.y * this.y + this.z * this.z;
     };
+    /**
+     * @returns vector length.
+     */
     Vector3.prototype.length = function () {
         return Math.sqrt(this.lengthSquared());
     };
+    /**
+     * Multiplies vector coords by -1.
+     * @returns opposite vector.
+     */
     Vector3.prototype.negate = function () {
         this.x = -this.x;
         this.y = -this.y;
@@ -230,12 +258,22 @@ var Vector3 = /** @class */ (function () {
         var v = vx;
         return this.distance(v.x, v.y, v.z);
     };
+    /**
+     * Scales vector coords by factor.
+     * @param factor scaling factor
+     * @returns scaled vector
+     */
     Vector3.prototype.scale = function (factor) {
         this.x *= factor;
         this.y *= factor;
         this.z *= factor;
         return this;
     };
+    /**
+     * Scales vector length to specified value.
+     * @param len target length
+     * @returns scaled vector
+     */
     Vector3.prototype.scaleTo = function (len) {
         var factor = len / this.length();
         return this.scale(factor);
