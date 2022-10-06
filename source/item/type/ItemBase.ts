@@ -1,19 +1,11 @@
 abstract class ItemBase {
-	/**
-	 * Item string id
-	 */
+	/** Item string id */
 	readonly stringID: string;
-	/**
-	 * Item numeric id
-	 */
+	/** Item numeric id */
 	readonly id: number;
-	/**
-	 * Item name
-	 */
+	/** Item name */
 	name: string;
-	/**
-	 * Item texture data
-	 */
+	/** Item texture data */
 	icon: {name: string, meta: number};
 	/**
 	 * Maximum stack size of the item 
@@ -23,7 +15,6 @@ abstract class ItemBase {
 	 * Maximum data value of the item
 	 */
 	maxDamage: number = 0;
-
 	inCreative: boolean = false;
 	/**
 	 * Native class used to set item properties

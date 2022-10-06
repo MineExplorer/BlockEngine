@@ -572,6 +572,21 @@ declare namespace EntityCustomData {
     function getField(entity: number, key: string): any;
     function putField(entity: number, key: string, value: any): void;
 }
+/**
+ * Block functions
+ */
+interface BlockBehavior {
+    getDrop?(coords: Callback.ItemUseCoordinates, block: Tile, diggingLevel: number, enchant: ToolAPI.EnchantData, item: ItemStack, region: BlockSource): ItemInstanceArray[];
+    onDestroy?(coords: Vector, block: Tile, region: BlockSource, player: number): void;
+    onBreak?(coords: Vector, block: Tile, region: BlockSource): void;
+    onPlace?(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number, region: BlockSource): Vector | void;
+    onNeighbourChange?(coords: Vector, block: Tile, changeCoords: Vector, region: BlockSource): void;
+    onEntityInside?(coords: Vector, block: Tile, entity: number): void;
+    onEntityStepOn?(coords: Vector, block: Tile, entity: number): void;
+    onRandomTick?(x: number, y: number, z: number, block: Tile, region: BlockSource): void;
+    onAnimateTick?(x: number, y: number, z: number, id: number, data: number): void;
+    onClick?(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number): void;
+}
 declare namespace BlockModeler {
     type BoxVertexes = [number, number, number, number, number, number];
     function getRotatedBoxVertexes(box: BoxVertexes, rotation: number): BoxVertexes;
@@ -651,21 +666,6 @@ interface BlockType {
      * Specifies sounds of the block
      */
     sound?: Block.Sound;
-}
-/**
- * Block functions
- */
-interface BlockBehavior {
-    getDrop?(coords: Callback.ItemUseCoordinates, block: Tile, diggingLevel: number, enchant: ToolAPI.EnchantData, item: ItemStack, region: BlockSource): ItemInstanceArray[];
-    onDestroy?(coords: Vector, block: Tile, region: BlockSource, player: number): void;
-    onBreak?(coords: Vector, block: Tile, region: BlockSource): void;
-    onPlace?(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number, region: BlockSource): Vector | void;
-    onNeighbourChange?(coords: Vector, block: Tile, changeCoords: Vector, region: BlockSource): void;
-    onEntityInside?(coords: Vector, block: Tile, entity: number): void;
-    onEntityStepOn?(coords: Vector, block: Tile, entity: number): void;
-    onRandomTick?(x: number, y: number, z: number, block: Tile, region: BlockSource): void;
-    onAnimateTick?(x: number, y: number, z: number, id: number, data: number): void;
-    onClick?(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number): void;
 }
 declare class BlockBase implements BlockBehavior {
     readonly stringID: string;
@@ -902,93 +902,6 @@ declare namespace BlockRegistry {
     function getBlockDrop(x: number, y: number, z: number, block: Tile, level: number, item: ItemInstance, region?: BlockSource): ItemInstanceArray[];
 }
 /**
- * Class representing item stack in the inventory.
- */
-declare class ItemStack implements ItemInstance {
-    id: number;
-    count: number;
-    data: number;
-    extra?: ItemExtraData;
-    constructor();
-    constructor(item: ItemInstance);
-    constructor(id: number, count: number, data?: number, extra?: ItemExtraData);
-    /**
-     * @returns instance of item class if the item was added by BlockEngine, null otherwise.
-     */
-    getItemInstance(): Nullable<ItemBase>;
-    /**
-     * Creates a copy of current ItemStack object
-     * @returns a created copy of the ItemStack
-     */
-    copy(): ItemStack;
-    /**
-     * @returns maximum stack size for the item
-     */
-    getMaxStack(): number;
-    /**
-     * @returns maximum damage value for the item
-     */
-    getMaxDamage(): number;
-    /**
-     * @returns true if all stack values are empty, false otherwise
-     */
-    isEmpty(): boolean;
-    /**
-     * Decreases stack count by specified value.
-     * @param count amount to decrease
-     */
-    decrease(count: number): void;
-    /**
-     * Sets all stack values to 0.
-     */
-    clear(): void;
-    /**
-     * Applies damage to the item and destroys it if its max damage reached
-     * @param damage amount to apply
-     */
-    applyDamage(damage: number): void;
-    /**
-     * @returns item's custom name
-     */
-    getCustomName(): string;
-    /**
-    * Sets item's custom name. Creates new ItemExtraData instance if
-    * it doesn't exist.
-    */
-    setCustomName(name: string): void;
-    /**
-     * @returns true if the item is enchanted, false otherwise
-     */
-    isEnchanted(): boolean;
-    /**
-     * Adds a new enchantment to the item. Creates new ItemExtraData instance if
-     * it doesn't exist.
-     * @param id enchantment id, one of the Native.Enchantment constants
-     * @param level enchantment level, generally between 1 and 5
-     */
-    addEnchant(id: number, level: number): void;
-    /**
-     * Removes enchantments by its id
-     * @param id enchantment id, one of the Native.Enchantment constants
-     */
-    removeEnchant(id: number): void;
-    /**
-     * Removes all the enchantments of the item
-     */
-    removeAllEnchants(): void;
-    /**
-     * @param id enchantment id, one of the Native.Enchantment constants
-     * @returns level of the specified enchantment
-     */
-    getEnchantLevel(id: number): number;
-    /**
-     * @returns all the enchantments of the item in the readable format
-     */
-    getEnchants(): {
-        [key: number]: number;
-    };
-}
-/**
  * Functions which can be used both for blocks and items
  */
 interface BlockItemBehavior {
@@ -1006,20 +919,42 @@ interface ItemBehavior extends BlockItemBehavior {
     onUsingComplete?(item: ItemStack, player: number): void;
 }
 declare abstract class ItemBase {
+    /** Item string id */
     readonly stringID: string;
+    /** Item numeric id */
     readonly id: number;
+    /** Item name */
     name: string;
+    /** Item texture data */
     icon: {
         name: string;
         meta: number;
     };
+    /**
+     * Maximum stack size of the item
+     */
     maxStack: number;
+    /**
+     * Maximum data value of the item
+     */
     maxDamage: number;
     inCreative: boolean;
+    /**
+     * Native class used to set item properties
+     */
     item: Item.NativeItem;
     constructor(stringID: string, name?: string, icon?: string | Item.TextureData);
-    setName(name: string): void;
-    setIcon(texture: string, index?: number): void;
+    /**
+     * Method that can be overrided to modify item name before item creation.
+     * @param name item name passed to the constructor
+     */
+    protected setName(name: string): void;
+    /**
+     * Method that can be overrided to modify item textures before item creation.
+     * @param texture texture name
+     * @param index texture index
+     */
+    protected setIcon(texture: string, index?: number): void;
     /**
      * Sets item creative category
      * @param category item category, should be integer from 1 to 4.
@@ -1069,10 +1004,13 @@ declare abstract class ItemBase {
     addRepairItem(itemID: number): void;
     /**
     * Sets properties for the item from JSON-like object. Uses vanilla mechanics.
-    * @param id string or numeric item id
     * @param props object containing properties
     */
     setProperties(props: object): void;
+    /**
+     * Sets item rarity.
+     * @param rarity one of `EnumRarity` values
+     */
     setRarity(rarity: number): void;
     addDefaultToCreative(): void;
 }
@@ -1102,6 +1040,18 @@ declare class ItemThrowable extends ItemBase {
     onProjectileHit(projectile: number, item: ItemInstance, target: Callback.ProjectileHitTarget): void;
 }
 interface ArmorListeners {
+    /**
+     * This event is called when the damage is dealt to the player that has this armor put on.
+     * @param params additional data about damage
+     * @param params.attacker attacker entity or -1 if the damage was not caused by an entity
+     * @param params.damage damage amount that was applied to the player
+     * @param params.type damage type
+     * @param item armor item instance
+     * @param slot armor slot index (from 0 to 3).
+     * @param player player entity uid
+     * @returns the item instance to change armor item,
+     * if nothing is returned, armor will be damaged by default.
+     */
     onHurt?(params: {
         attacker: number;
         type: number;
@@ -1109,8 +1059,28 @@ interface ArmorListeners {
         bool1: boolean;
         bool2: boolean;
     }, item: ItemInstance, slot: number, player: number): ItemInstance | void;
+    /**
+     * This event is called when the damage is dealt to the player that has this armor put on.
+     * @param item armor item instance
+     * @param slot armor slot index (from 0 to 3).
+     * @param player player entity uid
+     * @returns the item instance to change armor item,
+     * if nothing is returned, armor will not be changed.
+     */
     onTick?(item: ItemInstance, slot: number, player: number): ItemInstance | void;
+    /**
+     * This event is called when player takes on this armor, or spawns with it.
+     * @param item armor item instance
+     * @param slot armor slot index (from 0 to 3).
+     * @param player player entity uid
+     */
     onTakeOn?(item: ItemInstance, slot: number, player: number): void;
+    /**
+     * This event is called when player takes off or changes this armor item.
+     * @param item armor item instance
+     * @param slot armor slot index (from 0 to 3).
+     * @param player player entity uid
+     */
     onTakeOff?(item: ItemInstance, slot: number, player: number): void;
 }
 declare type ArmorMaterial = {
@@ -1127,14 +1097,42 @@ declare type ArmorParams = {
 };
 declare class ItemArmor extends ItemBase {
     private static maxDamageArray;
+    /**
+     * Object containing armor properties specified by its material.
+     */
     armorMaterial: ArmorMaterial;
+    /**
+     * String type of armor.
+     */
     armorType: ArmorType;
+    /**
+     * Defence value for armor piece.
+     */
     defence: number;
+    /**
+     * Armor texture.
+     */
     texture: string;
     constructor(stringID: string, name: string, icon: string | Item.TextureData, params: ArmorParams, inCreative?: boolean);
-    setArmorTexture(texture: string): void;
+    /**
+     * Method that can be overrided to modify armor texture before item creation.
+     * @param texture armor texture path
+     */
+    protected setArmorTexture(texture: string): void;
+    /**
+     * Sets armor properties from armor material.
+     * @param armorMaterial material name or object.
+     */
     setMaterial(armorMaterial: string | ArmorMaterial): void;
+    /**
+     * Prevents armor from being damaged.
+     */
     preventDamaging(): void;
+    /**
+     * Registers all armor functions from given object.
+     * @param id armor item id
+     * @param armorFuncs object that implements `ArmorListener` interface
+     */
     static registerListeners(id: number, armorFuncs: ItemArmor | ArmorListeners): void;
 }
 /**
@@ -1168,17 +1166,6 @@ interface ToolMaterial extends ToolAPI.ToolMaterial {
      * Id of the item that is used to repair tool in anvil.
      */
     repairMaterial?: number;
-}
-/**
- * Tool parameters for vanilla tool types.
- */
-declare namespace ToolType {
-    const SWORD: ToolParams;
-    const SHOVEL: ToolParams;
-    const PICKAXE: ToolParams;
-    const AXE: ToolParams;
-    const HOE: ToolParams;
-    const SHEARS: ToolParams;
 }
 declare class ItemTool extends ItemCommon implements ToolParams {
     handEquipped: boolean;
@@ -1270,7 +1257,7 @@ declare namespace ItemRegistry {
     export function registerItem(itemInstance: ItemBase): ItemBase;
     /**
      * Registers all item functions from given object.
-     * @param itemFuncs object which implements ItemBehavior interface
+     * @param itemFuncs object which implements `ItemBehavior` interface
      */
     export function registerItemFuncs(itemID: string | number, itemFuncs: ItemBehavior): void;
     interface ItemDescription {
@@ -1344,6 +1331,104 @@ declare namespace ItemRegistry {
      */
     export function createTool(stringID: string, params: ToolDescription, toolData?: ToolParams): ItemTool;
     export {};
+}
+/**
+ * Class representing item stack in the inventory.
+ */
+declare class ItemStack implements ItemInstance {
+    id: number;
+    count: number;
+    data: number;
+    extra?: ItemExtraData;
+    constructor();
+    constructor(item: ItemInstance);
+    constructor(id: number, count: number, data?: number, extra?: ItemExtraData);
+    /**
+     * @returns instance of item class if the item was added by BlockEngine, null otherwise.
+     */
+    getItemInstance(): Nullable<ItemBase>;
+    /**
+     * Creates a copy of current ItemStack object
+     * @returns a created copy of the ItemStack
+     */
+    copy(): ItemStack;
+    /**
+     * @returns maximum stack size for the item
+     */
+    getMaxStack(): number;
+    /**
+     * @returns maximum damage value for the item
+     */
+    getMaxDamage(): number;
+    /**
+     * @returns true if all stack values are empty, false otherwise
+     */
+    isEmpty(): boolean;
+    /**
+     * Decreases stack count by specified value.
+     * @param count amount to decrease
+     */
+    decrease(count: number): void;
+    /**
+     * Sets all stack values to 0.
+     */
+    clear(): void;
+    /**
+     * Applies damage to the item and destroys it if its max damage reached
+     * @param damage amount to apply
+     */
+    applyDamage(damage: number): void;
+    /**
+     * @returns item's custom name
+     */
+    getCustomName(): string;
+    /**
+    * Sets item's custom name. Creates new ItemExtraData instance if
+    * it doesn't exist.
+    */
+    setCustomName(name: string): void;
+    /**
+     * @returns true if the item is enchanted, false otherwise
+     */
+    isEnchanted(): boolean;
+    /**
+     * Adds a new enchantment to the item. Creates new ItemExtraData instance if
+     * it doesn't exist.
+     * @param id enchantment id, one of the Native.Enchantment constants
+     * @param level enchantment level, generally between 1 and 5
+     */
+    addEnchant(id: number, level: number): void;
+    /**
+     * Removes enchantments by its id
+     * @param id enchantment id, one of the Native.Enchantment constants
+     */
+    removeEnchant(id: number): void;
+    /**
+     * Removes all the enchantments of the item
+     */
+    removeAllEnchants(): void;
+    /**
+     * @param id enchantment id, one of the Native.Enchantment constants
+     * @returns level of the specified enchantment
+     */
+    getEnchantLevel(id: number): number;
+    /**
+     * @returns all the enchantments of the item in the readable format
+     */
+    getEnchants(): {
+        [key: number]: number;
+    };
+}
+/**
+ * Tool parameters for vanilla tool types.
+ */
+declare namespace ToolType {
+    const SWORD: ToolParams;
+    const SHOVEL: ToolParams;
+    const PICKAXE: ToolParams;
+    const AXE: ToolParams;
+    const HOE: ToolParams;
+    const SHEARS: ToolParams;
 }
 declare namespace IDConverter {
     type IDDataPair = {

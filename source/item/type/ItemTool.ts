@@ -1,4 +1,4 @@
-/// <reference path="../ToolType.ts" />
+/// <reference path="../interfaces/ToolParams.ts" />
 
 class ItemTool extends ItemCommon
 implements ToolParams {

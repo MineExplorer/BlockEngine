@@ -1919,165 +1919,15 @@ var BlockRegistry;
         sound: "gravel"
     });
 })(BlockRegistry || (BlockRegistry = {}));
-/**
- * Class representing item stack in the inventory.
- */
-var ItemStack = /** @class */ (function () {
-    function ItemStack(item, count, data, extra) {
-        if (typeof item == "object") {
-            this.id = item.id;
-            this.data = item.data;
-            this.count = item.count;
-            this.extra = item.extra || null;
-        }
-        else {
-            this.id = item || 0;
-            this.data = data || 0;
-            this.count = count || 0;
-            this.extra = extra || null;
-        }
-    }
-    /**
-     * @returns instance of item class if the item was added by BlockEngine, null otherwise.
-     */
-    ItemStack.prototype.getItemInstance = function () {
-        return ItemRegistry.getInstanceOf(this.id);
-    };
-    /**
-     * Creates a copy of current ItemStack object
-     * @returns a created copy of the ItemStack
-     */
-    ItemStack.prototype.copy = function () {
-        var _a;
-        return new ItemStack(this.id, this.count, this.data, (_a = this.extra) === null || _a === void 0 ? void 0 : _a.copy());
-    };
-    /**
-     * @returns maximum stack size for the item
-     */
-    ItemStack.prototype.getMaxStack = function () {
-        return Item.getMaxStack(this.id);
-    };
-    /**
-     * @returns maximum damage value for the item
-     */
-    ItemStack.prototype.getMaxDamage = function () {
-        return Item.getMaxDamage(this.id);
-    };
-    /**
-     * @returns true if all stack values are empty, false otherwise
-     */
-    ItemStack.prototype.isEmpty = function () {
-        return this.id == 0 &&
-            this.count == 0 &&
-            this.data == 0 &&
-            this.extra == null;
-    };
-    /**
-     * Decreases stack count by specified value.
-     * @param count amount to decrease
-     */
-    ItemStack.prototype.decrease = function (count) {
-        this.count -= count;
-        if (this.count <= 0)
-            this.clear();
-    };
-    /**
-     * Sets all stack values to 0.
-     */
-    ItemStack.prototype.clear = function () {
-        this.id = this.data = this.count = 0;
-        this.extra = null;
-    };
-    /**
-     * Applies damage to the item and destroys it if its max damage reached
-     * @param damage amount to apply
-     */
-    ItemStack.prototype.applyDamage = function (damage) {
-        var unbreakingLevel = this.getEnchantLevel(Native.Enchantment.UNBREAKING);
-        if (Math.random() < 1 / (unbreakingLevel + 1)) {
-            this.data += damage;
-        }
-        if (this.data >= this.getMaxDamage()) {
-            var tool = ToolAPI.getToolData(this.id);
-            if (tool && tool.brokenId) {
-                this.id = tool.brokenId;
-                this.data = 0;
-                this.extra = null;
-            }
-            else {
-                this.clear();
-            }
-        }
-    };
-    /**
-     * @returns item's custom name
-     */
-    ItemStack.prototype.getCustomName = function () {
-        var _a;
-        return ((_a = this.extra) === null || _a === void 0 ? void 0 : _a.getCustomName()) || "";
-    };
-    /**
-    * Sets item's custom name. Creates new ItemExtraData instance if
-    * it doesn't exist.
-    */
-    ItemStack.prototype.setCustomName = function (name) {
-        var _a;
-        (_a = this.extra) !== null && _a !== void 0 ? _a : (this.extra = new ItemExtraData());
-        this.extra.setCustomName(name);
-    };
-    /**
-     * @returns true if the item is enchanted, false otherwise
-     */
-    ItemStack.prototype.isEnchanted = function () {
-        var _a;
-        return ((_a = this.extra) === null || _a === void 0 ? void 0 : _a.isEnchanted()) || false;
-    };
-    /**
-     * Adds a new enchantment to the item. Creates new ItemExtraData instance if
-     * it doesn't exist.
-     * @param id enchantment id, one of the Native.Enchantment constants
-     * @param level enchantment level, generally between 1 and 5
-     */
-    ItemStack.prototype.addEnchant = function (id, level) {
-        var _a;
-        (_a = this.extra) !== null && _a !== void 0 ? _a : (this.extra = new ItemExtraData());
-        this.extra.addEnchant(id, level);
-    };
-    /**
-     * Removes enchantments by its id
-     * @param id enchantment id, one of the Native.Enchantment constants
-     */
-    ItemStack.prototype.removeEnchant = function (id) {
-        var _a;
-        (_a = this.extra) === null || _a === void 0 ? void 0 : _a.removeEnchant(id);
-    };
-    /**
-     * Removes all the enchantments of the item
-     */
-    ItemStack.prototype.removeAllEnchants = function () {
-        var _a;
-        (_a = this.extra) === null || _a === void 0 ? void 0 : _a.removeAllEnchants();
-    };
-    /**
-     * @param id enchantment id, one of the Native.Enchantment constants
-     * @returns level of the specified enchantment
-     */
-    ItemStack.prototype.getEnchantLevel = function (id) {
-        var _a;
-        return ((_a = this.extra) === null || _a === void 0 ? void 0 : _a.getEnchantLevel(id)) || 0;
-    };
-    /**
-     * @returns all the enchantments of the item in the readable format
-     */
-    ItemStack.prototype.getEnchants = function () {
-        var _a;
-        return ((_a = this.extra) === null || _a === void 0 ? void 0 : _a.getEnchants()) || null;
-    };
-    return ItemStack;
-}());
 var ItemBase = /** @class */ (function () {
     function ItemBase(stringID, name, icon) {
+        /**
+         * Maximum stack size of the item
+         */
         this.maxStack = 64;
+        /**
+         * Maximum data value of the item
+         */
         this.maxDamage = 0;
         this.inCreative = false;
         this.stringID = stringID;
@@ -2090,9 +1940,18 @@ var ItemBase = /** @class */ (function () {
         else
             this.setIcon("missing_icon");
     }
+    /**
+     * Method that can be overrided to modify item name before item creation.
+     * @param name item name passed to the constructor
+     */
     ItemBase.prototype.setName = function (name) {
         this.name = name;
     };
+    /**
+     * Method that can be overrided to modify item textures before item creation.
+     * @param texture texture name
+     * @param index texture index
+     */
     ItemBase.prototype.setIcon = function (texture, index) {
         if (index === void 0) { index = 0; }
         this.icon = { name: texture, meta: index };
@@ -2166,12 +2025,15 @@ var ItemBase = /** @class */ (function () {
     };
     /**
     * Sets properties for the item from JSON-like object. Uses vanilla mechanics.
-    * @param id string or numeric item id
     * @param props object containing properties
     */
     ItemBase.prototype.setProperties = function (props) {
         this.item.setProperties(JSON.stringify(props));
     };
+    /**
+     * Sets item rarity.
+     * @param rarity one of `EnumRarity` values
+     */
     ItemBase.prototype.setRarity = function (rarity) {
         ItemRegistry.setRarity(this.id, rarity);
     };
@@ -2264,6 +2126,7 @@ var ItemThrowable = /** @class */ (function (_super) {
     ItemThrowable.prototype.onProjectileHit = function (projectile, item, target) { };
     return ItemThrowable;
 }(ItemBase));
+/// <reference path="../interfaces/ArmorListeners.ts" />
 var ItemArmor = /** @class */ (function (_super) {
     __extends(ItemArmor, _super);
     function ItemArmor(stringID, name, icon, params, inCreative) {
@@ -2288,9 +2151,17 @@ var ItemArmor = /** @class */ (function (_super) {
         ItemArmor.registerListeners(_this.id, _this);
         return _this;
     }
+    /**
+     * Method that can be overrided to modify armor texture before item creation.
+     * @param texture armor texture path
+     */
     ItemArmor.prototype.setArmorTexture = function (texture) {
         this.texture = texture;
     };
+    /**
+     * Sets armor properties from armor material.
+     * @param armorMaterial material name or object.
+     */
     ItemArmor.prototype.setMaterial = function (armorMaterial) {
         if (typeof armorMaterial == "string") {
             armorMaterial = ItemRegistry.getArmorMaterial(armorMaterial);
@@ -2306,9 +2177,17 @@ var ItemArmor = /** @class */ (function (_super) {
             this.addRepairItem(armorMaterial.repairMaterial);
         }
     };
+    /**
+     * Prevents armor from being damaged.
+     */
     ItemArmor.prototype.preventDamaging = function () {
         Armor.preventDamaging(this.id);
     };
+    /**
+     * Registers all armor functions from given object.
+     * @param id armor item id
+     * @param armorFuncs object that implements `ArmorListener` interface
+     */
     ItemArmor.registerListeners = function (id, armorFuncs) {
         if ('onHurt' in armorFuncs) {
             Armor.registerOnHurtListener(id, function (item, slot, player, type, value, attacker, bool1, bool2) {
@@ -2334,145 +2213,7 @@ var ItemArmor = /** @class */ (function (_super) {
     ItemArmor.maxDamageArray = [11, 16, 15, 13];
     return ItemArmor;
 }(ItemBase));
-/**
- * Tool parameters for vanilla tool types.
- */
-var ToolType;
-(function (ToolType) {
-    ToolType.SWORD = {
-        __flag: "__sword",
-        handEquipped: true,
-        isWeapon: true,
-        enchantType: Native.EnchantType.weapon,
-        damage: 4,
-        blockTypes: ["fibre", "plant"],
-        calcDestroyTime: function (item, coords, block, params, destroyTime, enchant) {
-            if (block.id == 30)
-                return 0.08;
-            var material = ToolAPI.getBlockMaterialName(block.id);
-            if (material == "plant" || block.id == 86 || block.id == 91 || block.id == 103 || block.id == 127 || block.id == 410) {
-                return params.base / 1.5;
-            }
-            return destroyTime;
-        }
-    };
-    ToolType.SHOVEL = {
-        __flag: "__shovel",
-        handEquipped: true,
-        enchantType: Native.EnchantType.shovel,
-        damage: 2,
-        blockTypes: ["dirt"],
-        onItemUse: function (coords, item, block, player) {
-            if (block.id == 2 && coords.side == 1) {
-                var region = WorldRegion.getForActor(player);
-                region.setBlock(coords, 198, 0);
-                region.playSound(coords.x + .5, coords.y + 1, coords.z + .5, "step.grass", 0.5, 0.8);
-                item.applyDamage(1);
-                Entity.setCarriedItem(player, item.id, item.count, item.data, item.extra);
-            }
-        }
-    };
-    ToolType.PICKAXE = {
-        __flag: "__pickaxe",
-        handEquipped: true,
-        enchantType: Native.EnchantType.pickaxe,
-        damage: 2,
-        blockTypes: ["stone"],
-    };
-    ToolType.AXE = {
-        __flag: "__axe",
-        handEquipped: true,
-        enchantType: Native.EnchantType.axe,
-        damage: 3,
-        blockTypes: ["wood"],
-        onItemUse: function (coords, item, tile, player) {
-            var logID = this.getStrippedLogId(tile);
-            if (logID) {
-                var region = WorldRegion.getForActor(player);
-                if (BlockEngine.getMainGameVersion() >= 16) {
-                    var block = region.getBlock(coords);
-                    var states = { "pillar_axis": block.getState(EBlockStates.PILLAR_AXIS) };
-                    if (logID == VanillaTileID.stripped_warped_stem || logID == VanillaTileID.stripped_crimson_stem) {
-                        states["deprecated"] = 0;
-                    }
-                    var block2 = new BlockState(logID, states);
-                    region.setBlock(coords, block2);
-                }
-                else {
-                    region.setBlock(coords, logID, 0);
-                }
-                item.applyDamage(1);
-                Entity.setCarriedItem(player, item.id, item.count, item.data, item.extra);
-            }
-        },
-        getStrippedLogId: function (block) {
-            switch (block.id) {
-                case 17:
-                    if (block.data == 0)
-                        return VanillaTileID.stripped_oak_log;
-                    if (block.data == 1)
-                        return VanillaTileID.stripped_spruce_log;
-                    if (block.data == 2)
-                        return VanillaTileID.stripped_birch_log;
-                    return VanillaTileID.stripped_jungle_log;
-                case 162:
-                    if (block.data == 0)
-                        return VanillaTileID.stripped_acacia_log;
-                    return VanillaTileID.stripped_dark_oak_log;
-                case VanillaTileID.warped_stem:
-                    return VanillaTileID.stripped_warped_stem;
-                case VanillaTileID.crimson_stem:
-                    return VanillaTileID.stripped_crimson_stem;
-            }
-        }
-    };
-    ToolType.HOE = {
-        __flag: "__hoe",
-        handEquipped: true,
-        enchantType: Native.EnchantType.pickaxe,
-        damage: 2,
-        blockTypes: ["plant"],
-        onItemUse: function (coords, item, block, player) {
-            if ((block.id == 2 || block.id == 3) && coords.side != 0) {
-                var region = WorldRegion.getForActor(player);
-                if (region.getBlockId(coords.x, coords.y + 1, coords.z) != 0)
-                    return;
-                region.setBlock(coords, 60, 0);
-                region.playSound(coords.x + .5, coords.y + 1, coords.z + .5, "step.gravel", 1, 0.8);
-                item.applyDamage(1);
-                Entity.setCarriedItem(player, item.id, item.count, item.data, item.extra);
-            }
-        }
-    };
-    ToolType.SHEARS = {
-        __flag: "__shears",
-        blockTypes: ["plant", "fibre", "wool"],
-        modifyEnchant: function (enchantData, item, coords, block) {
-            if (block) {
-                var material = ToolAPI.getBlockMaterialName(block.id);
-                if (material == "fibre" || material == "plant") {
-                    enchantData.silk = true;
-                }
-            }
-        },
-        calcDestroyTime: function (item, coords, block, params, destroyTime, enchant) {
-            if (block.id == 30)
-                return 0.08;
-            return destroyTime;
-        },
-        onDestroy: function (item, coords, block, player) {
-            if (block.id == 31 || block.id == 32 || block.id == 18 || block.id == 161) {
-                var region = WorldRegion.getForActor(player);
-                region.destroyBlock(coords);
-                region.dropItem(coords.x + .5, coords.y + .5, coords.z + .5, block.id, 1, block.data);
-            }
-            return false;
-        }
-    };
-})(ToolType || (ToolType = {}));
-ToolAPI.addBlockMaterial("wool", 1.5);
-ToolAPI.registerBlockMaterial(35, "wool");
-/// <reference path="../ToolType.ts" />
+/// <reference path="../interfaces/ToolParams.ts" />
 var ItemTool = /** @class */ (function (_super) {
     __extends(ItemTool, _super);
     function ItemTool(stringID, name, icon, toolMaterial, toolData, inCreative) {
@@ -2661,7 +2402,7 @@ var ItemRegistry;
     ItemRegistry.registerItem = registerItem;
     /**
      * Registers all item functions from given object.
-     * @param itemFuncs object which implements ItemBehavior interface
+     * @param itemFuncs object which implements `ItemBehavior` interface
      */
     function registerItemFuncs(itemID, itemFuncs) {
         var numericID = Item.getNumericId(itemID);
@@ -2796,6 +2537,301 @@ var ItemRegistry;
     }
     ItemRegistry.createTool = createTool;
 })(ItemRegistry || (ItemRegistry = {}));
+/**
+ * Class representing item stack in the inventory.
+ */
+var ItemStack = /** @class */ (function () {
+    function ItemStack(item, count, data, extra) {
+        if (typeof item == "object") {
+            this.id = item.id;
+            this.data = item.data;
+            this.count = item.count;
+            this.extra = item.extra || null;
+        }
+        else {
+            this.id = item || 0;
+            this.data = data || 0;
+            this.count = count || 0;
+            this.extra = extra || null;
+        }
+    }
+    /**
+     * @returns instance of item class if the item was added by BlockEngine, null otherwise.
+     */
+    ItemStack.prototype.getItemInstance = function () {
+        return ItemRegistry.getInstanceOf(this.id);
+    };
+    /**
+     * Creates a copy of current ItemStack object
+     * @returns a created copy of the ItemStack
+     */
+    ItemStack.prototype.copy = function () {
+        var _a;
+        return new ItemStack(this.id, this.count, this.data, (_a = this.extra) === null || _a === void 0 ? void 0 : _a.copy());
+    };
+    /**
+     * @returns maximum stack size for the item
+     */
+    ItemStack.prototype.getMaxStack = function () {
+        return Item.getMaxStack(this.id);
+    };
+    /**
+     * @returns maximum damage value for the item
+     */
+    ItemStack.prototype.getMaxDamage = function () {
+        return Item.getMaxDamage(this.id);
+    };
+    /**
+     * @returns true if all stack values are empty, false otherwise
+     */
+    ItemStack.prototype.isEmpty = function () {
+        return this.id == 0 &&
+            this.count == 0 &&
+            this.data == 0 &&
+            this.extra == null;
+    };
+    /**
+     * Decreases stack count by specified value.
+     * @param count amount to decrease
+     */
+    ItemStack.prototype.decrease = function (count) {
+        this.count -= count;
+        if (this.count <= 0)
+            this.clear();
+    };
+    /**
+     * Sets all stack values to 0.
+     */
+    ItemStack.prototype.clear = function () {
+        this.id = this.data = this.count = 0;
+        this.extra = null;
+    };
+    /**
+     * Applies damage to the item and destroys it if its max damage reached
+     * @param damage amount to apply
+     */
+    ItemStack.prototype.applyDamage = function (damage) {
+        var unbreakingLevel = this.getEnchantLevel(Native.Enchantment.UNBREAKING);
+        if (Math.random() < 1 / (unbreakingLevel + 1)) {
+            this.data += damage;
+        }
+        if (this.data >= this.getMaxDamage()) {
+            var tool = ToolAPI.getToolData(this.id);
+            if (tool && tool.brokenId) {
+                this.id = tool.brokenId;
+                this.data = 0;
+                this.extra = null;
+            }
+            else {
+                this.clear();
+            }
+        }
+    };
+    /**
+     * @returns item's custom name
+     */
+    ItemStack.prototype.getCustomName = function () {
+        var _a;
+        return ((_a = this.extra) === null || _a === void 0 ? void 0 : _a.getCustomName()) || "";
+    };
+    /**
+    * Sets item's custom name. Creates new ItemExtraData instance if
+    * it doesn't exist.
+    */
+    ItemStack.prototype.setCustomName = function (name) {
+        var _a;
+        (_a = this.extra) !== null && _a !== void 0 ? _a : (this.extra = new ItemExtraData());
+        this.extra.setCustomName(name);
+    };
+    /**
+     * @returns true if the item is enchanted, false otherwise
+     */
+    ItemStack.prototype.isEnchanted = function () {
+        var _a;
+        return ((_a = this.extra) === null || _a === void 0 ? void 0 : _a.isEnchanted()) || false;
+    };
+    /**
+     * Adds a new enchantment to the item. Creates new ItemExtraData instance if
+     * it doesn't exist.
+     * @param id enchantment id, one of the Native.Enchantment constants
+     * @param level enchantment level, generally between 1 and 5
+     */
+    ItemStack.prototype.addEnchant = function (id, level) {
+        var _a;
+        (_a = this.extra) !== null && _a !== void 0 ? _a : (this.extra = new ItemExtraData());
+        this.extra.addEnchant(id, level);
+    };
+    /**
+     * Removes enchantments by its id
+     * @param id enchantment id, one of the Native.Enchantment constants
+     */
+    ItemStack.prototype.removeEnchant = function (id) {
+        var _a;
+        (_a = this.extra) === null || _a === void 0 ? void 0 : _a.removeEnchant(id);
+    };
+    /**
+     * Removes all the enchantments of the item
+     */
+    ItemStack.prototype.removeAllEnchants = function () {
+        var _a;
+        (_a = this.extra) === null || _a === void 0 ? void 0 : _a.removeAllEnchants();
+    };
+    /**
+     * @param id enchantment id, one of the Native.Enchantment constants
+     * @returns level of the specified enchantment
+     */
+    ItemStack.prototype.getEnchantLevel = function (id) {
+        var _a;
+        return ((_a = this.extra) === null || _a === void 0 ? void 0 : _a.getEnchantLevel(id)) || 0;
+    };
+    /**
+     * @returns all the enchantments of the item in the readable format
+     */
+    ItemStack.prototype.getEnchants = function () {
+        var _a;
+        return ((_a = this.extra) === null || _a === void 0 ? void 0 : _a.getEnchants()) || null;
+    };
+    return ItemStack;
+}());
+/// <reference path="./interfaces/ToolParams.ts" />
+/**
+ * Tool parameters for vanilla tool types.
+ */
+var ToolType;
+(function (ToolType) {
+    ToolType.SWORD = {
+        __flag: "__sword",
+        handEquipped: true,
+        isWeapon: true,
+        enchantType: Native.EnchantType.weapon,
+        damage: 4,
+        blockTypes: ["fibre", "plant"],
+        calcDestroyTime: function (item, coords, block, params, destroyTime, enchant) {
+            if (block.id == 30)
+                return 0.08;
+            var material = ToolAPI.getBlockMaterialName(block.id);
+            if (material == "plant" || block.id == 86 || block.id == 91 || block.id == 103 || block.id == 127 || block.id == 410) {
+                return params.base / 1.5;
+            }
+            return destroyTime;
+        }
+    };
+    ToolType.SHOVEL = {
+        __flag: "__shovel",
+        handEquipped: true,
+        enchantType: Native.EnchantType.shovel,
+        damage: 2,
+        blockTypes: ["dirt"],
+        onItemUse: function (coords, item, block, player) {
+            if (block.id == 2 && coords.side == 1) {
+                var region = WorldRegion.getForActor(player);
+                region.setBlock(coords, 198, 0);
+                region.playSound(coords.x + .5, coords.y + 1, coords.z + .5, "step.grass", 0.5, 0.8);
+                item.applyDamage(1);
+                Entity.setCarriedItem(player, item.id, item.count, item.data, item.extra);
+            }
+        }
+    };
+    ToolType.PICKAXE = {
+        __flag: "__pickaxe",
+        handEquipped: true,
+        enchantType: Native.EnchantType.pickaxe,
+        damage: 2,
+        blockTypes: ["stone"],
+    };
+    ToolType.AXE = {
+        __flag: "__axe",
+        handEquipped: true,
+        enchantType: Native.EnchantType.axe,
+        damage: 3,
+        blockTypes: ["wood"],
+        onItemUse: function (coords, item, tile, player) {
+            var logID = this.getStrippedLogId(tile);
+            if (logID) {
+                var region = WorldRegion.getForActor(player);
+                if (BlockEngine.getMainGameVersion() >= 16) {
+                    var block = region.getBlock(coords);
+                    var states = { "pillar_axis": block.getState(EBlockStates.PILLAR_AXIS) };
+                    if (logID == VanillaTileID.stripped_warped_stem || logID == VanillaTileID.stripped_crimson_stem) {
+                        states["deprecated"] = 0;
+                    }
+                    var block2 = new BlockState(logID, states);
+                    region.setBlock(coords, block2);
+                }
+                else {
+                    region.setBlock(coords, logID, 0);
+                }
+                item.applyDamage(1);
+                Entity.setCarriedItem(player, item.id, item.count, item.data, item.extra);
+            }
+        },
+        getStrippedLogId: function (block) {
+            switch (block.id) {
+                case 17:
+                    if (block.data == 0)
+                        return VanillaTileID.stripped_oak_log;
+                    if (block.data == 1)
+                        return VanillaTileID.stripped_spruce_log;
+                    if (block.data == 2)
+                        return VanillaTileID.stripped_birch_log;
+                    return VanillaTileID.stripped_jungle_log;
+                case 162:
+                    if (block.data == 0)
+                        return VanillaTileID.stripped_acacia_log;
+                    return VanillaTileID.stripped_dark_oak_log;
+                case VanillaTileID.warped_stem:
+                    return VanillaTileID.stripped_warped_stem;
+                case VanillaTileID.crimson_stem:
+                    return VanillaTileID.stripped_crimson_stem;
+            }
+        }
+    };
+    ToolType.HOE = {
+        __flag: "__hoe",
+        handEquipped: true,
+        enchantType: Native.EnchantType.pickaxe,
+        damage: 2,
+        blockTypes: ["plant"],
+        onItemUse: function (coords, item, block, player) {
+            if ((block.id == 2 || block.id == 3) && coords.side != 0) {
+                var region = WorldRegion.getForActor(player);
+                if (region.getBlockId(coords.x, coords.y + 1, coords.z) != 0)
+                    return;
+                region.setBlock(coords, 60, 0);
+                region.playSound(coords.x + .5, coords.y + 1, coords.z + .5, "step.gravel", 1, 0.8);
+                item.applyDamage(1);
+                Entity.setCarriedItem(player, item.id, item.count, item.data, item.extra);
+            }
+        }
+    };
+    ToolType.SHEARS = {
+        __flag: "__shears",
+        blockTypes: ["plant", "fibre", "wool"],
+        modifyEnchant: function (enchantData, item, coords, block) {
+            if (block) {
+                var material = ToolAPI.getBlockMaterialName(block.id);
+                if (material == "fibre" || material == "plant") {
+                    enchantData.silk = true;
+                }
+            }
+        },
+        calcDestroyTime: function (item, coords, block, params, destroyTime, enchant) {
+            if (block.id == 30)
+                return 0.08;
+            return destroyTime;
+        },
+        onDestroy: function (item, coords, block, player) {
+            if (block.id == 31 || block.id == 32 || block.id == 18 || block.id == 161) {
+                var region = WorldRegion.getForActor(player);
+                region.destroyBlock(coords);
+                region.dropItem(coords.x + .5, coords.y + .5, coords.z + .5, block.id, 1, block.data);
+            }
+            return false;
+        }
+    };
+})(ToolType || (ToolType = {}));
+ToolAPI.addBlockMaterial("wool", 1.5);
+ToolAPI.registerBlockMaterial(35, "wool");
 // By NikolaySavenko (https://github.com/NikolaySavenko)
 var IDConverter;
 (function (IDConverter) {
