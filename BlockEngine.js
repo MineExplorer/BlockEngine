@@ -2334,6 +2334,9 @@ var ItemArmor = /** @class */ (function (_super) {
     ItemArmor.maxDamageArray = [11, 16, 15, 13];
     return ItemArmor;
 }(ItemBase));
+/**
+ * Tool parameters for vanilla tool types.
+ */
 var ToolType;
 (function (ToolType) {
     ToolType.SWORD = {
