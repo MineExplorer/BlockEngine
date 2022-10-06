@@ -41,7 +41,7 @@ namespace ItemRegistry {
 	}
 
 	/**
-	 * @returns instance of item class if it exists
+	 * @returns instance of item class if the item was added by BlockEngine, null otherwise.
 	 */
 	export function getInstanceOf(itemID: string | number): Nullable<ItemBase> {
 		const numericID = Item.getNumericId(itemID);

@@ -901,6 +901,9 @@ declare namespace BlockRegistry {
     function addBlockDropOnExplosion(nameID: string | number): void;
     function getBlockDrop(x: number, y: number, z: number, block: Tile, level: number, item: ItemInstance, region?: BlockSource): ItemInstanceArray[];
 }
+/**
+ * Class representing item stack in the inventory.
+ */
 declare class ItemStack implements ItemInstance {
     id: number;
     count: number;
@@ -909,6 +912,9 @@ declare class ItemStack implements ItemInstance {
     constructor();
     constructor(item: ItemInstance);
     constructor(id: number, count: number, data?: number, extra?: ItemExtraData);
+    /**
+     * @returns instance of item class if the item was added by BlockEngine, null otherwise.
+     */
     getItemInstance(): Nullable<ItemBase>;
     /**
      * Creates a copy of current ItemStack object
@@ -1175,7 +1181,7 @@ declare namespace ItemRegistry {
      */
     export function getVanillaStringID(id: number): string;
     /**
-     * @returns instance of item class if it exists
+     * @returns instance of item class if the item was added by BlockEngine, null otherwise.
      */
     export function getInstanceOf(itemID: string | number): Nullable<ItemBase>;
     /**

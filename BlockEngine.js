@@ -1919,6 +1919,9 @@ var BlockRegistry;
         sound: "gravel"
     });
 })(BlockRegistry || (BlockRegistry = {}));
+/**
+ * Class representing item stack in the inventory.
+ */
 var ItemStack = /** @class */ (function () {
     function ItemStack(item, count, data, extra) {
         if (typeof item == "object") {
@@ -1934,6 +1937,9 @@ var ItemStack = /** @class */ (function () {
             this.extra = extra || null;
         }
     }
+    /**
+     * @returns instance of item class if the item was added by BlockEngine, null otherwise.
+     */
     ItemStack.prototype.getItemInstance = function () {
         return ItemRegistry.getInstanceOf(this.id);
     };
@@ -2540,7 +2546,7 @@ var ItemRegistry;
     }
     ItemRegistry.getVanillaStringID = getVanillaStringID;
     /**
-     * @returns instance of item class if it exists
+     * @returns instance of item class if the item was added by BlockEngine, null otherwise.
      */
     function getInstanceOf(itemID) {
         var numericID = Item.getNumericId(itemID);

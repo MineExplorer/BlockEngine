@@ -1,3 +1,6 @@
+/**
+ * Class representing item stack in the inventory.
+ */
 class ItemStack implements ItemInstance {
 	id: number;
 	count: number;
@@ -21,6 +24,9 @@ class ItemStack implements ItemInstance {
 		}
 	}
 
+	/**
+	 * @returns instance of item class if the item was added by BlockEngine, null otherwise.
+	 */
 	getItemInstance(): Nullable<ItemBase> {
 		return ItemRegistry.getInstanceOf(this.id);
 	}
