@@ -1,11 +1,33 @@
 abstract class ItemBase {
+	/**
+	 * Item string id
+	 */
 	readonly stringID: string;
+	/**
+	 * Item numeric id
+	 */
 	readonly id: number;
+	/**
+	 * Item name
+	 */
 	name: string;
+	/**
+	 * Item texture data
+	 */
 	icon: {name: string, meta: number};
+	/**
+	 * Maximum stack size of the item 
+	 */
 	maxStack: number = 64;
+	/**
+	 * Maximum data value of the item
+	 */
 	maxDamage: number = 0;
+
 	inCreative: boolean = false;
+	/**
+	 * Native class used to set item properties
+	 */
 	item: Item.NativeItem;
 
 	constructor(stringID: string, name?: string, icon?: string | Item.TextureData) {
@@ -20,11 +42,20 @@ abstract class ItemBase {
 			this.setIcon("missing_icon");
 	}
 
-	setName(name: string): void {
+	/**
+	 * Method that can be overrided to modify item name before item creation.
+	 * @param name item name passed to the constructor
+	 */
+	protected setName(name: string): void {
 		this.name = name;
 	}
 
-	setIcon(texture: string, index: number = 0): void {
+	/**
+	 * Method that can be overrided to modify item textures before item creation.
+	 * @param texture texture name
+	 * @param index texture index
+	 */
+	protected setIcon(texture: string, index: number = 0): void {
 		this.icon = {name: texture, meta: index};
 	}
 
@@ -106,13 +137,16 @@ abstract class ItemBase {
 
 	 /**
      * Sets properties for the item from JSON-like object. Uses vanilla mechanics.
-     * @param id string or numeric item id
      * @param props object containing properties
      */
 	setProperties(props: object): void {
 		this.item.setProperties(JSON.stringify(props));
 	}
 
+	/**
+	 * Sets item rarity.
+	 * @param rarity one of `EnumRarity` values
+	 */
 	setRarity(rarity: number): void {
 		ItemRegistry.setRarity(this.id, rarity);
 	}

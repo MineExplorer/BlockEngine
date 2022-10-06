@@ -149,7 +149,7 @@ namespace ItemRegistry {
 
 	/**
 	 * Registers all item functions from given object.
-	 * @param itemFuncs object which implements ItemBehavior interface
+	 * @param itemFuncs object which implements `ItemBehavior` interface
 	 */
 	export function registerItemFuncs(itemID: string | number, itemFuncs: ItemBehavior): void {
 		const numericID = Item.getNumericId(itemID);
@@ -193,7 +193,7 @@ namespace ItemRegistry {
 
 	interface ItemDescription {
 		name: string,
-		icon: string|Item.TextureData,
+		icon: string | Item.TextureData,
 		type?: "common" | "food" | "throwable",
 		stack?: number,
 		inCreative?: boolean,

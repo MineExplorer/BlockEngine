@@ -1,9 +1,4 @@
-interface ArmorListeners {
-	onHurt?(params: {attacker: number, type: number, damage: number, bool1: boolean, bool2: boolean}, item: ItemInstance, slot: number, player: number): ItemInstance | void;
-	onTick?(item: ItemInstance, slot: number, player: number): ItemInstance | void;
-	onTakeOn?(item: ItemInstance, slot: number, player: number): void;
-	onTakeOff?(item: ItemInstance, slot: number, player: number): void;
-}
+/// <reference path="../interfaces/ArmorListeners.ts" />
 
 type ArmorMaterial = {durabilityFactor: number, enchantability?: number, repairMaterial?: number};
 
@@ -12,12 +7,24 @@ type ArmorParams = {type: ArmorType, defence: number, knockbackResistance?: numb
 class ItemArmor extends ItemBase {
 	private static maxDamageArray: number[] = [11, 16, 15, 13]
 
+	/**
+	 * Object containing armor properties specified by its material.
+	 */
 	armorMaterial: ArmorMaterial
+	/**
+	 * String type of armor.
+	 */
 	armorType: ArmorType
+	/**
+	 * Defence value for armor piece.
+	 */
 	defence: number
+	/**
+	 * Armor texture.
+	 */
 	texture: string
 
-	constructor(stringID: string, name: string, icon: string|Item.TextureData, params: ArmorParams, inCreative: boolean = true) {
+	constructor(stringID: string, name: string, icon: string | Item.TextureData, params: ArmorParams, inCreative: boolean = true) {
 		super(stringID, name, icon);
 		this.armorType = params.type;
 		this.defence = params.defence;
@@ -37,10 +44,18 @@ class ItemArmor extends ItemBase {
 		ItemArmor.registerListeners(this.id, this);
 	}
 
-	setArmorTexture(texture: string): void {
+	/**
+	 * Method that can be overrided to modify armor texture before item creation.
+	 * @param texture armor texture path
+	 */
+	protected setArmorTexture(texture: string): void {
 		this.texture = texture;
 	}
 
+	/**
+	 * Sets armor properties from armor material.
+	 * @param armorMaterial material name or object.
+	 */
 	setMaterial(armorMaterial: string | ArmorMaterial): void {
 		if (typeof armorMaterial == "string") {
 			armorMaterial = ItemRegistry.getArmorMaterial(armorMaterial);
@@ -57,10 +72,18 @@ class ItemArmor extends ItemBase {
 		}
 	}
 
+	/**
+	 * Prevents armor from being damaged.
+	 */
 	preventDamaging(): void {
 		Armor.preventDamaging(this.id);
 	}
 
+	/**
+	 * Registers all armor functions from given object.
+	 * @param id armor item id
+	 * @param armorFuncs object that implements `ArmorListener` interface
+	 */
 	static registerListeners(id: number, armorFuncs: ItemArmor | ArmorListeners) {
 		if ('onHurt' in armorFuncs) {
 			Armor.registerOnHurtListener(id, function(item, slot, player, type, value, attacker, bool1, bool2) {
