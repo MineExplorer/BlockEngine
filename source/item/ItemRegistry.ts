@@ -6,35 +6,46 @@
 /// <reference path="ItemArmor.ts" />
 /// <reference path="ItemTool.ts" />
 
+/**
+ * Module for advanced item definition.
+ */
 namespace ItemRegistry {
 	const items = {};
 	const itemsRarity = {};
 	const armorMaterials = {};
 
 	/**
-	 * @returns item type ("block" or "item")
+	 * @returns item type
 	 */
-	export function getType(id: number): string {
-		return IDRegistry.getIdInfo(id).split(":")[0];
+	export function getType(id: number): "block" | "item" {
+		return IDRegistry.getIdInfo(id).split(":")[0] as "block" | "item";
 	}
 
+	/**
+	 * @param id block id
+	 * @returns true if a block identifier was given, false otherwise.
+	 */
 	export function isBlock(id: number): boolean {
 		return getType(id) == "block";
 	}
 
+	/**
+	 * @param id item id
+	 * @returns true if an item identifier was given, false otherwise.
+	 */
 	export function isItem(id: number): boolean {
 		return getType(id) == "item";
 	}
 
 	/**
-	 * @returns whether item is an item from the original game
+	 * @returns whether the item is an item from the original game.
 	 */
 	export function isVanilla(id: number): boolean {
 		return !IDRegistry.getNameByID(id);
 	}
 
 	/**
-	 * @returns item string id in the game, it differs for custom items
+	 * @returns item string id in the game (in snake_case format).
 	 */
 	export function getVanillaStringID(id: number): string {
 		return IDRegistry.getIdInfo(id).split(":")[1].split("#")[0];
@@ -49,15 +60,15 @@ namespace ItemRegistry {
 	}
 
 	/**
-	 * @returns EnumRarity value for item
+	 * @returns `EnumRarity` value for the item.
 	 */
 	export function getRarity(itemID: number): number {
 		return itemsRarity[itemID] ?? EnumRarity.COMMON;
 	}
 
 	/**
-	 * @returns chat color for rarity
-	 * @param rarity one of EnumRarity values
+	 * @returns chat color for rarity.
+	 * @param rarity one of `EnumRarity` values
 	 */
 	export function getRarityColor(rarity: number): string {
 		if (rarity == EnumRarity.UNCOMMON) return "§e";
@@ -67,15 +78,16 @@ namespace ItemRegistry {
 	}
 
 	/**
-	 * @returns chat color for item's rarity
+	 * @returns chat color for rare items.
 	 */
 	export function getItemRarityColor(itemID: number): string {
 		return getRarityColor(getRarity(itemID));
 	}
 
 	/**
+	 * Sets item rarity.
 	 * @param id item id
-	 * @param rarity one of EnumRarity values
+	 * @param rarity one of `EnumRarity` values
 	 * @param preventNameOverride prevent registration of name override function
 	 */
 	export function setRarity(id: string | number, rarity: number, preventNameOverride?: boolean): void {
@@ -90,7 +102,7 @@ namespace ItemRegistry {
 	}
 
 	/**
-	 * Creates new armor material with specified parameters
+	 * Creates new armor material with specified parameters.
 	 * @param name new (or existing) material name
 	 * @param material material properties
 	 */
@@ -99,7 +111,7 @@ namespace ItemRegistry {
 	}
 
 	/**
-	 * @returns armor material by name
+	 * @returns armor material by name.
 	 */
 	export function getArmorMaterial(name: string): ArmorMaterial {
 		return armorMaterials[name];
@@ -117,7 +129,7 @@ namespace ItemRegistry {
 	}
 
 	/**
-	 * @returns tool material by name registered in ToolAPI
+	 * @returns tool material by name registered in ToolAPI.
 	 */
 	export function getToolMaterial(name: string): ToolMaterial {
 		//@ts-ignore
@@ -228,7 +240,7 @@ namespace ItemRegistry {
 
 	interface FoodDescription extends FoodParams {
 		name: string,
-		icon: string|Item.TextureData,
+		icon: string | Item.TextureData,
 		stack?: number,
 		inCreative?: boolean,
 		category?: number,

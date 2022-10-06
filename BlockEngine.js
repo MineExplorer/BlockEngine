@@ -2511,35 +2511,46 @@ var ItemTool = /** @class */ (function (_super) {
 /// <reference path="ItemThrowable.ts" />
 /// <reference path="ItemArmor.ts" />
 /// <reference path="ItemTool.ts" />
+/**
+ * Module for advanced item definition.
+ */
 var ItemRegistry;
 (function (ItemRegistry) {
     var items = {};
     var itemsRarity = {};
     var armorMaterials = {};
     /**
-     * @returns item type ("block" or "item")
+     * @returns item type
      */
     function getType(id) {
         return IDRegistry.getIdInfo(id).split(":")[0];
     }
     ItemRegistry.getType = getType;
+    /**
+     * @param id block id
+     * @returns true if a block identifier was given, false otherwise.
+     */
     function isBlock(id) {
         return getType(id) == "block";
     }
     ItemRegistry.isBlock = isBlock;
+    /**
+     * @param id item id
+     * @returns true if an item identifier was given, false otherwise.
+     */
     function isItem(id) {
         return getType(id) == "item";
     }
     ItemRegistry.isItem = isItem;
     /**
-     * @returns whether item is an item from the original game
+     * @returns whether the item is an item from the original game.
      */
     function isVanilla(id) {
         return !IDRegistry.getNameByID(id);
     }
     ItemRegistry.isVanilla = isVanilla;
     /**
-     * @returns item string id in the game, it differs for custom items
+     * @returns item string id in the game (in snake_case format).
      */
     function getVanillaStringID(id) {
         return IDRegistry.getIdInfo(id).split(":")[1].split("#")[0];
@@ -2554,7 +2565,7 @@ var ItemRegistry;
     }
     ItemRegistry.getInstanceOf = getInstanceOf;
     /**
-     * @returns EnumRarity value for item
+     * @returns `EnumRarity` value for the item.
      */
     function getRarity(itemID) {
         var _a;
@@ -2562,8 +2573,8 @@ var ItemRegistry;
     }
     ItemRegistry.getRarity = getRarity;
     /**
-     * @returns chat color for rarity
-     * @param rarity one of EnumRarity values
+     * @returns chat color for rarity.
+     * @param rarity one of `EnumRarity` values
      */
     function getRarityColor(rarity) {
         if (rarity == EnumRarity.UNCOMMON)
@@ -2576,15 +2587,16 @@ var ItemRegistry;
     }
     ItemRegistry.getRarityColor = getRarityColor;
     /**
-     * @returns chat color for item's rarity
+     * @returns chat color for rare items.
      */
     function getItemRarityColor(itemID) {
         return getRarityColor(getRarity(itemID));
     }
     ItemRegistry.getItemRarityColor = getItemRarityColor;
     /**
+     * Sets item rarity.
      * @param id item id
-     * @param rarity one of EnumRarity values
+     * @param rarity one of `EnumRarity` values
      * @param preventNameOverride prevent registration of name override function
      */
     function setRarity(id, rarity, preventNameOverride) {
@@ -2599,7 +2611,7 @@ var ItemRegistry;
     }
     ItemRegistry.setRarity = setRarity;
     /**
-     * Creates new armor material with specified parameters
+     * Creates new armor material with specified parameters.
      * @param name new (or existing) material name
      * @param material material properties
      */
@@ -2608,7 +2620,7 @@ var ItemRegistry;
     }
     ItemRegistry.addArmorMaterial = addArmorMaterial;
     /**
-     * @returns armor material by name
+     * @returns armor material by name.
      */
     function getArmorMaterial(name) {
         return armorMaterials[name];
@@ -2626,7 +2638,7 @@ var ItemRegistry;
     }
     ItemRegistry.addToolMaterial = addToolMaterial;
     /**
-     * @returns tool material by name registered in ToolAPI
+     * @returns tool material by name registered in ToolAPI.
      */
     function getToolMaterial(name) {
         //@ts-ignore
