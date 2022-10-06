@@ -2469,7 +2469,7 @@ var ToolType;
 })(ToolType || (ToolType = {}));
 ToolAPI.addBlockMaterial("wool", 1.5);
 ToolAPI.registerBlockMaterial(35, "wool");
-/// <reference path="ToolType.ts" />
+/// <reference path="../ToolType.ts" />
 var ItemTool = /** @class */ (function (_super) {
     __extends(ItemTool, _super);
     function ItemTool(stringID, name, icon, toolMaterial, toolData, inCreative) {
@@ -2504,13 +2504,13 @@ var ItemTool = /** @class */ (function (_super) {
     }
     return ItemTool;
 }(ItemCommon));
-/// <reference path="ItemBehavior.ts" />
-/// <reference path="ItemBase.ts" />
-/// <reference path="ItemCommon.ts" />
-/// <reference path="ItemFood.ts" />
-/// <reference path="ItemThrowable.ts" />
-/// <reference path="ItemArmor.ts" />
-/// <reference path="ItemTool.ts" />
+/// <reference path="./ItemBehavior.ts" />
+/// <reference path="./type/ItemBase.ts" />
+/// <reference path="./type/ItemCommon.ts" />
+/// <reference path="./type/ItemFood.ts" />
+/// <reference path="./type/ItemThrowable.ts" />
+/// <reference path="./type/ItemArmor.ts" />
+/// <reference path="./type/ItemTool.ts" />
 /**
  * Module for advanced item definition.
  */

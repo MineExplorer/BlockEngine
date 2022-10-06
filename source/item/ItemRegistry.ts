@@ -1,10 +1,10 @@
-/// <reference path="ItemBehavior.ts" />
-/// <reference path="ItemBase.ts" />
-/// <reference path="ItemCommon.ts" />
-/// <reference path="ItemFood.ts" />
-/// <reference path="ItemThrowable.ts" />
-/// <reference path="ItemArmor.ts" />
-/// <reference path="ItemTool.ts" />
+/// <reference path="./ItemBehavior.ts" />
+/// <reference path="./type/ItemBase.ts" />
+/// <reference path="./type/ItemCommon.ts" />
+/// <reference path="./type/ItemFood.ts" />
+/// <reference path="./type/ItemThrowable.ts" />
+/// <reference path="./type/ItemArmor.ts" />
+/// <reference path="./type/ItemTool.ts" />
 
 /**
  * Module for advanced item definition.
