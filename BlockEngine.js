@@ -1572,6 +1572,9 @@ var BlockRegistry;
                 });
             }
         }
+        if ('onNameOverride' in blockFuncs || 'onItemUse' in blockFuncs || 'onDispense' in blockFuncs) {
+            ItemRegistry.registerItemFuncs(blockID, blockFuncs);
+        }
     }
     BlockRegistry.registerBlockFuncs = registerBlockFuncs;
     /**
@@ -1919,6 +1922,7 @@ var BlockRegistry;
         sound: "gravel"
     });
 })(BlockRegistry || (BlockRegistry = {}));
+/// <reference path="./BlockItemBehavior.ts" />
 var ItemBase = /** @class */ (function () {
     function ItemBase(stringID, name, icon) {
         /**
@@ -2248,7 +2252,7 @@ var ItemTool = /** @class */ (function (_super) {
     }
     return ItemTool;
 }(ItemCommon));
-/// <reference path="./ItemBehavior.ts" />
+/// <reference path="./interfaces/ItemBehavior.ts" />
 /// <reference path="./type/ItemBase.ts" />
 /// <reference path="./type/ItemCommon.ts" />
 /// <reference path="./type/ItemFood.ts" />

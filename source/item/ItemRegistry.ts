@@ -1,4 +1,4 @@
-/// <reference path="./ItemBehavior.ts" />
+/// <reference path="./interfaces/ItemBehavior.ts" />
 /// <reference path="./type/ItemBase.ts" />
 /// <reference path="./type/ItemCommon.ts" />
 /// <reference path="./type/ItemFood.ts" />

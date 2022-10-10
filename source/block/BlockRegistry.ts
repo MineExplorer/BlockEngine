@@ -130,7 +130,7 @@ namespace BlockRegistry {
 		return block;
 	}
 
-	export function registerBlockFuncs(blockID: string | number, blockFuncs: BlockBehavior): void {
+	export function registerBlockFuncs(blockID: string | number, blockFuncs: BlockBehavior | BlockItemBehavior): void {
 		const numericID = Block.getNumericId(blockID);
 		if ('getDrop' in blockFuncs) {
 			Block.registerDropFunction(numericID, function(coords: Callback.ItemUseCoordinates, blockID: number, blockData: number, diggingLevel: number, enchant: ToolAPI.EnchantData, item: ItemInstance, region: BlockSource) {
@@ -192,6 +192,10 @@ namespace BlockRegistry {
 					}
 				});
 			}
+		}
+
+		if ('onNameOverride' in blockFuncs || 'onItemUse' in blockFuncs || 'onDispense' in blockFuncs) {
+			ItemRegistry.registerItemFuncs(blockID, blockFuncs);
 		}
 	}
 
