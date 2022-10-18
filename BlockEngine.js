@@ -656,9 +656,9 @@ var WorldRegion = /** @class */ (function () {
         this.sendPacketInRadius(soundPos, 100, "WorldRegion.play_sound_at", { ent: ent, name: name, volume: volume, pitch: pitch });
     };
     /**
-     * Sends network packet for players in a radius from specified coords.
+     * Sends network packet for players within a radius from specified coords.
      * @param coords coordinates from which players will be searched
-     * @param radius radius in which players will receive packet
+     * @param radius radius within which players will receive packet
      * @param packetName name of the packet to send
      * @param data packet data object
      */
