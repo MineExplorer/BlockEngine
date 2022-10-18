@@ -580,7 +580,7 @@ declare namespace BlockModeler {
     function setInventoryModel(blockID: number, model: RenderMesh | ICRender.Model | BlockRenderer.Model, data?: number): void;
 }
 /**
- * Object that represents common block properties.
+ * Object representing common block properties.
  */
 interface BlockType {
     /**
@@ -932,9 +932,32 @@ declare namespace BlockRegistry {
  * Common functions for blocks and items
  */
 interface BlockItemBehavior {
+    /**
+     * This method is called to get displayed item name.
+     * @param item item stack information
+     * @param translation translated item name
+     * @param name original item name
+     * @returns new name that will be displayed
+     */
     onNameOverride?(item: ItemInstance, translation: string, name: string): string;
+    /**
+     * This methos is called when player clicks on block with the item.
+     * @param coords object of touch coordinates with side information and relative coordinates set.
+     * @param item item that was in the player's hand when he touched the block
+     * @param block block that was touched
+     * @param player player entity uID
+     */
     onItemUse?(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number): void;
-    onDispense?(coords: Callback.ItemUseCoordinates, item: ItemStack, region: WorldRegion): void;
+    /**
+     * This method is called when the item was dispensed.
+     * @param coords full coords object, where the main coords are the position of the dispenser block,
+     * `relative` ones are the position of the block to which the dispenser is pointed,
+     * and `vec` are the coords for the item to be dropped at
+     * @param item item that was dispensed
+     * @param region BlockSource object
+     * @param slot numeric id of the slot from which the item was dispensed
+     */
+    onDispense?(coords: Callback.ItemUseCoordinates, item: ItemStack, region: WorldRegion, slot: number): void;
 }
 /**
  * Item functions
@@ -942,7 +965,7 @@ interface BlockItemBehavior {
 interface ItemBehavior extends BlockItemBehavior {
     /**
      * This method is called to override texture for the item icon.
-     * @param item item stack that icon is being overriden.
+     * @param item item stack information.
      * @param isModUi whether icon override is working in mod ui or in vanilla one
      * @returns texture data which will be used for the item icon.
      */

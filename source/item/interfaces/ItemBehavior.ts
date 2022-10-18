@@ -6,7 +6,7 @@
 interface ItemBehavior extends BlockItemBehavior {
 	/**
 	 * This method is called to override texture for the item icon.
-	 * @param item item stack that icon is being overriden.
+	 * @param item item stack information.
      * @param isModUi whether icon override is working in mod ui or in vanilla one
 	 * @returns texture data which will be used for the item icon.
 	 */

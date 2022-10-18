@@ -184,9 +184,9 @@ namespace ItemRegistry {
 			});
 		}
 		if ('onDispense' in itemFuncs) {
-			Item.registerDispenseFunction(numericID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, blockSource: BlockSource) {
+			Item.registerDispenseFunction(numericID, function(coords: Callback.ItemUseCoordinates, item: ItemInstance, blockSource: BlockSource, slot: number) {
 				const region = new WorldRegion(blockSource);
-				itemFuncs.onDispense(coords, new ItemStack(item), region);
+				itemFuncs.onDispense(coords, new ItemStack(item), region, slot);
 			});
 		}
 	}

@@ -1,5 +1,5 @@
 /**
- * Object that represents common block properties.
+ * Object representing common block properties.
  */
 interface BlockType {
 	/**

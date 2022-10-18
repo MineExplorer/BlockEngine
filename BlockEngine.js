@@ -2465,9 +2465,9 @@ var ItemRegistry;
             });
         }
         if ('onDispense' in itemFuncs) {
-            Item.registerDispenseFunction(numericID, function (coords, item, blockSource) {
+            Item.registerDispenseFunction(numericID, function (coords, item, blockSource, slot) {
                 var region = new WorldRegion(blockSource);
-                itemFuncs.onDispense(coords, new ItemStack(item), region);
+                itemFuncs.onDispense(coords, new ItemStack(item), region, slot);
             });
         }
     }
