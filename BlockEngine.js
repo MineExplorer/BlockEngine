@@ -1033,13 +1033,16 @@ var BlockModeler;
     }
     BlockModeler.setInventoryModel = setInventoryModel;
 })(BlockModeler || (BlockModeler = {}));
-/// <reference path="../BlockType.ts" />
-/// <reference path="../BlockBehavior.ts" />
+/// <reference path="../interfaces/BlockType.ts" />
+/// <reference path="../interfaces/BlockBehavior.ts" />
 var BlockBase = /** @class */ (function () {
     function BlockBase(stringID, blockType) {
         if (blockType === void 0) { blockType = {}; }
         this.variations = [];
         this.shapes = {};
+        /**
+         * Flag that defines whether block for this instance was defined or not.
+         */
         this.isDefined = false;
         this.miningLevel = 0;
         this.stringID = stringID;
@@ -1111,8 +1114,7 @@ var BlockBase = /** @class */ (function () {
         BlockRegistry.setBlockMaterial(this.id, material, level);
     };
     /**
-     * Sets block box shape
-     * @param id block numeric id
+     * Sets block box shape.
      * @params x1, y1, z1 position of block lower corner (0, 0, 0 for solid block)
      * @params x2, y2, z2 position of block upper conner (1, 1, 1 for solid block)
      * @param data sets shape for one block variation if specified and for all variations otherwise
@@ -1122,7 +1124,7 @@ var BlockBase = /** @class */ (function () {
         this.shapes[data] = [x1, y1, z1, x2, y2, z2];
     };
     /**
-     * Sets the block type of another block, which allows to inherit some of its properties
+     * Sets the block type of another block, which allows to inherit some of its properties.
      * @param baseBlock id of the block to inherit type
      */
     BlockBase.prototype.setBaseBlock = function (baseBlock) {
@@ -1136,6 +1138,7 @@ var BlockBase = /** @class */ (function () {
         this.blockType.solid = isSolid;
     };
     /**
+     * Sets rendering of the block faces.
      * @param renderAllFaces If true, all block faces are rendered, otherwise back faces are not
      * rendered (for optimization purposes). Default is false
      */
@@ -1202,7 +1205,7 @@ var BlockBase = /** @class */ (function () {
         this.blockType.sound = sound;
     };
     /**
-     * Sets block color when displayed on the vanilla maps
+     * Sets block color when displayed on the vanilla maps.
      * @param color map color of the block
      */
     BlockBase.prototype.setMapColor = function (color) {
@@ -1216,7 +1219,7 @@ var BlockBase = /** @class */ (function () {
         this.blockType.colorSource = colorSource;
     };
     /**
-     * Sets item creative category
+     * Sets item creative category.
      * @param category item category, should be integer from 1 to 4.
      */
     BlockBase.prototype.setCategory = function (category) {
@@ -1379,8 +1382,8 @@ var BlockDoubleSlab = /** @class */ (function (_super) {
     };
     return BlockDoubleSlab;
 }(BlockBase));
-/// <reference path="./BlockType.ts" />
-/// <reference path="./BlockBehavior.ts" />
+/// <reference path="./interfaces/BlockType.ts" />
+/// <reference path="./interfaces/BlockBehavior.ts" />
 /// <reference path="./type/BlockBase.ts" />
 /// <reference path="./type/BlockRotative.ts" />
 /// <reference path="./type/BlockStairs.ts" />
@@ -1495,13 +1498,19 @@ var BlockRegistry;
     }
     BlockRegistry.convertBlockTypeToSpecialType = convertBlockTypeToSpecialType;
     /**
-     * @returns instance of block class if it exists
+     * @param blockID block numeric or string id
+     * @returns instance of block class if it exists.
      */
     function getInstanceOf(blockID) {
         var numericID = Block.getNumericId(blockID);
         return blocks[numericID] || null;
     }
     BlockRegistry.getInstanceOf = getInstanceOf;
+    /**
+     * Registers instance of BlockBase class and creates block for it.
+     * @param block instance of BlockBase class
+     * @returns the same BlockBase instance with `isDefined` flag set to true.
+     */
     function registerBlock(block) {
         block.createBlock();
         registerBlockFuncs(block.id, block);
@@ -1578,7 +1587,8 @@ var BlockRegistry;
     }
     BlockRegistry.registerBlockFuncs = registerBlockFuncs;
     /**
-     * Sets destroy time for the block with specified id
+     * Sets destroy time for the block with specified id.
+     * @param blockID block numeric or string id
      * @param time block destroy time
      */
     function setDestroyTime(blockID, time) {
@@ -1586,7 +1596,8 @@ var BlockRegistry;
     }
     BlockRegistry.setDestroyTime = setDestroyTime;
     /**
-     * Sets the block type of another block, which allows to inherit some of its properties
+     * Sets the block type of another block, which allows to inherit some of its properties.
+     * @param blockID block numeric or string id
      * @param baseBlock id of the block to inherit type
      */
     function setBaseBlock(blockID, baseBlock) {
@@ -1595,6 +1606,7 @@ var BlockRegistry;
     BlockRegistry.setBaseBlock = setBaseBlock;
     /**
      * Sets block to be transparent or opaque.
+     * @param blockID block numeric or string id
      * @param isSolid if true, sets block to be opaque.
      */
     function setSolid(blockID, isSolid) {
@@ -1602,6 +1614,8 @@ var BlockRegistry;
     }
     BlockRegistry.setSolid = setSolid;
     /**
+     * Sets rendering of the block faces.
+     * @param blockID block numeric or string id
      * @param renderAllFaces If true, all block faces are rendered, otherwise back faces are not
      * rendered (for optimization purposes). Default is false
      */
@@ -1611,6 +1625,7 @@ var BlockRegistry;
     BlockRegistry.setRenderAllFaces = setRenderAllFaces;
     /**
      * Sets render type of the block.
+     * @param blockID block numeric or string id
      * @param renderType default is 0 (full block), use other values to change block's model
      */
     function setRenderType(blockID, renderType) {
@@ -1619,6 +1634,7 @@ var BlockRegistry;
     BlockRegistry.setRenderType = setRenderType;
     /**
      * Specifies the layer that is used to render the block.
+     * @param blockID block numeric or string id
      * @param renderLayer default is 4
      */
     function setRenderLayer(blockID, renderLayer) {
@@ -1627,6 +1643,7 @@ var BlockRegistry;
     BlockRegistry.setRenderLayer = setRenderLayer;
     /**
      * Sets level of the light emitted by the block.
+     * @param blockID block numeric or string id
      * @param lightLevel value from 0 (no light) to 15
      */
     function setLightLevel(blockID, lightLevel) {
@@ -1635,6 +1652,7 @@ var BlockRegistry;
     BlockRegistry.setLightLevel = setLightLevel;
     /**
      * Specifies how opaque block is.
+     * @param blockID block numeric or string id
      * @param lightOpacity Value from 0 to 15 which will be substracted
      * from the light level when the light passes through the block
      */
@@ -1644,6 +1662,7 @@ var BlockRegistry;
     BlockRegistry.setLightOpacity = setLightOpacity;
     /**
      * Specifies how block resists to the explosions.
+     * @param blockID block numeric or string id
      * @param resistance integer value, default is 3
      */
     function setExplosionResistance(blockID, resistance) {
@@ -1654,6 +1673,7 @@ var BlockRegistry;
      * Sets block friction. It specifies how player walks on the block.
      * The higher the friction is, the more difficult it is to change speed
      * and direction.
+     * @param blockID block numeric or string id
      * @param friction float value, default is 0.6
      */
     function setFriction(blockID, friction) {
@@ -1662,6 +1682,7 @@ var BlockRegistry;
     BlockRegistry.setFriction = setFriction;
     /**
      * Specifies rendering of shadows on the block.
+     * @param blockID block numeric or string id
      * @param translucency float value from 0 (no shadows) to 1
      */
     function setTranslucency(blockID, translucency) {
@@ -1670,6 +1691,7 @@ var BlockRegistry;
     BlockRegistry.setTranslucency = setTranslucency;
     /**
      * Sets sound type of the block.
+     * @param blockID block numeric or string id
      * @param sound block sound type
      */
     function setSoundType(blockID, sound) {
@@ -1677,7 +1699,8 @@ var BlockRegistry;
     }
     BlockRegistry.setSoundType = setSoundType;
     /**
-     * Sets block color when displayed on the vanilla maps
+     * Sets block color when displayed on the vanilla maps.
+     * @param blockID block numeric or string id
      * @param color map color of the block
      */
     function setMapColor(blockID, color) {
@@ -1686,6 +1709,7 @@ var BlockRegistry;
     BlockRegistry.setMapColor = setMapColor;
     /**
      * Makes block use biome color when displayed on the vanilla maps.
+     * @param blockID block numeric or string id
      * @param color block color source
      */
     function setBlockColorSource(blockID, color) {
@@ -1695,8 +1719,8 @@ var BlockRegistry;
     /**
      * Registers block material and digging level. If you are registering
      * block with 'stone' material ensure that its block type has baseBlock
-     * id 1 to be correctly destroyed by pickaxes
-     * @param nameID block numeric or string id
+     * id 1 to be correctly destroyed by pickaxes.
+     * @param blockID block numeric or string id
      * @param material material name
      * @param level block's digging level
      */

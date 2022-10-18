@@ -3,7 +3,7 @@
 class BlockRotative extends BlockBase {
 	hasVerticalFacings: boolean;
 
-	constructor(stringID: string, blockType?: string | Block.SpecialType, hasVerticalFacings: boolean = false) {
+	constructor(stringID: string, blockType?: string | BlockType, hasVerticalFacings: boolean = false) {
 		super(stringID, blockType);
 		this.hasVerticalFacings = hasVerticalFacings;
 	}

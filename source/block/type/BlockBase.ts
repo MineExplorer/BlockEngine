@@ -1,5 +1,5 @@
-/// <reference path="../BlockType.ts" />
-/// <reference path="../BlockBehavior.ts" />
+/// <reference path="../interfaces/BlockType.ts" />
+/// <reference path="../interfaces/BlockBehavior.ts" />
 
 class BlockBase
 implements BlockBehavior {
@@ -9,6 +9,9 @@ implements BlockBehavior {
 	variations: Array<Block.BlockVariation> = [];
 	blockType: BlockType;
 	shapes: {[key: number]: BlockModeler.BoxVertexes} = {};
+	/**
+	 * Flag that defines whether block for this instance was defined or not.
+	 */
 	isDefined: boolean = false;
 	blockMaterial: string;
 	miningLevel: number = 0;
@@ -86,8 +89,7 @@ implements BlockBehavior {
 	}
 
 	/**
-	 * Sets block box shape
-	 * @param id block numeric id
+	 * Sets block box shape.
 	 * @params x1, y1, z1 position of block lower corner (0, 0, 0 for solid block)
 	 * @params x2, y2, z2 position of block upper conner (1, 1, 1 for solid block)
 	 * @param data sets shape for one block variation if specified and for all variations otherwise
@@ -97,7 +99,7 @@ implements BlockBehavior {
 	}
 
 	/**
-	 * Sets the block type of another block, which allows to inherit some of its properties
+	 * Sets the block type of another block, which allows to inherit some of its properties.
 	 * @param baseBlock id of the block to inherit type
 	 */
 	setBaseBlock(baseBlock: number): void {
@@ -113,6 +115,7 @@ implements BlockBehavior {
 	}
 
 	/**
+	 * Sets rendering of the block faces.
 	 * @param renderAllFaces If true, all block faces are rendered, otherwise back faces are not
 	 * rendered (for optimization purposes). Default is false
 	 */
@@ -188,7 +191,7 @@ implements BlockBehavior {
 	}
 
 	/**
-	 * Sets block color when displayed on the vanilla maps
+	 * Sets block color when displayed on the vanilla maps.
 	 * @param color map color of the block
 	 */
 	setMapColor(color: number): void {
@@ -204,7 +207,7 @@ implements BlockBehavior {
 	}
 
 	/**
-     * Sets item creative category
+     * Sets item creative category.
 	 * @param category item category, should be integer from 1 to 4.
 	 */
 	setCategory(category: number): void {

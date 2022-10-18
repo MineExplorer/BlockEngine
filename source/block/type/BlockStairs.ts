@@ -1,7 +1,7 @@
 /// <reference path="./BlockBase.ts" />
 
 class BlockStairs extends BlockBase {
-	constructor(stringID: string, defineData: Block.BlockVariation, blockType?: string | Block.SpecialType) {
+	constructor(stringID: string, defineData: Block.BlockVariation, blockType?: string | BlockType) {
 		super(stringID, blockType);
 		this.variations.push(defineData);
 		BlockModeler.setStairsRenderModel(this.id);

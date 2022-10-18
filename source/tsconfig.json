@@ -26,7 +26,7 @@
 		"LiquidItemRegistry.ts",
 		"LiquidTank.ts",
 		"export.ts"
-	],
+, "block/interfaces/BlockType.ts", "block/interfaces/BlockBehavior.ts"	],
 	"files": [
 		"../declarations/core-engine.d.ts"
 	]

@@ -572,21 +572,6 @@ declare namespace EntityCustomData {
     function getField(entity: number, key: string): any;
     function putField(entity: number, key: string, value: any): void;
 }
-/**
- * Block functions
- */
-interface BlockBehavior {
-    getDrop?(coords: Callback.ItemUseCoordinates, block: Tile, diggingLevel: number, enchant: ToolAPI.EnchantData, item: ItemStack, region: BlockSource): ItemInstanceArray[];
-    onDestroy?(coords: Vector, block: Tile, region: BlockSource, player: number): void;
-    onBreak?(coords: Vector, block: Tile, region: BlockSource): void;
-    onPlace?(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number, region: BlockSource): Vector | void;
-    onNeighbourChange?(coords: Vector, block: Tile, changeCoords: Vector, region: BlockSource): void;
-    onEntityInside?(coords: Vector, block: Tile, entity: number): void;
-    onEntityStepOn?(coords: Vector, block: Tile, entity: number): void;
-    onRandomTick?(x: number, y: number, z: number, block: Tile, region: BlockSource): void;
-    onAnimateTick?(x: number, y: number, z: number, id: number, data: number): void;
-    onClick?(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number): void;
-}
 declare namespace BlockModeler {
     type BoxVertexes = [number, number, number, number, number, number];
     function getRotatedBoxVertexes(box: BoxVertexes, rotation: number): BoxVertexes;
@@ -594,6 +579,9 @@ declare namespace BlockModeler {
     function createStairsRenderModel(id: number, startData: number, boxes: BoxVertexes[]): void;
     function setInventoryModel(blockID: number, model: RenderMesh | ICRender.Model | BlockRenderer.Model, data?: number): void;
 }
+/**
+ * Object that represents common block properties.
+ */
 interface BlockType {
     /**
      * Block type to inherit properties
@@ -667,6 +655,21 @@ interface BlockType {
      */
     sound?: Block.Sound;
 }
+/**
+ * Block functions
+ */
+interface BlockBehavior {
+    getDrop?(coords: Callback.ItemUseCoordinates, block: Tile, diggingLevel: number, enchant: ToolAPI.EnchantData, item: ItemStack, region: BlockSource): ItemInstanceArray[];
+    onDestroy?(coords: Vector, block: Tile, region: BlockSource, player: number): void;
+    onBreak?(coords: Vector, block: Tile, region: BlockSource): void;
+    onPlace?(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number, region: BlockSource): Vector | void;
+    onNeighbourChange?(coords: Vector, block: Tile, changeCoords: Vector, region: BlockSource): void;
+    onEntityInside?(coords: Vector, block: Tile, entity: number): void;
+    onEntityStepOn?(coords: Vector, block: Tile, entity: number): void;
+    onRandomTick?(x: number, y: number, z: number, block: Tile, region: BlockSource): void;
+    onAnimateTick?(x: number, y: number, z: number, id: number, data: number): void;
+    onClick?(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number): void;
+}
 declare class BlockBase implements BlockBehavior {
     readonly stringID: string;
     readonly id: number;
@@ -676,6 +679,9 @@ declare class BlockBase implements BlockBehavior {
     shapes: {
         [key: number]: BlockModeler.BoxVertexes;
     };
+    /**
+     * Flag that defines whether block for this instance was defined or not.
+     */
     isDefined: boolean;
     blockMaterial: string;
     miningLevel: number;
@@ -687,15 +693,14 @@ declare class BlockBase implements BlockBehavior {
     setDestroyTime(destroyTime: number): void;
     setBlockMaterial(material: string, level?: number): void;
     /**
-     * Sets block box shape
-     * @param id block numeric id
+     * Sets block box shape.
      * @params x1, y1, z1 position of block lower corner (0, 0, 0 for solid block)
      * @params x2, y2, z2 position of block upper conner (1, 1, 1 for solid block)
      * @param data sets shape for one block variation if specified and for all variations otherwise
      */
     setShape(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number, data?: number): void;
     /**
-     * Sets the block type of another block, which allows to inherit some of its properties
+     * Sets the block type of another block, which allows to inherit some of its properties.
      * @param baseBlock id of the block to inherit type
      */
     setBaseBlock(baseBlock: number): void;
@@ -705,6 +710,7 @@ declare class BlockBase implements BlockBehavior {
      */
     setSolid(isSolid: boolean): void;
     /**
+     * Sets rendering of the block faces.
      * @param renderAllFaces If true, all block faces are rendered, otherwise back faces are not
      * rendered (for optimization purposes). Default is false
      */
@@ -753,7 +759,7 @@ declare class BlockBase implements BlockBehavior {
      */
     setSoundType(sound: Block.Sound): void;
     /**
-     * Sets block color when displayed on the vanilla maps
+     * Sets block color when displayed on the vanilla maps.
      * @param color map color of the block
      */
     setMapColor(color: number): void;
@@ -763,7 +769,7 @@ declare class BlockBase implements BlockBehavior {
      */
     setBlockColorSource(colorSource: Block.ColorSource): void;
     /**
-     * Sets item creative category
+     * Sets item creative category.
      * @param category item category, should be integer from 1 to 4.
      */
     setCategory(category: number): void;
@@ -772,13 +778,13 @@ declare class BlockBase implements BlockBehavior {
 }
 declare class BlockRotative extends BlockBase {
     hasVerticalFacings: boolean;
-    constructor(stringID: string, blockType?: string | Block.SpecialType, hasVerticalFacings?: boolean);
+    constructor(stringID: string, blockType?: string | BlockType, hasVerticalFacings?: boolean);
     addVariation(name: string, texture: [string, number][], inCreative?: boolean): void;
     createBlock(): void;
     onPlace(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number, region: BlockSource): Vector;
 }
 declare class BlockStairs extends BlockBase {
-    constructor(stringID: string, defineData: Block.BlockVariation, blockType?: string | Block.SpecialType);
+    constructor(stringID: string, defineData: Block.BlockVariation, blockType?: string | BlockType);
     createItemModel(): void;
     onPlace(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number, region: BlockSource): Vector;
 }
@@ -797,62 +803,78 @@ declare class BlockDoubleSlab extends BlockBase {
 declare const NativeBlock: any;
 declare namespace BlockRegistry {
     function createBlock(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void;
-    function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType, hasVerticalFacings?: boolean): void;
-    function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): void;
+    function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType, hasVerticalFacings?: boolean): void;
+    function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void;
     function createSlabs(slabID: string, doubleSlabID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void;
     function getBlockType(name: string): Nullable<BlockType>;
     function extendBlockType(type: BlockType): void;
     function createBlockType(name: string, type: BlockType, isNative?: boolean): void;
     function convertBlockTypeToSpecialType(properites: BlockType): Block.SpecialType;
     /**
-     * @returns instance of block class if it exists
+     * @param blockID block numeric or string id
+     * @returns instance of block class if it exists.
      */
     function getInstanceOf(blockID: string | number): Nullable<BlockBase>;
+    /**
+     * Registers instance of BlockBase class and creates block for it.
+     * @param block instance of BlockBase class
+     * @returns the same BlockBase instance with `isDefined` flag set to true.
+     */
     function registerBlock(block: BlockBase): BlockBase;
     function registerBlockFuncs(blockID: string | number, blockFuncs: BlockBehavior | BlockItemBehavior): void;
     /**
-     * Sets destroy time for the block with specified id
+     * Sets destroy time for the block with specified id.
+     * @param blockID block numeric or string id
      * @param time block destroy time
      */
     function setDestroyTime(blockID: string | number, time: number): void;
     /**
-     * Sets the block type of another block, which allows to inherit some of its properties
+     * Sets the block type of another block, which allows to inherit some of its properties.
+     * @param blockID block numeric or string id
      * @param baseBlock id of the block to inherit type
      */
     function setBaseBlock(blockID: string | number, baseBlock: number): void;
     /**
      * Sets block to be transparent or opaque.
+     * @param blockID block numeric or string id
      * @param isSolid if true, sets block to be opaque.
      */
     function setSolid(blockID: string | number, isSolid: boolean): void;
     /**
+     * Sets rendering of the block faces.
+     * @param blockID block numeric or string id
      * @param renderAllFaces If true, all block faces are rendered, otherwise back faces are not
      * rendered (for optimization purposes). Default is false
      */
     function setRenderAllFaces(blockID: string | number, renderAllFaces: boolean): void;
     /**
      * Sets render type of the block.
+     * @param blockID block numeric or string id
      * @param renderType default is 0 (full block), use other values to change block's model
      */
     function setRenderType(blockID: string | number, renderType: number): void;
     /**
      * Specifies the layer that is used to render the block.
+     * @param blockID block numeric or string id
      * @param renderLayer default is 4
      */
     function setRenderLayer(blockID: string | number, renderLayer: number): void;
     /**
      * Sets level of the light emitted by the block.
+     * @param blockID block numeric or string id
      * @param lightLevel value from 0 (no light) to 15
      */
     function setLightLevel(blockID: string | number, lightLevel: number): void;
     /**
      * Specifies how opaque block is.
+     * @param blockID block numeric or string id
      * @param lightOpacity Value from 0 to 15 which will be substracted
      * from the light level when the light passes through the block
      */
     function setLightOpacity(blockID: string | number, lightOpacity: number): void;
     /**
      * Specifies how block resists to the explosions.
+     * @param blockID block numeric or string id
      * @param resistance integer value, default is 3
      */
     function setExplosionResistance(blockID: string | number, resistance: number): void;
@@ -860,34 +882,39 @@ declare namespace BlockRegistry {
      * Sets block friction. It specifies how player walks on the block.
      * The higher the friction is, the more difficult it is to change speed
      * and direction.
+     * @param blockID block numeric or string id
      * @param friction float value, default is 0.6
      */
     function setFriction(blockID: string | number, friction: number): void;
     /**
      * Specifies rendering of shadows on the block.
+     * @param blockID block numeric or string id
      * @param translucency float value from 0 (no shadows) to 1
      */
     function setTranslucency(blockID: string | number, translucency: number): void;
     /**
      * Sets sound type of the block.
+     * @param blockID block numeric or string id
      * @param sound block sound type
      */
     function setSoundType(blockID: string | number, sound: Block.Sound): void;
     /**
-     * Sets block color when displayed on the vanilla maps
+     * Sets block color when displayed on the vanilla maps.
+     * @param blockID block numeric or string id
      * @param color map color of the block
      */
     function setMapColor(blockID: string | number, color: number): void;
     /**
      * Makes block use biome color when displayed on the vanilla maps.
+     * @param blockID block numeric or string id
      * @param color block color source
      */
     function setBlockColorSource(blockID: string | number, color: Block.ColorSource): void;
     /**
      * Registers block material and digging level. If you are registering
      * block with 'stone' material ensure that its block type has baseBlock
-     * id 1 to be correctly destroyed by pickaxes
-     * @param nameID block numeric or string id
+     * id 1 to be correctly destroyed by pickaxes.
+     * @param blockID block numeric or string id
      * @param material material name
      * @param level block's digging level
      */

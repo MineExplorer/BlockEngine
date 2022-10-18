@@ -1,5 +1,5 @@
-/// <reference path="./BlockType.ts" />
-/// <reference path="./BlockBehavior.ts" />
+/// <reference path="./interfaces/BlockType.ts" />
+/// <reference path="./interfaces/BlockBehavior.ts" />
 /// <reference path="./type/BlockBase.ts" />
 /// <reference path="./type/BlockRotative.ts" />
 /// <reference path="./type/BlockStairs.ts" />
@@ -21,7 +21,7 @@ namespace BlockRegistry {
 		registerBlock(block);
 	}
 
-    export function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType, hasVerticalFacings?: boolean): void {
+    export function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType, hasVerticalFacings?: boolean): void {
 		const block = new BlockRotative(stringID, blockType, hasVerticalFacings);
 		for (let variation of defineData) {
 			block.addVariation(variation.name, variation.texture, variation.inCreative);
@@ -29,7 +29,7 @@ namespace BlockRegistry {
 		registerBlock(block);
     }
 
-	export function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): void {
+	export function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void {
 		registerBlock(new BlockStairs(stringID, defineData[0], blockType));
 	}
 
@@ -116,13 +116,19 @@ namespace BlockRegistry {
 	}
 
 	/**
-	 * @returns instance of block class if it exists
+	 * @param blockID block numeric or string id
+	 * @returns instance of block class if it exists.
 	 */
 	export function getInstanceOf(blockID: string | number): Nullable<BlockBase> {
 		const numericID = Block.getNumericId(blockID);
 		return blocks[numericID] || null;
 	}
 
+	/**
+	 * Registers instance of BlockBase class and creates block for it.
+	 * @param block instance of BlockBase class
+	 * @returns the same BlockBase instance with `isDefined` flag set to true.
+	 */
 	export function registerBlock(block: BlockBase): BlockBase {
 		block.createBlock();
 		registerBlockFuncs(block.id, block);
@@ -200,7 +206,8 @@ namespace BlockRegistry {
 	}
 
 	/**
-	 * Sets destroy time for the block with specified id
+	 * Sets destroy time for the block with specified id.
+	 * @param blockID block numeric or string id
 	 * @param time block destroy time
 	 */
 	export function setDestroyTime(blockID: string | number, time: number): void {
@@ -208,7 +215,8 @@ namespace BlockRegistry {
 	}
 
 	/**
-	 * Sets the block type of another block, which allows to inherit some of its properties
+	 * Sets the block type of another block, which allows to inherit some of its properties.
+	 * @param blockID block numeric or string id
 	 * @param baseBlock id of the block to inherit type
 	 */
 	export function setBaseBlock(blockID: string | number, baseBlock: number): void {
@@ -217,6 +225,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Sets block to be transparent or opaque.
+	 * @param blockID block numeric or string id
 	 * @param isSolid if true, sets block to be opaque.
 	 */
 	export function setSolid(blockID: string | number, isSolid: boolean): void {
@@ -224,6 +233,8 @@ namespace BlockRegistry {
 	}
 
 	/**
+	 * Sets rendering of the block faces.
+	 * @param blockID block numeric or string id
 	 * @param renderAllFaces If true, all block faces are rendered, otherwise back faces are not
 	 * rendered (for optimization purposes). Default is false
 	 */
@@ -233,6 +244,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Sets render type of the block.
+	 * @param blockID block numeric or string id
 	 * @param renderType default is 0 (full block), use other values to change block's model
 	 */
 	export function setRenderType(blockID: string | number, renderType: number): void {
@@ -241,6 +253,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Specifies the layer that is used to render the block.
+	 * @param blockID block numeric or string id
 	 * @param renderLayer default is 4
 	 */
 	export function setRenderLayer(blockID: string | number, renderLayer: number): void {
@@ -249,6 +262,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Sets level of the light emitted by the block.
+	 * @param blockID block numeric or string id
 	 * @param lightLevel value from 0 (no light) to 15
 	 */
 	export function setLightLevel(blockID: string | number, lightLevel: number): void {
@@ -257,6 +271,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Specifies how opaque block is.
+	 * @param blockID block numeric or string id
 	 * @param lightOpacity Value from 0 to 15 which will be substracted
 	 * from the light level when the light passes through the block
 	 */
@@ -266,6 +281,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Specifies how block resists to the explosions.
+	 * @param blockID block numeric or string id
 	 * @param resistance integer value, default is 3
 	 */
 	export function setExplosionResistance(blockID: string | number, resistance: number): void {
@@ -276,6 +292,7 @@ namespace BlockRegistry {
 	 * Sets block friction. It specifies how player walks on the block.
 	 * The higher the friction is, the more difficult it is to change speed
 	 * and direction.
+	 * @param blockID block numeric or string id
 	 * @param friction float value, default is 0.6
 	 */
 	export function setFriction(blockID: string | number, friction: number): void {
@@ -284,6 +301,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Specifies rendering of shadows on the block.
+	 * @param blockID block numeric or string id
 	 * @param translucency float value from 0 (no shadows) to 1
 	 */
 	export function setTranslucency(blockID: string | number, translucency: number): void {
@@ -292,6 +310,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Sets sound type of the block.
+	 * @param blockID block numeric or string id
 	 * @param sound block sound type
 	 */
 	export function setSoundType(blockID: string | number, sound: Block.Sound): void {
@@ -299,7 +318,8 @@ namespace BlockRegistry {
 	}
 
 	/**
-	 * Sets block color when displayed on the vanilla maps
+	 * Sets block color when displayed on the vanilla maps.
+	 * @param blockID block numeric or string id
 	 * @param color map color of the block
 	 */
 	export function setMapColor(blockID: string | number, color: number): void {
@@ -308,6 +328,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Makes block use biome color when displayed on the vanilla maps.
+	 * @param blockID block numeric or string id
 	 * @param color block color source
 	 */
 	export function setBlockColorSource(blockID: string | number, color: Block.ColorSource): void {
@@ -317,8 +338,8 @@ namespace BlockRegistry {
 	/**
 	 * Registers block material and digging level. If you are registering
 	 * block with 'stone' material ensure that its block type has baseBlock
-	 * id 1 to be correctly destroyed by pickaxes
-	 * @param nameID block numeric or string id
+	 * id 1 to be correctly destroyed by pickaxes.
+	 * @param blockID block numeric or string id
 	 * @param material material name
 	 * @param level block's digging level
 	 */

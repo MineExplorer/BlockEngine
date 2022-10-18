@@ -1,3 +1,6 @@
+/**
+ * Object that represents common block properties.
+ */
 interface BlockType {
 	/**
 	 * Block type to inherit properties
