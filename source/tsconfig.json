@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "ES5",
 		"lib": ["ESNext"],
-		"outFile": "../BlockEngine.js",
+		"outFile": "../build/BlockEngine.js",
 		"allowJs": false,
 		"downlevelIteration": false,
 		"experimentalDecorators": true,
