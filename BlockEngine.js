@@ -595,11 +595,11 @@ var WorldRegion = /** @class */ (function () {
         }
         return this.dropItem(x + .5, y + .5, z + .5, id, count, data, extra);
     };
-    WorldRegion.prototype.spawnEntity = function (x, y, z, namespace, type, init_data) {
+    WorldRegion.prototype.spawnEntity = function (x, y, z, namespace, type, spawnEvent) {
         if (type === undefined) {
             return this.blockSource.spawnEntity(x, y, z, namespace);
         }
-        return this.blockSource.spawnEntity(x, y, z, namespace, type, init_data);
+        return this.blockSource.spawnEntity(x, y, z, namespace, type, spawnEvent);
     };
     WorldRegion.prototype.spawnExpOrbs = function (x, y, z, amount) {
         if (typeof x == "object") {

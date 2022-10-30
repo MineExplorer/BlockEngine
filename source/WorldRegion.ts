@@ -478,16 +478,17 @@ class WorldRegion {
 	 */
 	spawnEntity(x: number, y: number, z: number, type: number | string): number;
 	/**
-	 * Spawns entity of given type on coords with specified initial data.
+	 * Spawns entity of given type on coords with specified spawn event.
 	 * @param namespace namespace of the entity type: 'minecraft' or from add-on.
 	 * @param type entity type name
+	 * @param spawnEvent built-in event for entity spawn. Use 'minecraft:entity_born' to spawn baby mob.
 	 */
-	spawnEntity(x: number, y: number, z: number, namespace: string, type: string, init_data: string): number;
-	spawnEntity(x: number, y: number, z: number, namespace: string, type?: string, init_data?: string): number {
+	spawnEntity(x: number, y: number, z: number, namespace: string, type: string, spawnEvent: string): number;
+	spawnEntity(x: number, y: number, z: number, namespace: string, type?: string, spawnEvent?: string): number {
 		if (type === undefined) {
 			return this.blockSource.spawnEntity(x, y, z, namespace);
 		}
-		return this.blockSource.spawnEntity(x, y, z, namespace, type, init_data);
+		return this.blockSource.spawnEntity(x, y, z, namespace, type, spawnEvent);
 	}
 
 	/**

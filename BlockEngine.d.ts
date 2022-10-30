@@ -381,11 +381,12 @@ declare class WorldRegion {
      */
     spawnEntity(x: number, y: number, z: number, type: number | string): number;
     /**
-     * Spawns entity of given type on coords with specified initial data.
+     * Spawns entity of given type on coords with specified spawn event.
      * @param namespace namespace of the entity type: 'minecraft' or from add-on.
      * @param type entity type name
+     * @param spawnEvent built-in event for entity spawn. Use 'minecraft:entity_born' to spawn baby mob.
      */
-    spawnEntity(x: number, y: number, z: number, namespace: string, type: string, init_data: string): number;
+    spawnEntity(x: number, y: number, z: number, namespace: string, type: string, spawnEvent: string): number;
     /**
      * Spawns experience orbs on coords.
      * @param amount experience amount
