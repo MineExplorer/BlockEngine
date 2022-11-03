@@ -19,11 +19,11 @@ Item descriptor is an object which specifies all item properties. The module all
 The library also adds vanilla tool types such as swords, pickaxes, shovels, axes, hoes and shears defined in **ToolType** namespace.
 
 Another way to create items is item classes. You can specify all item properties and functions in a class derived from one of the base classes added by the library.
-Base classes includes **ItemCommon**, **ItemFood**, **ItemThrowable**, **ItemArmor** and **ItemTool**. It may seem complicated, but very useful to defining new item types or advanced items such as tools.
+Base item classes include **ItemCommon**, **ItemFood**, **ItemThrowable**, **ItemArmor** and **ItemTool**. It may seem complicated, but very useful to defining new item types or advanced items such as tools.
 
 ### BlockRegistry module
 **BlockRegistry** is a block registration module. You can add blocks in similar way to Core Engine API, but special types system replaced with block types.
-**Block types** have correct JavaScript naming for properties and can inherit properties from another block type! Also module adds some default block types such as: stairs, slabs and blocks with rotation on 6 sides. You can define block from block class similar to ItemRegistry module as well. Block base classes includes **BlockBase** and **BlockRotative** and some other classes for built-in types.
+**Block types** have correct JavaScript naming for properties and can inherit properties from another block type! Also module adds some default block types such as: stairs, slabs and blocks with rotation on 6 sides. You can define block from block class similar to ItemRegistry module as well. Base block classes include **BlockBase** and **BlockRotative** and some other classes for built-in types.
 
 ### TileEntityBase class
 This is must have thing if you want to create tile entities in multiplayer mod. Original tile entity prototypes have complicated and inconvenient structure for adding client/server side functions and events, when with decorators from *BlockEngine.Decorators* namespace you can just mark methods as container or network events or client side functions, and they will be inherited in derived classes.
@@ -47,7 +47,7 @@ The library adds several classes to work with ingame objects or data.
 
 ### Support for both Minecraft 1.11 and 1.16
 The library is aimed to support both modern and legacy Inner Core versions and provides tools to add reverse compatibility in mods.
-*WorldRegion* class has reverse compatibility for new *BlockSource* methods. It reproduces theit functionality on legacy version or adds plugs if its not possible.
+*WorldRegion* class has reverse compatibility for new *BlockSource* methods. It reproduces their functionality on legacy version or adds plugs if it isn't possible.
 Some item ids were changed in new version of Minecraft. You can use **IDConverter** module to get numeric item id and data from new string id depending on the game version.
 
 ## Mods which uses BlockEngine library
