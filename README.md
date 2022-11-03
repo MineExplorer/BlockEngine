@@ -19,7 +19,7 @@ Item descriptor is an object which specifies all item properties. The module all
 The library also adds vanilla tool types such as swords, pickaxes, shovels, axes, hoes and shears defined in **ToolType** namespace.
 
 Another way to create items is item classes. You can specify all item properties and functions in a class derived from one of the base classes added by the library.
-Base item classes include **ItemCommon**, **ItemFood**, **ItemThrowable**, **ItemArmor** and **ItemTool**. It may seem complicated, but very useful to defining new item types or advanced items such as tools.
+Base item classes include **ItemCommon**, **ItemFood**, **ItemThrowable**, **ItemArmor** and **ItemTool**. It may seem complicated, but very useful to defining new item types or advanced items like tools.
 
 ### BlockRegistry module
 **BlockRegistry** is a block registration module. You can add blocks in similar way to Core Engine API, but special types system replaced with block types.
@@ -37,11 +37,11 @@ To replace it the library adds **LiquidTank** class. It stores only 1 liquid but
 ### Functional classes
 The library adds several classes to work with ingame objects or data.
 
-**WorldRegion** - wrapper for BlockSource java class. It adds new features such overloads for methods with vector coordinates as an argument or playing sounds in multiplayer.
+**WorldRegion** - wrapper for BlockSource java class. It has new features such as overloads for methods with vector coordinates as an argument or playing sounds in multiplayer.
 
-**PlayerEntity** - wrapper for PlayerActor java class. Adds some handful method overloads.
+**PlayerEntity** - wrapper for PlayerActor java class. Adds some helpful method overloads.
 
-**ItemStack** - class which implements *ItemInstance* interface and adds method to modify item stack. Note: any modification will not be applied before you reset inventory slot of the item.
+**ItemStack** - class which implements *ItemInstance* interface and can be used to modify item stack. Note: any modification will not be applied before you reset inventory slot of the item.
 
 **Vector3** - class to operate with 3-d vectors.
 
