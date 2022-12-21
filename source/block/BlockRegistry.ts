@@ -48,10 +48,25 @@ namespace BlockRegistry {
 		registerBlock(block);
     }
 
+	/**
+	 * Creates stairs using specified params
+	 * @param stringID string id of the block
+	 * @param defineData array containing one variation of the block (for similarity with other methods).
+	 * @param blockType BlockType object or block type name, if the type was previously registered.
+	 */
 	export function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void {
 		registerBlock(new BlockStairs(stringID, defineData[0], blockType));
 	}
 
+	/**
+	 * Creates slabs and its double slabs using specified params
+	 * @param slabID string id of the
+	 * @param doubleSlabID string id of the double slab
+	 * @param defineData array containing all variations of the block. Each 
+	 * variation corresponds to block data value, data values are assigned 
+	 * according to variations order.
+	 * @param blockType BlockType object or block type name, if the type was previously registered.
+	 */
 	export function createSlabs(slabID: string, doubleSlabID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType) {
 		const slab = new BlockSlab(slabID, blockType);
 		slab.variations = defineData;
@@ -214,7 +229,7 @@ namespace BlockRegistry {
 			});
 		}
 		if ('onEntityStepOn' in blockFuncs) {
-			Block.registerEntityInsideFunction(numericID, function(coords: Vector, block: Tile, entity: number) {
+			Block.registerEntityStepOnFunction(numericID, function(coords: Vector, block: Tile, entity: number) {
 				blockFuncs.onEntityStepOn(coords, block, entity);
 			});
 		}

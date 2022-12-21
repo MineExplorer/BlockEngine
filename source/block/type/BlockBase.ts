@@ -1,19 +1,35 @@
 /// <reference path="../interfaces/BlockType.ts" />
 /// <reference path="../interfaces/BlockBehavior.ts" />
 
-class BlockBase
-implements BlockBehavior {
+/**
+ * Base class for block
+ */
+class BlockBase implements BlockBehavior {
+	/** Block string id */
 	readonly stringID: string;
+
+	/** Block numeric id */
 	readonly id: number;
+
+	/** Item category */
 	category: number;
+
+	/** Array of block variations */
 	variations: Array<Block.BlockVariation> = [];
+
+	/** Block properties */
 	blockType: BlockType;
+
+	/** Shapes of block variations */
 	shapes: {[key: number]: BlockModeler.BoxVertexes} = {};
-	/**
-	 * Flag that defines whether block for this instance was defined or not.
-	 */
+
+	/** Flag that defines whether block for this instance was defined or not. */
 	isDefined: boolean = false;
+
+	/** Block material */
 	blockMaterial: string;
+	
+	/** Block mining level */
 	miningLevel: number = 0;
 
 	constructor(stringID: string, blockType: BlockType | string = {}) {
@@ -27,18 +43,25 @@ implements BlockBehavior {
 		this.blockType = blockType;
 	}
 
+	/**
+	 * Adds variation for the block.
+	 * @param name item name
+	 * @param texture block texture
+	 * @param inCreative true if should be added to creative inventory
+	 */
 	addVariation(name: string, texture: [string, number][], inCreative: boolean = false) {
 		this.variations.push({name: name, texture: texture, inCreative: inCreative});
 	}
 
+	/**
+	 * Registers block in game.
+	 */
 	createBlock(): void {
 		if (this.variations.length == 0) {
 			this.addVariation(this.stringID + ".name", [["__missing", 0]]);
 		}
-		let blockType = null;
-		if (this.blockType) {
-			blockType = BlockRegistry.convertBlockTypeToSpecialType(this.blockType);
-		}
+
+		const blockType = this.blockType ? BlockRegistry.convertBlockTypeToSpecialType(this.blockType) : null;
 
 		// remove duplicated items in creative
 		const duplicatedInstance = BlockRegistry.getInstanceOf(this.id);
@@ -78,10 +101,21 @@ implements BlockBehavior {
 		}
 	}
 
+	/**
+	 * Sets destroy time for the block.
+	 * @param destroyTime block destroy time
+	 */
 	setDestroyTime(destroyTime: number): void {
 		this.blockType.destroyTime = destroyTime;
 	}
 
+	/**
+	 * Registers block material and digging level. If you are registering
+	 * block with 'stone' material ensure that its block type has baseBlock
+	 * id 1 to be correctly destroyed by pickaxes.
+	 * @param material material name
+	 * @param level block digging level
+	 */
 	setBlockMaterial(material: string, level: number = 0): void {
 		this.blockMaterial = material;
 		this.miningLevel = level;
@@ -207,18 +241,26 @@ implements BlockBehavior {
 	}
 
 	/**
-     * Sets item creative category.
+     * Sets item category.
 	 * @param category item category, should be integer from 1 to 4.
 	 */
 	setCategory(category: number): void {
 		this.category = category;
 	}
 
+	/**
+	 * Sets item rarity.
+	 * @param rarity one of `EnumRarity` values
+	 */
 	setRarity(rarity: number): void {
 		ItemRegistry.setRarity(this.id, rarity);
 	}
 
-	registerTileEntity(prototype: TileEntity.TileEntityPrototype) {
+	/**
+	 * Registers TileEntity prototype for this block.
+	 * @param prototype TileEntity prototype
+	 */
+	registerTileEntity(prototype: TileEntity.TileEntityPrototype): void {
 		TileEntity.registerPrototype(this.id, prototype);
 	}
 }
