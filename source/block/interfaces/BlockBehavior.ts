@@ -1,7 +1,7 @@
 /**
  * Block functions
  */
-interface BlockBehavior {
+interface BlockBehavior extends BlockItemBehavior {
 	getDrop?(coords: Callback.ItemUseCoordinates, block: Tile, diggingLevel: number, enchant: ToolAPI.EnchantData, item: ItemStack, region: BlockSource): ItemInstanceArray[];
 	onDestroy?(coords: Vector, block: Tile, region: BlockSource, player: number): void;
 	onBreak?(coords: Vector, block: Tile, region: BlockSource): void;

@@ -9,10 +9,21 @@
 //@ts-ignore
 const NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
 
+/**
+ * Module for advanced block definition.
+ */
 namespace BlockRegistry {
 	const blocks = {};
 	const blockTypes = {};
 
+	/**
+	 * Creates new block using specified params.
+	 * @param stringID string id of the block.
+	 * @param defineData array containing all variations of the block. Each 
+	 * variation corresponds to block data value, data values are assigned 
+	 * according to variations order.
+	 * @param blockType BlockType object or block type name, if the type was previously registered.
+	 */
 	export function createBlock(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void {
 		const block = new BlockBase(stringID, blockType);
 		for (let variation of defineData) {
@@ -21,6 +32,14 @@ namespace BlockRegistry {
 		registerBlock(block);
 	}
 
+	/**
+	 * Creates new block with horizontal or all sides rotation.
+	 * @param stringID string id of the block
+	 * @param defineData array containing all variations of the block. Supports 2 variations,
+	 * each occupying 6 data values for rotation.
+	 * @param blockType BlockType object or block type name, if the type was previously registered.
+	 * @param hasVerticalFacings true if the block has vertical facings, false otherwise.
+	 */
     export function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType, hasVerticalFacings?: boolean): void {
 		const block = new BlockRotative(stringID, blockType, hasVerticalFacings);
 		for (let variation of defineData) {
@@ -49,10 +68,18 @@ namespace BlockRegistry {
 		registerBlock(doubleSlab);
 	}
 
+	/**
+	 * @param name block type name
+	 * @returns BlockType object by name
+	 */
 	export function getBlockType(name: string): Nullable<BlockType> {
 		return blockTypes[name] || null;
 	}
 
+	/**
+	 * Inherits default values from type specified in "extends" property.
+	 * @param type BlockType object
+	 */
 	export function extendBlockType(type: BlockType): void {
 		if (!type.extends) return;
 
@@ -64,6 +91,12 @@ namespace BlockRegistry {
 		}
 	}
 
+	/**
+	 * Registers block type in BlockEngine and as Block.SpecialType.
+	 * @param name block type name
+	 * @param type BlockType object
+	 * @param isNative if true doesn't create special type
+	 */
 	export function createBlockType(name: string, type: BlockType, isNative?: boolean): void {
 		extendBlockType(type);
 		blockTypes[name] = type;
@@ -72,6 +105,11 @@ namespace BlockRegistry {
 		}
 	}
 
+	/**
+	 * Converts block type to special type.
+	 * @param properites BlockType object
+	 * @returns block special type
+	 */
 	export function convertBlockTypeToSpecialType(properites: BlockType): Block.SpecialType {
 		const type: Block.SpecialType = {};
 		for (let key in properites) {
@@ -117,7 +155,7 @@ namespace BlockRegistry {
 
 	/**
 	 * @param blockID block numeric or string id
-	 * @returns instance of block class if it exists.
+	 * @returns instance of block class if it exists
 	 */
 	export function getInstanceOf(blockID: string | number): Nullable<BlockBase> {
 		const numericID = Block.getNumericId(blockID);
@@ -127,7 +165,7 @@ namespace BlockRegistry {
 	/**
 	 * Registers instance of BlockBase class and creates block for it.
 	 * @param block instance of BlockBase class
-	 * @returns the same BlockBase instance with `isDefined` flag set to true.
+	 * @returns the same BlockBase instance with `isDefined` flag set to true
 	 */
 	export function registerBlock(block: BlockBase): BlockBase {
 		block.createBlock();
@@ -136,7 +174,12 @@ namespace BlockRegistry {
 		return block;
 	}
 
-	export function registerBlockFuncs(blockID: string | number, blockFuncs: BlockBehavior | BlockItemBehavior): void {
+	/**
+	 * Registers all block functions.
+	 * @param blockID block numeric or string id
+	 * @param blockFuncs object containing block functions
+	 */
+	export function registerBlockFuncs(blockID: string | number, blockFuncs: BlockBehavior): void {
 		const numericID = Block.getNumericId(blockID);
 		if ('getDrop' in blockFuncs) {
 			Block.registerDropFunction(numericID, function(coords: Callback.ItemUseCoordinates, blockID: number, blockData: number, diggingLevel: number, enchant: ToolAPI.EnchantData, item: ItemInstance, region: BlockSource) {
@@ -347,6 +390,11 @@ namespace BlockRegistry {
 		ToolAPI.registerBlockMaterial(Block.getNumericId(blockID), material, level, material == "stone");
 	}
 
+	/**
+	 * @returns block side opposite to player rotation.
+	 * @param player player uid
+	 * @param hasVertical if true can return vertical sides as well
+	 */
 	export function getBlockRotation(player: number, hasVertical?: boolean): number {
 		const pitch = EntityGetPitch(player);
 		if (hasVertical) {
@@ -359,6 +407,12 @@ namespace BlockRegistry {
 		return rotation;
 	}
 
+	/**
+	 * @returns block place position for click coords in world.
+	 * @param coords click coords
+	 * @param block touched block
+	 * @param region BlockSource
+	 */
 	export function getPlacePosition(coords: Callback.ItemUseCoordinates, block: Tile, region: BlockSource): Vector {
 		if (World.canTileBeReplaced(block.id, block.data)) return coords;
 		const place = coords.relative;
@@ -367,6 +421,11 @@ namespace BlockRegistry {
 		return null;
 	}
 
+	/**
+	 * Registers place function for block with rotation.
+	 * @param id block numeric or string id
+	 * @param hasVertical true if the block has vertical facings, false otherwise.
+	 */
 	export function setRotationFunction(id: string | number, hasVertical?: boolean, placeSound?: string): void {
 		Block.registerPlaceFunction(id, function(coords, item, block, player, region) {
 			const place = getPlacePosition(coords, block, region);
@@ -378,31 +437,50 @@ namespace BlockRegistry {
 		});
 	}
 
-    export function registerDrop(nameID: string | number, dropFunc: Block.DropFunction, level?: number): void {
-        Block.registerDropFunction(nameID, function(blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
+	/**
+	 * Registers drop function for block.
+	 * @param blockID block numeric or string id
+	 * @param dropFunc drop function
+	 * @param level mining level
+	 */
+    export function registerDrop(blockID: string | number, dropFunc: Block.DropFunction, level?: number): void {
+        Block.registerDropFunction(blockID, function(blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
             if (!level || diggingLevel >= level) {
                 return dropFunc(blockCoords, blockID, blockData, diggingLevel, enchant, item, region);
             }
             return [];
         });
-        addBlockDropOnExplosion(nameID);
+        addBlockDropOnExplosion(blockID);
     }
 
-    export function setDestroyLevel(nameID: string | number, level: number): void {
-        Block.registerDropFunction(nameID, function(сoords, blockID, blockData, diggingLevel) {
+	/**
+	 * Sets mining level for block.
+	 * @param blockID block numeric or string id
+	 * @param level mining level
+	 */
+    export function setDestroyLevel(blockID: string | number, level: number): void {
+        Block.registerDropFunction(blockID, function(coords, blockID, blockData, diggingLevel) {
             if (diggingLevel >= level) {
-                return [[Block.getNumericId(nameID), 1, 0]];
+                return [[Block.getNumericId(blockID), 1, 0]];
             }
         });
-        addBlockDropOnExplosion(nameID);
+        addBlockDropOnExplosion(blockID);
     }
 
-	export function registerOnExplosionFunction(nameID: string | number, func: Block.PopResourcesFunction): void {
-		Block.registerPopResourcesFunction(nameID, func);
+	/**
+	 * Registers function called when block is destroyed by explosion.
+	 * @param blockID block numeric or string id
+	 * @param func function on explosion
+	 */
+	export function registerOnExplosionFunction(blockID: string | number, func: Block.PopResourcesFunction): void {
+		Block.registerPopResourcesFunction(blockID, func);
 	}
 
-    export function addBlockDropOnExplosion(nameID: string | number): void {
-		Block.registerPopResourcesFunction(nameID, function(coords, block, region) {
+	/**
+	 * Registers block drop on explosion with 25% chance.
+	 */
+    export function addBlockDropOnExplosion(blockID: string | number): void {
+		Block.registerPopResourcesFunction(blockID, function(coords, block, region) {
 			if (Math.random() >= 0.25) return;
             const dropFunc = Block.getDropFunction(block.id);
             const enchant = ToolAPI.getEnchantExtraData();
@@ -417,6 +495,7 @@ namespace BlockRegistry {
 
 	const noDropBlocks = [26, 30, 31, 32, 51, 59, 92, 99, 100, 104, 105, 106, 115, 127, 132, 141, 142, 144, 161, 175, 199, 244, 385, 386, 388, 389, 390, 391, 392, 462];
 
+	/** @deprecated */
 	export function getBlockDrop(x: number, y: number, z: number, block: Tile, level: number, item: ItemInstance, region?: BlockSource): ItemInstanceArray[] {
 		const id = block.id, data = block.data;
 		const enchant = ToolAPI.getEnchantExtraData(item.extra);
