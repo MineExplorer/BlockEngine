@@ -6,13 +6,16 @@
 /// <reference path="./type/BlockSlab.ts" />
 /// <reference path="./type/BlockDoubleSlab.ts" />
 
-//@ts-ignore
-const NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
-
 /**
  * Module for advanced block definition.
  */
 namespace BlockRegistry {
+	// Import native modules
+	const EntityGetYaw = ModAPI.requireGlobal("Entity.getYaw");
+	const EntityGetPitch = ModAPI.requireGlobal("Entity.getPitch");
+	//@ts-ignore
+	const NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
+	
 	const blocks = {};
 	const blockTypes = {};
 
