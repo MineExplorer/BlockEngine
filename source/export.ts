@@ -4,6 +4,7 @@ EXPORT("Vector3", Vector3);
 EXPORT("WorldRegion", WorldRegion);
 EXPORT("PlayerEntity", PlayerEntity);
 EXPORT("BlockBase", BlockBase);
+EXPORT("BlockRotative", BlockRotative);
 EXPORT("TileEntityBase", TileEntityBase);
 EXPORT("ItemCommon", ItemCommon);
 EXPORT("ItemFood", ItemFood);

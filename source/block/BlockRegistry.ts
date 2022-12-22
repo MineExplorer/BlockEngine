@@ -1,14 +1,32 @@
-/// <reference path="BlockBase.ts" />
-/// <reference path="BlockRotative.ts" />
-/// <reference path="BlockStairs.ts" />
+/// <reference path="./interfaces/BlockType.ts" />
+/// <reference path="./interfaces/BlockBehavior.ts" />
+/// <reference path="./type/BlockBase.ts" />
+/// <reference path="./type/BlockRotative.ts" />
+/// <reference path="./type/BlockStairs.ts" />
+/// <reference path="./type/BlockSlab.ts" />
+/// <reference path="./type/BlockDoubleSlab.ts" />
 
-//@ts-ignore
-const NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
-
+/**
+ * Module for advanced block definition.
+ */
 namespace BlockRegistry {
+	// Import native modules
+	const EntityGetYaw = ModAPI.requireGlobal("Entity.getYaw");
+	const EntityGetPitch = ModAPI.requireGlobal("Entity.getPitch");
+	//@ts-ignore
+	const NativeBlock = com.zhekasmirnov.innercore.api.NativeBlock;
+	
 	const blocks = {};
 	const blockTypes = {};
 
+	/**
+	 * Creates new block using specified params.
+	 * @param stringID string id of the block.
+	 * @param defineData array containing all variations of the block. Each 
+	 * variation corresponds to block data value, data values are assigned 
+	 * according to variations order.
+	 * @param blockType BlockType object or block type name, if the type was previously registered.
+	 */
 	export function createBlock(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void {
 		const block = new BlockBase(stringID, blockType);
 		for (let variation of defineData) {
@@ -17,7 +35,15 @@ namespace BlockRegistry {
 		registerBlock(block);
 	}
 
-    export function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType, hasVerticalFacings?: boolean): void {
+	/**
+	 * Creates new block with horizontal or all sides rotation.
+	 * @param stringID string id of the block
+	 * @param defineData array containing all variations of the block. Supports 2 variations,
+	 * each occupying 6 data values for rotation.
+	 * @param blockType BlockType object or block type name, if the type was previously registered.
+	 * @param hasVerticalFacings true if the block has vertical facings, false otherwise.
+	 */
+    export function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType, hasVerticalFacings?: boolean): void {
 		const block = new BlockRotative(stringID, blockType, hasVerticalFacings);
 		for (let variation of defineData) {
 			block.addVariation(variation.name, variation.texture, variation.inCreative);
@@ -25,14 +51,53 @@ namespace BlockRegistry {
 		registerBlock(block);
     }
 
-	export function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType?: string | Block.SpecialType): void {
+	/**
+	 * Creates stairs using specified params
+	 * @param stringID string id of the block
+	 * @param defineData array containing one variation of the block (for similarity with other methods).
+	 * @param blockType BlockType object or block type name, if the type was previously registered.
+	 */
+	export function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void {
 		registerBlock(new BlockStairs(stringID, defineData[0], blockType));
 	}
 
+	/**
+	 * Creates slabs and its double slabs using specified params
+	 * @param slabID string id of the
+	 * @param doubleSlabID string id of the double slab
+	 * @param defineData array containing all variations of the block. Each 
+	 * variation corresponds to block data value, data values are assigned 
+	 * according to variations order.
+	 * @param blockType BlockType object or block type name, if the type was previously registered.
+	 */
+	export function createSlabs(slabID: string, doubleSlabID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType) {
+		const slab = new BlockSlab(slabID, blockType);
+		slab.variations = defineData;
+
+		const doubleSlab = new BlockDoubleSlab(doubleSlabID, blockType);
+		for (let variation of defineData) {
+			doubleSlab.addVariation(variation.name, variation.texture);
+		}
+
+		slab.setDoubleSlab(doubleSlab.id);
+		doubleSlab.setSlab(slab.id);
+
+		registerBlock(slab);
+		registerBlock(doubleSlab);
+	}
+
+	/**
+	 * @param name block type name
+	 * @returns BlockType object by name
+	 */
 	export function getBlockType(name: string): Nullable<BlockType> {
 		return blockTypes[name] || null;
 	}
 
+	/**
+	 * Inherits default values from type specified in "extends" property.
+	 * @param type BlockType object
+	 */
 	export function extendBlockType(type: BlockType): void {
 		if (!type.extends) return;
 
@@ -44,6 +109,12 @@ namespace BlockRegistry {
 		}
 	}
 
+	/**
+	 * Registers block type in BlockEngine and as Block.SpecialType.
+	 * @param name block type name
+	 * @param type BlockType object
+	 * @param isNative if true doesn't create special type
+	 */
 	export function createBlockType(name: string, type: BlockType, isNative?: boolean): void {
 		extendBlockType(type);
 		blockTypes[name] = type;
@@ -52,6 +123,11 @@ namespace BlockRegistry {
 		}
 	}
 
+	/**
+	 * Converts block type to special type.
+	 * @param properites BlockType object
+	 * @returns block special type
+	 */
 	export function convertBlockTypeToSpecialType(properites: BlockType): Block.SpecialType {
 		const type: Block.SpecialType = {};
 		for (let key in properites) {
@@ -96,6 +172,7 @@ namespace BlockRegistry {
 	}
 
 	/**
+	 * @param blockID block numeric or string id
 	 * @returns instance of block class if it exists
 	 */
 	export function getInstanceOf(blockID: string | number): Nullable<BlockBase> {
@@ -103,6 +180,11 @@ namespace BlockRegistry {
 		return blocks[numericID] || null;
 	}
 
+	/**
+	 * Registers instance of BlockBase class and creates block for it.
+	 * @param block instance of BlockBase class
+	 * @returns the same BlockBase instance with `isDefined` flag set to true
+	 */
 	export function registerBlock(block: BlockBase): BlockBase {
 		block.createBlock();
 		registerBlockFuncs(block.id, block);
@@ -110,6 +192,11 @@ namespace BlockRegistry {
 		return block;
 	}
 
+	/**
+	 * Registers all block functions.
+	 * @param blockID block numeric or string id
+	 * @param blockFuncs object containing block functions
+	 */
 	export function registerBlockFuncs(blockID: string | number, blockFuncs: BlockBehavior): void {
 		const numericID = Block.getNumericId(blockID);
 		if ('getDrop' in blockFuncs) {
@@ -145,7 +232,7 @@ namespace BlockRegistry {
 			});
 		}
 		if ('onEntityStepOn' in blockFuncs) {
-			Block.registerEntityInsideFunction(numericID, function(coords: Vector, block: Tile, entity: number) {
+			Block.registerEntityStepOnFunction(numericID, function(coords: Vector, block: Tile, entity: number) {
 				blockFuncs.onEntityStepOn(coords, block, entity);
 			});
 		}
@@ -173,10 +260,15 @@ namespace BlockRegistry {
 				});
 			}
 		}
+
+		if ('onNameOverride' in blockFuncs || 'onItemUse' in blockFuncs || 'onDispense' in blockFuncs) {
+			ItemRegistry.registerItemFuncs(blockID, blockFuncs);
+		}
 	}
 
 	/**
-	 * Sets destroy time for the block with specified id
+	 * Sets destroy time for the block with specified id.
+	 * @param blockID block numeric or string id
 	 * @param time block destroy time
 	 */
 	export function setDestroyTime(blockID: string | number, time: number): void {
@@ -184,7 +276,8 @@ namespace BlockRegistry {
 	}
 
 	/**
-	 * Sets the block type of another block, which allows to inherit some of its properties
+	 * Sets the block type of another block, which allows to inherit some of its properties.
+	 * @param blockID block numeric or string id
 	 * @param baseBlock id of the block to inherit type
 	 */
 	export function setBaseBlock(blockID: string | number, baseBlock: number): void {
@@ -193,6 +286,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Sets block to be transparent or opaque.
+	 * @param blockID block numeric or string id
 	 * @param isSolid if true, sets block to be opaque.
 	 */
 	export function setSolid(blockID: string | number, isSolid: boolean): void {
@@ -200,6 +294,8 @@ namespace BlockRegistry {
 	}
 
 	/**
+	 * Sets rendering of the block faces.
+	 * @param blockID block numeric or string id
 	 * @param renderAllFaces If true, all block faces are rendered, otherwise back faces are not
 	 * rendered (for optimization purposes). Default is false
 	 */
@@ -209,6 +305,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Sets render type of the block.
+	 * @param blockID block numeric or string id
 	 * @param renderType default is 0 (full block), use other values to change block's model
 	 */
 	export function setRenderType(blockID: string | number, renderType: number): void {
@@ -217,6 +314,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Specifies the layer that is used to render the block.
+	 * @param blockID block numeric or string id
 	 * @param renderLayer default is 4
 	 */
 	export function setRenderLayer(blockID: string | number, renderLayer: number): void {
@@ -225,6 +323,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Sets level of the light emitted by the block.
+	 * @param blockID block numeric or string id
 	 * @param lightLevel value from 0 (no light) to 15
 	 */
 	export function setLightLevel(blockID: string | number, lightLevel: number): void {
@@ -233,6 +332,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Specifies how opaque block is.
+	 * @param blockID block numeric or string id
 	 * @param lightOpacity Value from 0 to 15 which will be substracted
 	 * from the light level when the light passes through the block
 	 */
@@ -242,6 +342,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Specifies how block resists to the explosions.
+	 * @param blockID block numeric or string id
 	 * @param resistance integer value, default is 3
 	 */
 	export function setExplosionResistance(blockID: string | number, resistance: number): void {
@@ -252,6 +353,7 @@ namespace BlockRegistry {
 	 * Sets block friction. It specifies how player walks on the block.
 	 * The higher the friction is, the more difficult it is to change speed
 	 * and direction.
+	 * @param blockID block numeric or string id
 	 * @param friction float value, default is 0.6
 	 */
 	export function setFriction(blockID: string | number, friction: number): void {
@@ -260,6 +362,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Specifies rendering of shadows on the block.
+	 * @param blockID block numeric or string id
 	 * @param translucency float value from 0 (no shadows) to 1
 	 */
 	export function setTranslucency(blockID: string | number, translucency: number): void {
@@ -268,6 +371,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Sets sound type of the block.
+	 * @param blockID block numeric or string id
 	 * @param sound block sound type
 	 */
 	export function setSoundType(blockID: string | number, sound: Block.Sound): void {
@@ -275,7 +379,8 @@ namespace BlockRegistry {
 	}
 
 	/**
-	 * Sets block color when displayed on the vanilla maps
+	 * Sets block color when displayed on the vanilla maps.
+	 * @param blockID block numeric or string id
 	 * @param color map color of the block
 	 */
 	export function setMapColor(blockID: string | number, color: number): void {
@@ -284,6 +389,7 @@ namespace BlockRegistry {
 
 	/**
 	 * Makes block use biome color when displayed on the vanilla maps.
+	 * @param blockID block numeric or string id
 	 * @param color block color source
 	 */
 	export function setBlockColorSource(blockID: string | number, color: Block.ColorSource): void {
@@ -293,8 +399,8 @@ namespace BlockRegistry {
 	/**
 	 * Registers block material and digging level. If you are registering
 	 * block with 'stone' material ensure that its block type has baseBlock
-	 * id 1 to be correctly destroyed by pickaxes
-	 * @param nameID block numeric or string id
+	 * id 1 to be correctly destroyed by pickaxes.
+	 * @param blockID block numeric or string id
 	 * @param material material name
 	 * @param level block's digging level
 	 */
@@ -302,6 +408,11 @@ namespace BlockRegistry {
 		ToolAPI.registerBlockMaterial(Block.getNumericId(blockID), material, level, material == "stone");
 	}
 
+	/**
+	 * @returns block side opposite to player rotation.
+	 * @param player player uid
+	 * @param hasVertical if true can return vertical sides as well
+	 */
 	export function getBlockRotation(player: number, hasVertical?: boolean): number {
 		const pitch = EntityGetPitch(player);
 		if (hasVertical) {
@@ -314,6 +425,12 @@ namespace BlockRegistry {
 		return rotation;
 	}
 
+	/**
+	 * @returns block place position for click coords in world.
+	 * @param coords click coords
+	 * @param block touched block
+	 * @param region BlockSource
+	 */
 	export function getPlacePosition(coords: Callback.ItemUseCoordinates, block: Tile, region: BlockSource): Vector {
 		if (World.canTileBeReplaced(block.id, block.data)) return coords;
 		const place = coords.relative;
@@ -322,6 +439,11 @@ namespace BlockRegistry {
 		return null;
 	}
 
+	/**
+	 * Registers place function for block with rotation.
+	 * @param id block numeric or string id
+	 * @param hasVertical true if the block has vertical facings, false otherwise.
+	 */
 	export function setRotationFunction(id: string | number, hasVertical?: boolean, placeSound?: string): void {
 		Block.registerPlaceFunction(id, function(coords, item, block, player, region) {
 			const place = getPlacePosition(coords, block, region);
@@ -333,31 +455,50 @@ namespace BlockRegistry {
 		});
 	}
 
-    export function registerDrop(nameID: string | number, dropFunc: Block.DropFunction, level?: number): void {
-        Block.registerDropFunction(nameID, function(blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
+	/**
+	 * Registers drop function for block.
+	 * @param blockID block numeric or string id
+	 * @param dropFunc drop function
+	 * @param level mining level
+	 */
+    export function registerDrop(blockID: string | number, dropFunc: Block.DropFunction, level?: number): void {
+        Block.registerDropFunction(blockID, function(blockCoords, blockID, blockData, diggingLevel, enchant, item, region) {
             if (!level || diggingLevel >= level) {
                 return dropFunc(blockCoords, blockID, blockData, diggingLevel, enchant, item, region);
             }
             return [];
         });
-        addBlockDropOnExplosion(nameID);
+        addBlockDropOnExplosion(blockID);
     }
 
-    export function setDestroyLevel(nameID: string | number, level: number): void {
-        Block.registerDropFunction(nameID, function(сoords, blockID, blockData, diggingLevel) {
+	/**
+	 * Sets mining level for block.
+	 * @param blockID block numeric or string id
+	 * @param level mining level
+	 */
+    export function setDestroyLevel(blockID: string | number, level: number): void {
+        Block.registerDropFunction(blockID, function(coords, blockID, blockData, diggingLevel) {
             if (diggingLevel >= level) {
-                return [[Block.getNumericId(nameID), 1, 0]];
+                return [[Block.getNumericId(blockID), 1, 0]];
             }
         });
-        addBlockDropOnExplosion(nameID);
+        addBlockDropOnExplosion(blockID);
     }
 
-	export function registerOnExplosionFunction(nameID: string | number, func: Block.PopResourcesFunction): void {
-		Block.registerPopResourcesFunction(nameID, func);
+	/**
+	 * Registers function called when block is destroyed by explosion.
+	 * @param blockID block numeric or string id
+	 * @param func function on explosion
+	 */
+	export function registerOnExplosionFunction(blockID: string | number, func: Block.PopResourcesFunction): void {
+		Block.registerPopResourcesFunction(blockID, func);
 	}
 
-    export function addBlockDropOnExplosion(nameID: string | number): void {
-		Block.registerPopResourcesFunction(nameID, function(coords, block, region) {
+	/**
+	 * Registers block drop on explosion with 25% chance.
+	 */
+    export function addBlockDropOnExplosion(blockID: string | number): void {
+		Block.registerPopResourcesFunction(blockID, function(coords, block, region) {
 			if (Math.random() >= 0.25) return;
             const dropFunc = Block.getDropFunction(block.id);
             const enchant = ToolAPI.getEnchantExtraData();
@@ -372,6 +513,7 @@ namespace BlockRegistry {
 
 	const noDropBlocks = [26, 30, 31, 32, 51, 59, 92, 99, 100, 104, 105, 106, 115, 127, 132, 141, 142, 144, 161, 175, 199, 244, 385, 386, 388, 389, 390, 391, 392, 462];
 
+	/** @deprecated */
 	export function getBlockDrop(x: number, y: number, z: number, block: Tile, level: number, item: ItemInstance, region?: BlockSource): ItemInstanceArray[] {
 		const id = block.id, data = block.data;
 		const enchant = ToolAPI.getEnchantExtraData(item.extra);

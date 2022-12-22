@@ -1,9 +1,9 @@
 /**
- * Class to work with world based on BlockSource
+ * Class to work with world based on `BlockSource`
  */
 class WorldRegion {
-	blockSource: BlockSource;
-	private isDeprecated = false;
+	readonly blockSource: BlockSource;
+	private readonly isDeprecated: boolean;
 
 	constructor(blockSource: BlockSource) {
 		this.blockSource = blockSource;
@@ -13,7 +13,7 @@ class WorldRegion {
 	/**
 	 * @returns interface to given dimension 
 	 * (null if given dimension is not loaded and this interface 
-	 * was not created yet)
+	 * was not created yet).
 	 */
 	static getForDimension(dimension: number): Nullable<WorldRegion> {
 		const blockSource = BlockSource.getDefaultForDimension(dimension);
@@ -26,7 +26,7 @@ class WorldRegion {
 	/**
 	 * @returns interface to the dimension where the given entity is 
 	 * (null if given entity does not exist or the dimension is not loaded 
-	 * and interface was not created)
+	 * and interface was not created).
 	 */
 	static getForActor(entityUid: number): Nullable<WorldRegion> {
 		const blockSource = BlockSource.getDefaultForActor(entityUid);
@@ -36,6 +36,9 @@ class WorldRegion {
 		return null;
 	}
 
+	/**
+	 * @returns `WorldRegion` for world generation callback.
+	 */
 	static getCurrentWorldGenRegion(): Nullable<WorldRegion> {
 		const blockSource = BlockSource.getCurrentWorldGenRegion();
 		if (blockSource) {
@@ -45,7 +48,7 @@ class WorldRegion {
 	}
 
 	/**
-	 * @returns the dimension id to which the following object belongs
+	 * @returns the dimension id to which the following object belongs.
 	 */
 	getDimension(): number {
 		return this.blockSource.getDimension();
@@ -65,7 +68,7 @@ class WorldRegion {
 	}
 
 	/**
-	 * @returns block's id at coords
+	 * @returns block's id at coords.
 	 */
 	getBlockId(coords: Vector): number;
 	getBlockId(x: number, y: number, z: number): number;
@@ -74,7 +77,7 @@ class WorldRegion {
 	}
 
 	/**
-	 * @returns block's data at coords
+	 * @returns block's data at coords.
 	 */
 	getBlockData(coords: Vector): number;
 	getBlockData(x: number, y: number, z: number): number;
@@ -83,13 +86,11 @@ class WorldRegion {
 	}
 
 	/**
-	 * Sets block on coords
-	 * @param id - id of the block to set
-	 * @param data - data of the block to set
+	 * Sets block on coords.
 	 */
-	setBlock(coords: Vector, state: BlockState): void;
+	setBlock(coords: Vector, state: BlockState | Tile): void;
 	setBlock(coords: Vector, id: number, data?: number): void;
-	setBlock(x: number, y: number, z: number, state: BlockState): void;
+	setBlock(x: number, y: number, z: number, state: BlockState | Tile): void;
 	setBlock(x: number, y: number, z: number, id: number, data?: number): void;
 	setBlock(x: any, y: any, z?: any, id?: any, data?: any): void {
 		if (typeof x === "number") {
@@ -155,6 +156,7 @@ class WorldRegion {
 
 	/**
 	 * Destroys block on coords producing appropriate drop and particles.
+	 * @param coords coords of the block
 	 * @param drop whether to provide drop for the block or not
 	 * @param player player entity if the block was destroyed by player
 	 */
@@ -183,10 +185,8 @@ class WorldRegion {
 
 	/**
 	 * Destroys block on coords by entity using specified item.
-	 * Reverse compatible with Legacy version (doesn't support `item` argument).
-	 * @param x X coord of the block
-	 * @param y Y coord of the block
-	 * @param z Z coord of the block
+	 * Partially reverse compatible with Legacy version (doesn't support `item` argument).
+	 * @param coords coords of the block
 	 * @param allowDrop whether to provide drop for the block or not
 	 * @param entity Entity id or -1 id if entity is not specified
 	 * @param item Tool which broke block
@@ -208,10 +208,8 @@ class WorldRegion {
 
 	/**
 	 * Same as breakBlock, but returns object containing drop and experince.
-	 * Reverse compatible with Legacy version (doesn't return experience).
-	 * @param x X coord of the block
-	 * @param y Y coord of the block
-	 * @param z Z coord of the block
+	 * Partially reverse compatible with Legacy version (doesn't return experience).
+	 * @param coords coords of the block
 	 * @param entity Entity id or -1 id if entity is not specified
 	 * @param item Tool which broke block
 	 */
@@ -240,7 +238,7 @@ class WorldRegion {
 	}
 
 	/**
-	 * @returns interface to the vanilla TileEntity (chest, furnace, etc.) on the coords
+	 * @returns interface to the vanilla TileEntity (chest, furnace, etc.) on the coords.
 	 */
 	getNativeTileEntity(coords: Vector): NativeTileEntity;
 	getNativeTileEntity(x: number, y: number, z: number): NativeTileEntity;
@@ -253,7 +251,7 @@ class WorldRegion {
 	}
 
 	/**
-     * @returns TileEntity located on the specified coordinates if it is initialized
+     * @returns TileEntity located on the specified coordinates if it is initialized.
      */
 	getTileEntity(coords: Vector): TileEntity;
 	getTileEntity(x: number, y: number, z: number): TileEntity;
@@ -268,8 +266,8 @@ class WorldRegion {
 
 	/**
      * If the block on the specified coordinates is a TileEntity block and is 
-     * not initialized, initializes it and returns created TileEntity object
-     * @returns TileEntity if one was created, null otherwise
+     * not initialized, initializes it and returns created TileEntity object.
+     * @returns TileEntity if one was created, null otherwise.
      */
 	addTileEntity(coords: Vector): TileEntity;
 	addTileEntity(x: number, y: number, z: number): TileEntity;
@@ -283,9 +281,9 @@ class WorldRegion {
 
 	/**
      * If the block on the specified coordinates is a TileEntity, destroys 
-     * it, dropping its container
+     * it, dropping its container.
      * @returns true if the TileEntity was destroyed successfully, false 
-     * otherwise
+     * otherwise.
      */
 	removeTileEntity(coords: Vector): boolean;
 	removeTileEntity(x: number, y: number, z: number): boolean;
@@ -298,9 +296,9 @@ class WorldRegion {
 	}
 
 	/**
-     * @returns if the block on the specified coordinates is a TileEntity, returns
-     * its container, if the block is a NativeTileEntity, returns it, if 
-     * none of above, returns null
+     * @returns if the block on the specified coordinates is a `TileEntity`, returns
+     * its container, if the block is a `NativeTileEntity`, returns its instance, if 
+     * none of above, returns null.
      */
 	getContainer(coords: Vector): NativeTileEntity | UI.Container | ItemContainer;
 	getContainer(x: number, y: number, z: number): NativeTileEntity | UI.Container | ItemContainer;
@@ -313,7 +311,7 @@ class WorldRegion {
 	}
 
 	/**
-	 * Causes an explosion on coords
+	 * Causes an explosion on coords.
 	 * @param power defines radius of the explosion and what blocks it can destroy
 	 * @param fire if true, puts the crater on fire
 	 */
@@ -329,22 +327,22 @@ class WorldRegion {
 	}
 
 	/**
-	 * @returns biome id at X and Z coord
+	 * @returns biome id at X and Z coord.
 	 */
 	getBiome(x: number, z: number): number {
 		return this.blockSource.getBiome(x, z);
 	}
 
 	/**
-	 * Sets biome id by coords
-	 * @param id - id of the biome to set
+	 * Sets biome id by coords.
+	 * @param biomeID - id of the biome to set
 	 */
 	setBiome(x: number, z: number, biomeID: number): void {
 		this.blockSource.setBiome(x, z, biomeID);
 	}
 
 	/**
-	 * @returns temperature of the biome on coords
+	 * @returns temperature of the biome on coords.
 	 */
 	getBiomeTemperatureAt(coords: Vector): number;
 	getBiomeTemperatureAt(x: number, y: number, z: number): number;
@@ -359,7 +357,7 @@ class WorldRegion {
 	/**
 	 * @param chunkX X coord of the chunk
 	 * @param chunkZ Z coord of the chunk
-	 * @returns true if chunk is loaded, false otherwise
+	 * @returns true if chunk is loaded, false otherwise.
 	 */
 	isChunkLoaded(chunkX: number, chunkZ: number): boolean {
 		return this.blockSource.isChunkLoaded(chunkX, chunkZ);
@@ -368,7 +366,7 @@ class WorldRegion {
 	/**
 	 * @param x X coord of the position
 	 * @param z Z coord of the position
-	 * @returns true if chunk on the position is loaded, false otherwise
+	 * @returns true if chunk on the position is loaded, false otherwise.
 	 */
 	isChunkLoadedAt(x: number, z: number): boolean {
 		return this.blockSource.isChunkLoadedAt(x, z);
@@ -377,7 +375,7 @@ class WorldRegion {
 	/**
 	 * @param chunkX X coord of the chunk
 	 * @param chunkZ Z coord of the chunk
-	 * @returns the loading state of the chunk by chunk coords
+	 * @returns the loading state of the chunk by chunk coords.
 	 */
 	getChunkState(chunkX: number, chunkZ: number): number {
 		return this.blockSource.getChunkState(chunkX, chunkZ);
@@ -386,14 +384,14 @@ class WorldRegion {
 	/**
 	 * @param x X coord of the position
 	 * @param z Z coord of the position
-	 * @returns the loading state of the chunk by coords
+	 * @returns the loading state of the chunk by coords.
 	 */
 	getChunkStateAt(x: number, z: number): number {
 		return this.blockSource.getChunkStateAt(x, z);
 	}
 
 	/**
-     * @returns light level on the specified coordinates, from 0 to 15
+     * @returns light level on the specified coordinates, from 0 to 15.
      */
 	getLightLevel(coords: Vector): number;
 	getLightLevel(x: number, y: number, z: number): number;
@@ -433,9 +431,8 @@ class WorldRegion {
 
 	/**
 	 * Creates dropped item and returns entity id
-	 * @param x X coord of the place where item will be dropped
-	 * @param y Y coord of the place where item will be dropped
-	 * @param z Z coord of the place where item will be dropped
+	 * @param coords coords of the place where item will be dropped
+	 * @param item item to drop
 	 * @returns drop entity id
 	 */
 	dropItem(coords: Vector, item: ItemInstance): number;
@@ -459,9 +456,8 @@ class WorldRegion {
 	}
 	/**
 	 * Creates dropped item at the block center and returns entity id
-	 * @param x X coord of the block where item will be dropped
-	 * @param y Y coord of the block where item will be dropped
-	 * @param z Z coord of the block where item will be dropped
+	 * @param coords coords of the block where item will be dropped
+	 * @param item item to drop
 	 * @returns drop entity id
 	 */
 	dropAtBlock(coords: Vector, item: ItemInstance): number;
@@ -477,19 +473,26 @@ class WorldRegion {
 	}
 
 	/**
-	 * Spawns entity of given numeric type on coords
+	 * Spawns entity of given type on coords.
+	 * @param type entity numeric or string type
 	 */
 	spawnEntity(x: number, y: number, z: number, type: number | string): number;
-	spawnEntity(x: number, y: number, z: number, namespace: string, type: string, init_data: string): number;
-	spawnEntity(x: number, y: number, z: number, namespace: string, type?: string, init_data?: string): number {
+	/**
+	 * Spawns entity of given type on coords with specified spawn event.
+	 * @param namespace namespace of the entity type: 'minecraft' or from add-on.
+	 * @param type entity type name
+	 * @param spawnEvent built-in event for entity spawn. Use 'minecraft:entity_born' to spawn baby mob.
+	 */
+	spawnEntity(x: number, y: number, z: number, namespace: string, type: string, spawnEvent: string): number;
+	spawnEntity(x: number, y: number, z: number, namespace: string, type?: string, spawnEvent?: string): number {
 		if (type === undefined) {
 			return this.blockSource.spawnEntity(x, y, z, namespace);
 		}
-		return this.blockSource.spawnEntity(x, y, z, namespace, type, init_data);
+		return this.blockSource.spawnEntity(x, y, z, namespace, type, spawnEvent);
 	}
 
 	/**
-	 * Spawns experience orbs on coords
+	 * Spawns experience orbs on coords.
 	 * @param amount experience amount
 	 */
 	spawnExpOrbs(coords: Vector, amount: number): void;
@@ -505,7 +508,7 @@ class WorldRegion {
 	/**
 	 * @returns the list of entity IDs in given box,
 	 * that are equal to the given type, if blacklist value is false,
-	 * and all except the entities of the given type, if blacklist value is true
+	 * and all except the entities of the given type, if blacklist value is true.
 	 */
 	listEntitiesInAABB(pos1: Vector, pos2: Vector, type?: number, blacklist?: boolean): number[];
 	listEntitiesInAABB(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number, type?: number, blacklist?: boolean): number[];
@@ -530,18 +533,31 @@ class WorldRegion {
 	}
 
 	/**
-     * Plays standart Minecraft sound on the specified coordinates
+     * Plays standard Minecraft sound on the specified coordinates.
      * @param name sound name
      * @param volume sound volume from 0 to 1. Default is 1.
      * @param pitch sound pitch, from 0 to 1. Default is 1.
      */
-	playSound(x: number, y: number, z: number, name: string, volume: number = 1, pitch: number = 1): void {
-		const soundPos = new Vector3(x, y, z);
-		this.sendPacketInRadius(soundPos, 100, "WorldRegion.play_sound", {...soundPos, name: name, volume: volume, pitch: pitch});
+	playSound(x: number, y: number, z: number, name: string, volume?: number, pitch?: number): void;
+	playSound(coords: Vector, name: string, volume?: number, pitch?: number): void;
+	playSound(x: any, y: any, z: any, name: any, volume?: number, pitch?: number): void {
+		if (typeof(x) == "number") {
+			const soundPos = new Vector3(x, y, z);
+			this.playSound(soundPos, name, volume, pitch)
+		} else {
+			const coords = arguments[0];
+			this.sendPacketInRadius(coords, 100, "WorldRegion.play_sound", {
+				...coords,
+				name: arguments[1],
+				volume: arguments[2] ?? 1,
+				pitch: arguments[3] ?? 1
+			});
+		}
 	}
 
 	/**
-     * Plays standart Minecraft sound from the specified entity
+     * Plays standard Minecraft sound from the specified entity.
+	 * @param ent entity id
      * @param name sound name
      * @param volume sound volume from 0 to 1. Default is 1.
      * @param pitch sound pitch, from 0 to 1. Default is 1.
@@ -552,7 +568,9 @@ class WorldRegion {
 	}
 
 	/**
-	 * Sends network packet for players in a radius from specified coords
+	 * Sends network packet for players within a radius from specified coords.
+	 * @param coords coordinates from which players will be searched
+	 * @param radius radius within which players will receive packet
 	 * @param packetName name of the packet to send
 	 * @param data packet data object
 	 */

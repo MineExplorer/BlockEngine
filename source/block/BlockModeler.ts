@@ -1,6 +1,17 @@
+/**
+ * Module for creating block models.
+ */
 namespace BlockModeler {
+	/**
+	 * Array of 6 coordinates representing start and end point of box.
+	 */
 	export type BoxVertexes = [number, number, number, number, number, number];
 
+	/**
+	 * @returns box vertexes with specified rotation
+	 * @param box array of box vertexes
+	 * @rotation block rotation
+	 */
 	export function getRotatedBoxVertexes(box: BoxVertexes, rotation: number): BoxVertexes {
 		switch (rotation) {
 		case 0:
@@ -10,10 +21,14 @@ namespace BlockModeler {
 		case 2:
 			return [box[2], box[1], 1 - box[3], box[5], box[4], 1 - box[0]]; // rotate 270°
 		case 3:
-			return [1 - box[5], box[1], box[0], 1 - box[2], box[4], box[3]] // rotate 90°
+			return [1 - box[5], box[1], box[0], 1 - box[2], box[4], box[3]]; // rotate 90°
 		}
 	}
 
+	/**
+	 * Sets stairs render model and shape to block.
+	 * @param id block numeric id
+	 */
 	export function setStairsRenderModel(id: number): void {
 		const boxes: BoxVertexes[] = [
 			[0, 0, 0, 1, 0.5, 1],
@@ -30,7 +45,18 @@ namespace BlockModeler {
 		createStairsRenderModel(id, 4, newBoxes);
 	}
 
-	export function createStairsRenderModel(id: number, startData: number, boxes: BoxVertexes[]): void {
+	/**
+	 * Sets hand and ui model for the block.
+	 * @param blockID block numeric id
+	 * @param model block model
+	 * @param data block data (0 by default)
+	 */
+	export function setInventoryModel(blockID: number, model: RenderMesh | ICRender.Model | BlockRenderer.Model, data: number = 0): void {
+		ItemModel.getFor(blockID, data).setHandModel(model);
+		ItemModel.getFor(blockID, data).setUiModel(model);
+	}
+
+	function createStairsRenderModel(id: number, startData: number, boxes: BoxVertexes[]): void {
 		const modelConditionData = [
 			{data: 3, posR: [-1, 0], posB: [0, 1]},
 			{data: 2, posR: [1, 0], posB: [0, -1]},
@@ -89,10 +115,5 @@ namespace BlockModeler {
 			BlockRenderer.setCustomCollisionShape(id, data, shape);
 			BlockRenderer.setCustomRaycastShape(id, data, shape);
 		}
-	}
-
-	export function setInventoryModel(blockID: number, model: RenderMesh | ICRender.Model | BlockRenderer.Model, data: number = 0): void {
-		ItemModel.getFor(blockID, data).setHandModel(model);
-		ItemModel.getFor(blockID, data).setUiModel(model);
 	}
 }

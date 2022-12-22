@@ -1,17 +1,8 @@
-interface ToolParams
-extends ToolAPI.ToolParams {
-	handEquipped?: boolean;
-	enchantType?: number;
-	blockTypes?: string[];
-	onItemUse?: (coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number) => void;
-}
+/// <reference path="./interfaces/ToolParams.ts" />
 
-interface ToolMaterial
-extends ToolAPI.ToolMaterial {
-	enchantability?: number;
-	repairMaterial?: number;
-}
-
+/**
+ * Tool parameters for vanilla tool types.
+ */
 namespace ToolType {
 	export const SWORD: ToolParams = {
 		__flag: "__sword",

@@ -150,7 +150,7 @@ implements TileEntity {
 		return "main";
 	}
 
-	getScreenByName(screenName: string): UI.IWindow {
+	getScreenByName(screenName: string, container: ItemContainer): UI.IWindow {
 		return null;
 	}
 
@@ -186,7 +186,7 @@ implements TileEntity {
         }
 
 		const screenName = this.getScreenName(player, coords);
-    	if (screenName && this.getScreenByName("main")) {
+    	if (screenName && this.getScreenByName(screenName, this.container)) {
             const client = Network.getClientForPlayer(player);
             if (client) {
             	this.container.openFor(client, screenName);
