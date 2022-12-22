@@ -1150,7 +1150,7 @@ declare namespace Block {
 
 
 	/**
-	 * Function used to determine where block is placed in the world
+	 * Function used to determine when block is placed in the world
 	 * @param coords set of all coordinate values that can be useful to write 
 	 * custom use logics
 	 * @param item item that was in the player's hand when he touched the block
@@ -11927,12 +11927,12 @@ declare namespace TileEntity {
 		/**
          * Called on server side and returns UI name to open on click
          */
-        getScreenName?: (player: number, coords: Vector) => string;
+        getScreenName?: (player: number, coords: Callback.ItemUseCoordinates) => string;
 
         /**
          * Called on client side, returns the window to open
          */
-        getScreenByName?: (screenName?: string) => UI.IWindow;
+        getScreenByName?: (screenName: string, container: ItemContainer) => UI.IWindow;
 
         /**
          * Called when more liquid is required
