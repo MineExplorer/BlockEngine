@@ -23,12 +23,11 @@ namespace BlockEngine {
 	}
 
 	/**
-	 * Sends packet with message which will be translated by the client. 
-	 * @param client receiver client
-	 * @param texts array of strings which will be translated and combined in one message.
+	 * Sends packet with message which will be translated by the client.
+	 * @deprecated Use sendMessage instead.
 	 */
 	export function sendUnlocalizedMessage(client: NetworkClient, ...texts: string[]): void {
-		client.send("blockengine.clientMessage", {texts: texts});
+		client.send("blockengine.clientMessageOld", {texts: texts});
 	}
 
 	/**
@@ -51,19 +50,19 @@ namespace BlockEngine {
 	export function sendMessage(client: NetworkClient, text: string, ...params: string[]): void {
 		if (text[0] == '§' && params.length > 0) {
 			const message = params.shift();
-			client.send("blockengine.clientMessageParametrized", {msg: message, color: text, params: params});
+			client.send("blockengine.clientMessage", {msg: message, color: text, params: params});
 		} else {
-			client.send("blockengine.clientMessageParametrized", {msg: text, params: params});
+			client.send("blockengine.clientMessage", {msg: text, params: params});
 		}
 	}
 }
 
-Network.addClientPacket("blockengine.clientMessage", function(data: {texts: string[]}) {
+Network.addClientPacket("blockengine.clientMessageOld", function(data: {texts: string[]}) {
 	const message = data.texts.map(Translation.translate).join("");
 	Game.message(message);
 });
 
-Network.addClientPacket("blockengine.clientMessageParametrized", function(data: {msg: string, color?: string, params: string[]}) {
+Network.addClientPacket("blockengine.clientMessage", function(data: {msg: string, color?: string, params: string[]}) {
 	let message = (data.color || "") + Translation.translate(data.msg);
 	data.params.forEach(substr => {
 		message = message.replace("%s", Translation.translate(substr));
