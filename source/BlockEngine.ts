@@ -1,6 +1,6 @@
 LIBRARY({
 	name: "BlockEngine",
-	version: 11,
+	version: 12,
 	shared: true,
 	api: "CoreEngine"
 });
@@ -48,7 +48,7 @@ namespace BlockEngine {
 	 */
 	export function sendMessage(client: NetworkClient, color: EColor, message: string, ...params: string[]): void;
 	export function sendMessage(client: NetworkClient, text: string, ...params: string[]): void {
-		if (text[0] == '§' && params.length > 0) {
+		if (text[0] == '§' && text.length == 2 && params.length > 0) {
 			const message = params.shift();
 			client.send("blockengine.clientMessage", {msg: message, color: text, params: params});
 		} else {

@@ -19,6 +19,7 @@
 		"WorldRegion.ts",
 		"PlayerEntity.ts",
 		"EntityCustomData.ts",
+		"VirtualBlockData.ts",
 		"block/*",
 		"item/*",
 		"id_converter/*",

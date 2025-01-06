@@ -629,4 +629,12 @@ namespace BlockRegistry {
 		explosionResistance: 2.5,
 		sound: "gravel"
 	});
+
+	Callback.addCallback("RedstoneSignal", function(coords, params, onLoad, blockSource) {
+		const blockId = blockSource.getBlockId(coords.x, coords.y, coords.z);
+		var instance: BlockBase & BlockBehavior = getInstanceOf(blockId);
+		if (instance && 'onRedstoneUpdate' in instance) {
+			instance.onRedstoneUpdate(coords, params, blockSource);
+		}
+	});
 }

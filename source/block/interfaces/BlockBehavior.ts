@@ -97,4 +97,11 @@ interface BlockBehavior extends BlockItemBehavior {
 	 * @param player player uid
 	 */
 	onClick?(coords: Callback.ItemUseCoordinates, item: ItemStack, block: Tile, player: number): void;
+
+	/**
+	 * Occurs when redstone signal on block was updated. Requires Block.setupAsRedstoneReceiver to be called on the block id.
+	 * @param coords coords of the block
+	 * @param region BlockSource object
+	 */
+	onRedstoneUpdate?(coords: Vector, params: {signal: number, onLoad: boolean}, region: BlockSource): void;
 }
