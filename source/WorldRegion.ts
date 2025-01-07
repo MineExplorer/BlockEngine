@@ -419,14 +419,8 @@ class WorldRegion {
 	/**
 	 * @returns grass color on coords
 	 */
-	getGrassColor(coords: Vector): number;
-	getGrassColor(x: number, y: number, z: number): number;
-	getGrassColor(x: Vector | number, y?: number, z?: number): number {
-		if (typeof x === "number") {
-			return this.blockSource.getGrassColor(x, y, z);
-		}
-		const pos = x;
-		return this.blockSource.getGrassColor(pos.x, pos.y, pos.z);
+	getGrassColor(x: number, z: number): number {
+		return this.blockSource.getGrassColor(x, z);
 	}
 
 	/**
@@ -521,7 +515,7 @@ class WorldRegion {
 		if (this.isDeprecated && (type == Native.EntityType.PLAYER) != blacklist) {
 			const players = Network.getConnectedPlayers();
 			const dimension = this.getDimension();
-			for (const ent of players) {
+			for (const ent of players as number[]) {
 				if (Entity.getDimension(ent) != dimension) continue;
 				const c = Entity.getPosition(ent);
 				if ((c.x >= x1 && c.x <= x2) && (c.y - 1.62 >= y1 && c.y - 1.62 <= y2) && (c.z >= z1 && c.z <= z2)) {
@@ -577,7 +571,7 @@ class WorldRegion {
 	sendPacketInRadius(coords: Vector, radius: number, packetName: string, data: object): void {
 		const dimension = this.getDimension();
 		const clientsList = Network.getConnectedClients();
-		for (const client of clientsList) {
+		for (const client of clientsList as NetworkClient[]) {
 			const player = client.getPlayerUid();
 			const entPos = Entity.getPosition(player);
 			if (Entity.getDimension(player) == dimension && Entity.getDistanceBetweenCoords(entPos, coords) <= radius) {

@@ -36,14 +36,15 @@ implements TileEntity {
 	__networkEvents: {[key: string]: Side};
 	__containerEvents: {[key: string]: Side};
 
-	x: number;
-	y: number;
-	z: number;
+	readonly x: number;
+	readonly y: number;
+	readonly z: number;
 	readonly dimension: number;
 	readonly blockID: number;
 	readonly useNetworkItemContainer: boolean = true;
 	remove: boolean;
 	isLoaded: boolean;
+   	noupdate: boolean;
 	__initialized: boolean;
 
 	data: {[key: string]: any};
@@ -70,14 +71,17 @@ implements TileEntity {
 	container: ItemContainer;
 	liquidStorage: LiquidRegistry.Storage;
 	blockSource: BlockSource;
-    networkData: SyncedNetworkData;
-	networkEntity: NetworkEntity;
+    readonly networkData: SyncedNetworkData;
+	readonly networkEntity: NetworkEntity;
+	readonly networkEntityType: NetworkEntityType;
+	readonly networkEntityTypeName: string;
 	/**
 	 * Interface for BlockSource of the TileEntity. Provides more functionality.
 	 */
 	region: WorldRegion;
 
 	private _runInit: () => boolean;
+	update: () => void;
 
 	created(): void {
 		this.onCreate();
@@ -103,6 +107,9 @@ implements TileEntity {
 	tick(): void {
 		this.onTick();
 	}
+	
+	/** @deprecated */
+	click(): void {}
 
 	/**
 	 * Called when a TileEntity is created
@@ -151,6 +158,11 @@ implements TileEntity {
 	}
 
 	getScreenByName(screenName: string, container: ItemContainer): UI.IWindow {
+		return null;
+	}
+
+	/** @deprecated */
+	getGuiScreen(): UI.IWindow {
 		return null;
 	}
 
