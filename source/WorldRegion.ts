@@ -61,10 +61,10 @@ class WorldRegion {
 	getBlock(x: number, y: number, z: number): BlockState;
 	getBlock(x: any, y?: number, z?: number): BlockState {
 		if (typeof x === "number") {
-			return this.blockSource.getBlock(x, y, z);
+			return this.blockSource.getBlock(x, y, z) as BlockState;
 		}
 		const pos = x;
-		return this.blockSource.getBlock(pos.x, pos.y, pos.z);
+		return this.blockSource.getBlock(pos.x, pos.y, pos.z) as BlockState;
 	}
 
 	/**
