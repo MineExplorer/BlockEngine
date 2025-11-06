@@ -141,14 +141,4 @@ abstract class ItemBase {
 	setRarity(rarity: number): void {
 		ItemRegistry.setRarity(this.id, rarity);
 	}
-
-	addDefaultToCreative(): void {
-		const wasInCreative = ItemRegistry.getInstanceOf(this.id)?.inCreative;
-		if (wasInCreative) {
-			Logger.Log(`Skipped duplicated adding to creative for item ${this.stringID}`, "BlockEngine");
-		} else {
-			Item.addToCreative(this.id, 1, 0);
-			this.inCreative = true;
-		}
-	}
- }
+}

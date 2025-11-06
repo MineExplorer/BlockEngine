@@ -73,20 +73,17 @@ class BlockBase implements BlockBehavior {
 
 		const blockType = this.blockType ? BlockRegistry.convertBlockTypeToSpecialType(this.blockType) : null;
 
-		// remove duplicated items in creative
-		const duplicatedInstance = BlockRegistry.getInstanceOf(this.id);
-		if (duplicatedInstance) {
-			const variations = duplicatedInstance.variations;
-			const checkedVariationsLength = Math.min(this.variations.length, variations.length);
-			for (let i = 0; i < checkedVariationsLength; i++) {
-				if (variations[i].inCreative) {
-					this.variations[i].inCreative = false;
-					Logger.Log(`Skipped duplicated adding to creative for block ${this.stringID}:${i}`, "BlockEngine");
-				}
+		const defineDataCopy = JSON.parse(JSON.stringify(this.variations));
+		for (let i = 0; i < defineDataCopy.length; i++) {
+			const variation = defineDataCopy[i];
+			if (variation.inCreative) {
+				// Use BlockEngine's addToCreative method to avoid duplicates
+				ItemRegistry.addToCreative(this.id, 1, i);
+				variation.inCreative = false;
 			}
 		}
+		Block.createBlock(this.stringID, defineDataCopy, blockType);
 
-		Block.createBlock(this.stringID, this.variations, blockType);
 		this.isDefined = true;
 		for (let data in this.shapes) {
 			const box = this.shapes[data];

@@ -3,6 +3,6 @@ class ItemCommon extends ItemBase {
 		super(stringID, name, icon);
 		this.item = Item.createItem(this.stringID, this.name, this.icon, {isTech: true});
 		this.setCategory(ItemCategory.ITEMS);
-		if (inCreative) this.addDefaultToCreative();
+		if (inCreative) ItemRegistry.addToCreative(this.id, 1, 0);
 	}
 }

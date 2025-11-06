@@ -13,6 +13,10 @@ namespace ItemRegistry {
 	const items = {};
 	const itemsRarity = {};
 	const armorMaterials = {};
+	/**
+	 * Map items without extra data by "id:data" key.
+	 */
+	const creativeTabItems: {[key: string]: true} = {};
 
 	/**
 	 * @returns item type
@@ -308,5 +312,25 @@ namespace ItemRegistry {
 		if (params.glint) item.setGlint(true);
 		if (params.rarity) item.setRarity(params.rarity);
 		return item;
+	}
+
+	/**
+	 * Adds item to creative. If extra data is not specified and item with same id and data is already added, it will be skipped.
+	 * @param id item id
+	 * @param count item count
+	 * @param data item data
+	 * @param extra item extra data
+	 */
+	export function addToCreative(id: string | number, count: number, data: number, extra?: ItemExtraData): void {
+		if (extra) {
+			Item.addToCreative(id, count, data, extra);
+		} else {
+			const mappingKey = `${id}:${data}`;
+			if (creativeTabItems[mappingKey]) 
+				return;
+
+			creativeTabItems[mappingKey] = true;
+			Item.addToCreative(id, count, data);
+		}
 	}
 }

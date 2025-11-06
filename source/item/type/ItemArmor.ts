@@ -40,7 +40,7 @@ class ItemArmor extends ItemBase {
 		});
 		this.setCategory(ItemCategory.EQUIPMENT);
 		if (params.material) this.setMaterial(params.material);
-		if (inCreative) this.addDefaultToCreative();
+		if (inCreative) ItemRegistry.addToCreative(this.id, 1, 0);
 		ItemArmor.registerListeners(this.id, this);
 	}
 
