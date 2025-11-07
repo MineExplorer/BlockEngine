@@ -136,7 +136,7 @@ namespace BlockEngine {
 		/**
 		 * Gets liquid from tank.
 		 * @param amount max amount of liquid to get
-		 * @returns amount of got liquid
+		 * @returns amount of received liquid
 		 */
 		getLiquid(amount: number): number;
 
@@ -144,11 +144,11 @@ namespace BlockEngine {
 		 * Gets liquid from tank.
 		 * @param liquid liquid type
 		 * @param amount max amount of liquid to get
-		 * @returns amount of got liquid
+		 * @returns amount of received liquid
 		 */
 		getLiquid(liquid: string, amount: number): number;
-		getLiquid(liquid: any, amount?: number): number {
-			if (amount == undefined) {
+		getLiquid(liquid: string | number, amount?: number): number {
+			if (typeof liquid == "number") {
 				amount = liquid;
 				liquid = null;
 			}
@@ -187,25 +187,22 @@ namespace BlockEngine {
 			const liquid = this.getLiquidStored();
 			if (!liquid) return false;
 
-			let amount = this.getAmount(liquid);
+			const amount = this.getAmount(liquid);
 			if (amount > 0) {
-				const full = LiquidItemRegistry.getFullItem(inputSlot.id, inputSlot.data, liquid);
-				if (full && (outputSlot.id == full.id && outputSlot.data == full.data && outputSlot.count < Item.getMaxStack(full.id) || outputSlot.id == 0)) {
-					if (amount >= full.amount) {
-						this.getLiquid(full.amount);
-						inputSlot.setSlot(inputSlot.id, inputSlot.count - 1, inputSlot.data);
+				const fullStack = LiquidItemRegistry.getFullStack(inputSlot, liquid);
+				if (fullStack && this.canStackBeMerged(fullStack, outputSlot)) {
+					if (amount >= fullStack.amount) {
+						this.getLiquid(fullStack.amount);
+						inputSlot.setSlot(inputSlot.id, inputSlot.count - 1, inputSlot.data, inputSlot.extra);
 						inputSlot.validate();
-						outputSlot.setSlot(full.id, outputSlot.count + 1, full.data);
+						outputSlot.setSlot(fullStack.id, outputSlot.count + 1, fullStack.data, fullStack.extra);
 						return true;
 					}
-					if (inputSlot.count == 1 && full.storage) {
-						if (inputSlot.id == full.id) {
-							amount = this.getLiquid(full.amount);
-							inputSlot.setSlot(inputSlot.id, 1, inputSlot.data - amount);
-						} else {
-							amount = this.getLiquid(full.storage);
-							inputSlot.setSlot(full.id, 1, full.storage - amount);
-						}
+					const liquidItem = LiquidItemRegistry.getItemInterface(fullStack.id);
+					if (liquidItem && inputSlot.count == 1) {
+						const addedAmount = liquidItem.addLiquid(inputSlot, liquid, amount);
+						this.getLiquid(addedAmount);
+						inputSlot.markDirty();
 						return true;
 					}
 				}
@@ -221,23 +218,22 @@ namespace BlockEngine {
 		 */
 		getLiquidFromItem(inputSlot: ItemContainerSlot, outputSlot: ItemContainerSlot): boolean {
 			const liquid = this.getLiquidStored();
-			const empty = LiquidItemRegistry.getEmptyItem(inputSlot.id, inputSlot.data);
-			if (empty && (!liquid && this.isValidLiquid(empty.liquid) || empty.liquid == liquid) && !this.isFull()) {
-				if (outputSlot.id == empty.id && outputSlot.data == empty.data && outputSlot.count < Item.getMaxStack(empty.id) || outputSlot.id == 0) {
-					const freeAmount = this.getLimit() - this.getAmount();
-					if (freeAmount >= empty.amount) {
-						this.addLiquid(empty.liquid, empty.amount);
-						inputSlot.setSlot(inputSlot.id, inputSlot.count - 1, inputSlot.data);
-						inputSlot.validate();
-						outputSlot.setSlot(empty.id, outputSlot.count + 1, empty.data);
-						return true;
-					}
-					if (inputSlot.count == 1 && empty.storage) {
-						const amount = Math.min(freeAmount, empty.amount);
-						this.addLiquid(empty.liquid, amount);
-						inputSlot.setSlot(inputSlot.id, 1, inputSlot.data + amount);
-						return true;
-					}
+			const emptyStack = LiquidItemRegistry.getEmptyStack(inputSlot);
+			if (emptyStack && (!liquid && this.isValidLiquid(emptyStack.liquid) || emptyStack.liquid == liquid) && !this.isFull() && this.canStackBeMerged(emptyStack, outputSlot)) {
+				const freeAmount = this.getLimit() - this.getAmount();
+				if (freeAmount >= emptyStack.amount) {
+					this.addLiquid(emptyStack.liquid, emptyStack.amount);
+					inputSlot.setSlot(inputSlot.id, inputSlot.count - 1, inputSlot.data, inputSlot.extra);
+					inputSlot.validate();
+					outputSlot.setSlot(emptyStack.id, outputSlot.count + 1, emptyStack.data, emptyStack.extra);
+					return true;
+				}
+				const liquidItem = LiquidItemRegistry.getItemInterface(inputSlot.id);
+				if (liquidItem && inputSlot.count == 1) {
+					const extractedAmount = liquidItem.getLiquid(inputSlot, freeAmount);
+					this.addLiquid(emptyStack.liquid, extractedAmount);
+					inputSlot.markDirty();
+					return true;
 				}
 			}
 			return false;
@@ -255,6 +251,12 @@ namespace BlockEngine {
 			} else {
 				(container as ItemContainer).sendEvent("setLiquidScale", {scale: scale, liquid: this.data.liquid, amount: this.getRelativeAmount()});
 			}
+		}
+
+		private canStackBeMerged(inputStack: ItemInstance, outputStack: ItemInstance) {
+			return outputStack.id == 0 || (outputStack.id == inputStack.id && outputStack.data == inputStack.data && 
+				outputStack.count + inputStack.count <= Item.getMaxStack(outputStack.id, outputStack.data) &&
+				outputStack.extra == inputStack.extra)
 		}
 	}
 }
