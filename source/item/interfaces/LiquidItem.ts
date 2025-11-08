@@ -4,11 +4,16 @@ interface LiquidItem {
      */
     liquidStorage: number;
     /**
+     * Returns true if the item supports specified liquid, false otherwise
+     * @param liquid liquid type
+     */
+    isValidLiquid(liquid: string): boolean;
+    /**
      * Returns liquid type stored in the item.
      * @param itemData item data
      * @param itemExtra item extra data
      */
-    getLiquidType(itemData: number, itemExtra: ItemExtraData): string;
+    getLiquidStored(itemData: number, itemExtra: ItemExtraData): string;
     /**
      * Returns amount of liquid stored in the item.
      * @param itemData item data
@@ -35,8 +40,8 @@ interface LiquidItem {
      */
     getEmptyItem(): ItemInstance;
     /**
-     * Returns full item stack for the specified liquid.
+     * Returns full item stack for the specified liquid or null if its not supported.
      * @param liquid liquid type
      */
-    getFullItem(liquid: string): ItemInstance;
+    getFullItem(liquid: string): Nullable<ItemInstance>;
 }

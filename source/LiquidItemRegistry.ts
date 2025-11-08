@@ -96,7 +96,7 @@ namespace LiquidItemRegistry {
 	export function getItemLiquid(id: number, data: number, extra?: ItemExtraData): string {
 		const liquidItem = LiquidItems[id];
 		if (liquidItem) {
-			return liquidItem.getLiquidType(data, extra);
+			return liquidItem.getLiquidStored(data, extra);
 		}
 
 		const empty = getEmptyByFullMapping(id, data);
@@ -104,6 +104,17 @@ namespace LiquidItemRegistry {
 			return empty.liquid;
 		}
 		return LiquidRegistry.getItemLiquid(id, data);
+	}
+
+	export function canBeFilledWithLiquid(id: number, data: number, extra: ItemExtraData, liquid: string) {
+		const liquidItem = LiquidItems[id];
+		if (liquidItem) {
+			const liquidStored = liquidItem.getLiquidStored(data, extra);
+			return !liquidStored && liquidItem.isValidLiquid(liquid) || 
+				liquidStored == liquid && liquidItem.getAmount(data, extra) < liquidItem.liquidStorage;
+		}
+
+		return !!getFullByEmptyMapping(id, data, liquid) || !!LiquidRegistry.getFullItem(id, data, liquid);
 	}
 	
 	/** @deprecated */
@@ -143,7 +154,7 @@ namespace LiquidItemRegistry {
 			if (amount == 0) return null;
 
 			const emptyItem = liquidItem.getEmptyItem();
-			return {id: emptyItem.id, count: 1, data: emptyItem.data, extra: emptyItem.extra || null, liquid: liquidItem.getLiquidType(data, extra), amount: amount};
+			return {id: emptyItem.id, count: 1, data: emptyItem.data, extra: emptyItem.extra || null, liquid: liquidItem.getLiquidStored(data, extra), amount: amount};
 		}
 		
 		return getEmptyItem(id, data);
@@ -151,7 +162,10 @@ namespace LiquidItemRegistry {
 
 	function getFullStackInternal(id: number, data: number, extra: ItemExtraData, liquid: string): FullItem {
 		const liquidItem = LiquidItems[id];
-		if (liquidItem) {
+		if (liquidItem && liquidItem.isValidLiquid(liquid)) {
+			const liquidStored = liquidItem.getLiquidStored(data, extra);
+			if (liquidStored && liquidStored != liquid) return null;
+			
 			const fullItem = liquidItem.getFullItem(liquid);
 			if (!fullItem) return null;
 
