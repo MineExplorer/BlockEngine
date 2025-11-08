@@ -213,4 +213,6 @@ namespace LiquidItemRegistry {
 		const item = id;
 		return getFullStackInternal(item.id, item.data, item.extra, data as string);
 	}
+
+	registerItem("water", {id: VanillaItemID.glass_bottle, data: 1}, {id: VanillaItemID.potion, data: 0}, 250);
 }
