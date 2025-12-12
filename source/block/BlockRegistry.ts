@@ -134,38 +134,50 @@ namespace BlockRegistry {
 			switch(key) {
 			case "baseBlock":
 				type.base = properites[key];
-			break;
+				break;
 			case "renderAllFaces":
 				type.renderallfaces = properites[key];
-			break;
+				break;
 			case "renderType":
 				type.rendertype = properites[key];
-			break;
+				break;
 			case "renderLayer":
 				type.renderlayer = properites[key];
-			break;
+				break;
 			case "lightLevel":
 				type.lightlevel = properites[key];
-			break;
+				break;
 			case "lightOpacity":
 				type.lightopacity = properites[key];
-			break;
+				break;
 			case "explosionResistance":
 				type.explosionres = properites[key];
-			break;
+				break;
 			case "destroyTime":
 				type.destroytime = properites[key];
-			break;
+				break;
 			case "mapColor":
 				type.mapcolor = properites[key];
-			break;
+				break;
 			case "colorSource":
 				type.color_source = properites[key];
-			break;
+				break;
+			case "canContainLiquid":
+				type.can_contain_liquid = properites[key];
+				break;
+			case "canBeExtraBlock":
+				type.can_be_extra_block = properites[key];
+				break;
+			case "flameOdds":
+				type.flame_odds = properites[key];
+				break;
+			case "burnOdds":
+				type.burn_odds = properites[key];
+				break;
 			case "extends": continue;
 			default:
 				type[key] = properites[key];
-			break;
+				break;
 			}
 		}
 		return type;

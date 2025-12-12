@@ -87,5 +87,43 @@ interface BlockType {
 	/**
 	 * Specifies sounds of the block
 	 */
-	sound?: Block.Sound
+	sound?: Block.Sound,
+	/**
+	 * Whether or not block may filled by water bucket or
+	 * other custom fillable liquids.
+	 * @default false
+	 */
+	canContainLiquid?: boolean,
+	/**
+	 * Whether or not block may overlay different block,
+	 * like water overlapping fillable blocks.
+	 * @default false
+	 */
+	canBeExtraBlock?: boolean,
+	/**
+	 * Adds ability to apply states to this block, preferably using
+	 * vanilla ones from {@link EBlockStates}, but if they are not enough,
+	 * you can always add your own using {@link BlockState.registerBlockState}.
+	 * Inexistent states are ignored.
+	 * @default ["color"] // this state always has been here
+	 */
+	states?: [EBlockStates | number | string][],
+	/**
+	 * Alternatively catch on fire chance modifier,
+	 * values between 0 and 100, with a higher number
+	 * meaning more likely to catch on fire.
+	 * For a "flame_odds" greater than 0, the fire will
+	 * continue to burn until the block is destroyed
+	 * (or it will burn forever if the "burn_odds" is 0).
+	 * @default 0 // 5 for planks
+	 * @since 3.1.0b125
+	 */
+	flameOdds?: number,
+	/**
+	 * Alternatively destroy by fire chance modifier,
+	 * values between 0 and 100, with a higher number
+	 * meaning more likely to be destroyed by fire.
+	 * @default 0 // 20 for planks
+	 */
+	burnOdds?: number;
 }
