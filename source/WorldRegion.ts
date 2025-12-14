@@ -531,21 +531,29 @@ class WorldRegion {
      * @param name sound name
      * @param volume sound volume from 0 to 1. Default is 1.
      * @param pitch sound pitch, from 0 to 1. Default is 1.
+	 * @param playerUids if not set, players players in radius multiplied by sound volume
+	 * will be detected automatically
      */
-	playSound(x: number, y: number, z: number, name: string, volume?: number, pitch?: number): void;
-	playSound(coords: Vector, name: string, volume?: number, pitch?: number): void;
-	playSound(x: any, y: any, z: any, name: any, volume?: number, pitch?: number): void {
+	playSound(x: number, y: number, z: number, name: string, volume?: number, pitch?: number, playerUids?: number[]): void;
+	playSound(coords: Vector, name: string, volume?: number, pitch?: number, playerUids?: number[]): void;
+	playSound(x: any, y: any, z?: any, name?: any, volume?: any, pitch?: number, playerUids?: number[]): void {
 		if (typeof(x) == "number") {
-			const soundPos = new Vector3(x, y, z);
-			this.playSound(soundPos, name, volume, pitch)
-		} else {
+			if (this.blockSource.playSound) {
+				this.blockSource.playSound(x, y, z, name, volume, pitch, playerUids);
+			}
+			else {
+				const packetData = {x: x, y: y, z: z, name: name, volume: volume ?? 1, pitch: pitch ?? 1};
+				if (playerUids) {
+					this.sendPacketToPlayers(playerUids, "WorldRegion.play_sound", packetData);
+				} else {
+					const radius = (volume > 1) ? 16 * volume : 16;
+					this.sendPacketInRadius(packetData as Vector, radius, "WorldRegion.play_sound", packetData);
+				}
+			}
+		}
+		else {
 			const coords = arguments[0];
-			this.sendPacketInRadius(coords, 100, "WorldRegion.play_sound", {
-				...coords,
-				name: arguments[1],
-				volume: arguments[2] ?? 1,
-				pitch: arguments[3] ?? 1
-			});
+			this.playSound(coords.x, coords.y, coords.z, arguments[1], arguments[2], arguments[3], arguments[4]);
 		}
 	}
 
@@ -555,10 +563,32 @@ class WorldRegion {
      * @param name sound name
      * @param volume sound volume from 0 to 1. Default is 1.
      * @param pitch sound pitch, from 0 to 1. Default is 1.
+	 * @param playerUids if not set, players in radius multiplied by sound volume
+	 * will be detected automatically
      */
-	playSoundAtEntity(ent: number, name: string, volume: number = 1, pitch: number = 1): void {
-		const soundPos = Entity.getPosition(ent);
-		this.sendPacketInRadius(soundPos, 100, "WorldRegion.play_sound_at", {ent: ent, name: name, volume: volume, pitch: pitch})
+	playSoundAtEntity(ent: number, name: string, volume: number = 1, pitch: number = 1, playerUids?: number[]): void {
+		if (this.blockSource.playSoundAtEntity) {
+			this.blockSource.playSoundAtEntity(ent, name, volume, pitch);
+		} else {
+			const soundPos = Entity.getPosition(ent);
+			const packetData = {ent: ent, name: name, volume: volume, pitch: pitch};
+			if (playerUids) {
+				this.sendPacketToPlayers(playerUids, "WorldRegion.play_sound_at", packetData);
+			} else {
+				const radius = (volume > 1) ? 16 * volume : 16;
+				this.sendPacketInRadius(soundPos, radius, "WorldRegion.play_sound_at", packetData);
+			}
+		}
+	}
+
+	/**
+     * Method to stop sound by name for defined player list.
+     * @param sound resource pack sound name
+     * @param playerUids list of player UIDs to stop sound for
+     * @since Inner Core 3.1.1b127
+     */
+    stopSound(sound: string, playerUids: number[]): void {
+		this.blockSource.stopSound(sound, playerUids);
 	}
 
 	/**
@@ -578,6 +608,57 @@ class WorldRegion {
 				client.send(packetName, data);
 			}
 		}
+	}
+
+	/**
+	 * Sends network packet to specified players.
+	 * @param playerUids 
+	 * @param packetName 
+	 * @param data 
+	 */
+	sendPacketToPlayers(playerUids: number[], packetName: string, data: object): void {
+		for (const uid of playerUids) {
+			const client = Network.getClientForPlayer(uid);
+			if (client) {
+				client.send(packetName, data);
+			}
+		}
+	}
+
+	/**
+	 * Gets signal strength at specified coordinates
+	 * that consumers can receive.
+	 * @since Inner Core 3.1.0b125
+	 */
+	getRedstoneSignal(x: number, y: number, z: number): number {
+		return this.blockSource.getRedstoneSignal(x, y, z);
+	}
+
+	/**
+	 * Sets signal with specified strength to block, it is
+	 * recommended to call {@link Block.setupAsRedstoneEmitter}
+	 * to be able to add a source. Once block is destroyed,
+	 * signal will be reset.
+	 * @param strength level between 0-15 (inclusive)
+	 * @param delay time in ticks after which signal strength
+	 * will be reset, should be more than zero, updated depending
+	 * on redstone tick (1 redstone tick = 2 regular ticks), default is `4`
+	 * @param facing world side of {@link EBlockSide} to which signal
+	 * from source will be applied, use -1 to apply it to all sides
+	 * (as from redstone block), default is `-1`
+	 * @since Inner Core 3.1.0b125
+	 */
+	setRedstoneSignal(x: number, y: number, z: number, strength: number, delay?: number, facing?: number): void {
+		this.blockSource.setRedstoneSignal(x, y, z, strength, delay, facing);
+	}
+
+	/**
+	 * Causes a random tick event, usually affecting rate of
+	 * plant growth or grass spread and leaf disappearings.
+	 * @since Inner Core 3.1.0b125
+	 */
+	randomTick(x: number, y: number, z: number): void {
+		this.blockSource.randomTick(x, y, z);
 	}
 }
 
