@@ -620,6 +620,8 @@ namespace BlockRegistry {
 		baseBlock: 17,
 		destroyTime: 2,
 		explosionResistance: 10,
+		flameOdds: 5,
+		burnOdds: 20,
 		sound: "wood"
 	});
 
@@ -631,6 +633,8 @@ namespace BlockRegistry {
 		renderLayer: 1,
 		lightOpacity: 1,
 		translucency: 0.5,
+		flameOdds: 30,
+		burnOdds: 60,
 		sound: "grass"
 	});
 
