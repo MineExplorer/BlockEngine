@@ -26,13 +26,15 @@ namespace BlockRegistry {
 	 * variation corresponds to block data value, data values are assigned 
 	 * according to variations order.
 	 * @param blockType BlockType object or block type name, if the type was previously registered.
+	 * @returns instance of created block
 	 */
-	export function createBlock(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void {
+	export function createBlock(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): BlockBase {
 		const block = new BlockBase(stringID, blockType);
 		for (let variation of defineData) {
 			block.addVariation(variation.name, variation.texture, variation.inCreative);
 		}
 		registerBlock(block);
+		return block;
 	}
 
 	/**
@@ -42,13 +44,15 @@ namespace BlockRegistry {
 	 * each occupying 6 data values for rotation.
 	 * @param blockType BlockType object or block type name, if the type was previously registered.
 	 * @param hasVerticalFacings true if the block has vertical facings, false otherwise.
+	 * @returns instance of created block
 	 */
-    export function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType, hasVerticalFacings?: boolean): void {
+    export function createBlockWithRotation(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType, hasVerticalFacings?: boolean): BlockRotative {
 		const block = new BlockRotative(stringID, blockType, hasVerticalFacings);
 		for (let variation of defineData) {
 			block.addVariation(variation.name, variation.texture, variation.inCreative);
 		}
 		registerBlock(block);
+		return block;
     }
 
 	/**
@@ -56,9 +60,12 @@ namespace BlockRegistry {
 	 * @param stringID string id of the block
 	 * @param defineData array containing one variation of the block (for similarity with other methods).
 	 * @param blockType BlockType object or block type name, if the type was previously registered.
+	 * @returns instance of created stairs block
 	 */
-	export function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void {
-		registerBlock(new BlockStairs(stringID, defineData[0], blockType));
+	export function createStairs(stringID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): BlockStairs {
+		const stairs = new BlockStairs(stringID, defineData[0], blockType);
+		registerBlock(stairs);
+		return stairs;
 	}
 
 	/**
@@ -70,7 +77,7 @@ namespace BlockRegistry {
 	 * according to variations order.
 	 * @param blockType BlockType object or block type name, if the type was previously registered.
 	 */
-	export function createSlabs(slabID: string, doubleSlabID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType) {
+	export function createSlabs(slabID: string, doubleSlabID: string, defineData: Block.BlockVariation[], blockType?: string | BlockType): void {
 		const slab = new BlockSlab(slabID, blockType);
 		slab.variations = defineData;
 
