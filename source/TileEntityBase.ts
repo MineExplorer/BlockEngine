@@ -15,16 +15,16 @@ implements TileEntity {
 			this.client[propertyName] = this[propertyName];
 		}
 
-		for (let eventName in this.__networkEvents) {
-			const side = this.__networkEvents[eventName];
-			const target = (side == Side.Client) ? this.client.events : this.events;
-			target[eventName] = this[eventName];
+		for (let propertyName in this.__networkEvents) {
+			const event = this.__networkEvents[propertyName];
+			const target = (event.side == Side.Client) ? this.client.events : this.events;
+			target[event.eventName] = this[propertyName];
 		}
 
-		for (let eventName in this.__containerEvents) {
-			const side = this.__containerEvents[eventName];
-			const target = (side == Side.Client) ? this.client.containerEvents : this.containerEvents;
-			target[eventName] = this[eventName];
+		for (let propertyName in this.__containerEvents) {
+			const event = this.__containerEvents[propertyName];
+			const target = (event.side == Side.Client) ? this.client.containerEvents : this.containerEvents;
+			target[event.eventName] = this[propertyName];
 		}
 
 		delete this.__clientMethods;
@@ -33,8 +33,8 @@ implements TileEntity {
 	}
 
 	__clientMethods: {[key: string]: boolean};
-	__networkEvents: {[key: string]: Side};
-	__containerEvents: {[key: string]: Side};
+	__networkEvents: {[key: string]: {side: Side, eventName: string}};
+	__containerEvents: {[key: string]: {side: Side, eventName: string}};
 
 	readonly x: number;
 	readonly y: number;

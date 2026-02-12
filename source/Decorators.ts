@@ -7,18 +7,18 @@ namespace BlockEngine {
 		}
 
 		/** Adds method as network event in TileEntity */
-		export function NetworkEvent(side: Side) {
+		export function NetworkEvent(side: Side, eventName?: string) {
 			return (target: TileEntityBase, propertyName: string) => {
 				target.__networkEvents = {...target.__networkEvents};
-				target.__networkEvents[propertyName] = side;
+				target.__networkEvents[propertyName] = { side, eventName: eventName ?? propertyName };
 			}
 		}
 
 		/** Adds method as container event in TileEntity */
-		export function ContainerEvent(side: Side) {
+		export function ContainerEvent(side: Side, eventName?: string) {
 			return (target: TileEntityBase, propertyName: string) => {
 				target.__containerEvents = {...target.__containerEvents};
-				target.__containerEvents[propertyName] = side;
+				target.__containerEvents[propertyName] = { side, eventName: eventName ?? propertyName };
 			}
 		}
 	}
