@@ -88,18 +88,21 @@ interface BlockType {
 	 * Specifies sounds of the block
 	 */
 	sound?: Block.Sound,
+
 	/**
 	 * Whether or not block may filled by water bucket or
 	 * other custom fillable liquids.
 	 * @default false
 	 */
 	canContainLiquid?: boolean,
+
 	/**
 	 * Whether or not block may overlay different block,
 	 * like water overlapping fillable blocks.
 	 * @default false
 	 */
 	canBeExtraBlock?: boolean,
+
 	/**
 	 * Adds ability to apply states to this block, preferably using
 	 * vanilla ones from {@link EBlockStates}, but if they are not enough,
@@ -107,7 +110,8 @@ interface BlockType {
 	 * Inexistent states are ignored.
 	 * @default ["color"] // this state always has been here
 	 */
-	states?: [EBlockStates | number | string][],
+	states?: (EBlockStates | number | string)[],
+
 	/**
 	 * Alternatively catch on fire chance modifier,
 	 * values between 0 and 100, with a higher number
@@ -119,6 +123,7 @@ interface BlockType {
 	 * @since 3.1.0b125
 	 */
 	flameOdds?: number,
+	
 	/**
 	 * Alternatively destroy by fire chance modifier,
 	 * values between 0 and 100, with a higher number
