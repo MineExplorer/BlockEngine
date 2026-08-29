@@ -183,7 +183,7 @@ implements TileEntity {
         this._clickPrevented = true;
     }
 
-	onItemClick(id: number, count: number, data: number, coords: Callback.ItemUseCoordinates, player: number, extra: ItemExtraData): boolean {
+	onItemClick(id: number, count: number, data: number, coords: Callback.ItemUseCoordinates, player: number, extra: Nullable<ItemExtraData>): boolean {
         if (!this.__initialized) {
             if (!this._runInit()) {
                 return false;
