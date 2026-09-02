@@ -6,7 +6,7 @@ While the library partially supports JavaScript modding, it is highly recommende
 ## Development
 ### Building from Source
 1. Install [Node.js](https://nodejs.org/en/)
-2. Install the TypeScript compiler (run `npm install -g typescript`)
+2. Install the TypeScript compiler v5 (run `npm install -g typescript@5`), v6 and v7 are not supported!
 3. Build the script and declarations using the command `tsc -p .\source\tsconfig.json`, or just run the `tsc:build` task in the VS Code IDE (`Ctrl+Shift+B`).
 
 ## Overview
